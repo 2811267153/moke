@@ -1,0 +1,50 @@
+@import "src/assets/css/root.scss";
+h2{
+  font-weight: 300;
+  font-size: 16px;
+  padding: 0 20px;
+}
+.recommend-list-warp{
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px 15px;
+  .recommend-list{
+    border-radius: 10px;
+    align-items: flex-start; /* 添加这行代码 */
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
+    grid-gap: 10px;
+  }
+  .recommend-list-item {
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #fff;
+    padding: 10px 15px;
+    align-items: center;
+    p {
+      padding: 10px 15px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .item-name {
+      width: 200px;
+    }
+    .item-dt {
+      flex: 1;
+    }
+    &:hover {
+      background-color: #f2f2f2;
+    }
+    .list-tage {
+      right: 10px;
+      border: 1px solid $theme-active-color;
+      font-size: 8px;
+      padding: 2px 3px;
+      border-radius: 2px;
+      bottom: 10px;
+    }
+  }
+}

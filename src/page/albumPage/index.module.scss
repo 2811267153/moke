@@ -1,0 +1,73 @@
+@import "src/assets/css/root.scss";
+.album {
+  padding: 15px 20px;
+  .album-picture {
+    display: flex;
+    .album-info {
+      padding-left: 40px;
+      h2 {
+        margin-top: 40px;
+        margin-bottom: 20px;
+        font-weight: 600;
+        font-size: 30px;
+        padding-left: 10px;
+        vertical-align: bottom;
+      }
+      .description {
+        font-size: 16px;
+        width: 620px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display:-webkit-box; //作为弹性伸缩盒子模型显示。
+        -webkit-box-orient:vertical; //设置伸缩盒子的子元素排列方式--从上到下垂直排列
+        -webkit-line-clamp:3; //显示的行
+        letter-spacing: 1.1px;
+      }
+      .songs-other {
+        width: 80%;
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+         i{
+           width: 1px;
+           border: 1px solid #f53c3c;
+         }
+      }
+      .songs-btn {
+        width: 40%;
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        button {
+          padding: 10px 20px;
+          border-radius: 10px;
+        }
+        button:first-child {
+          background-color: $theme-active-color;
+          border: 2px solid $theme-active-color;
+          vertical-align: middle;
+          color: white;
+        }
+        button:first-child:hover{
+          background-color: transparent;
+          border: 2px solid $theme-active-color;
+          vertical-align: middle;
+          color: $theme-active-color;
+        }
+        button:last-child {
+          border: 2px solid #2f3e7c;
+          background-color: transparent;
+          vertical-align: middle;
+          color: #2f3e7c;
+        }
+        button:last-child:hover {
+          border: 2px solid #2f3e7c;
+          background-color: #2f3e7c;
+          vertical-align: middle;
+          color: #fff;
+        }
+      }
+    }
+  }
+}

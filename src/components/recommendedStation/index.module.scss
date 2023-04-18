@@ -1,0 +1,150 @@
+@import "../../assets/css/root.scss";
+
+.recommend-station {
+    padding: 20px 15px;
+}
+.recommend-station-warp {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.listening {
+    background-color: #fff;
+    width: 100%;
+    display: flex;
+    border-radius: 10px;
+    overflow: hidden;
+    padding: 10px 15px;
+    img {
+        border-radius: 10px;
+    }
+}
+.song-info {
+    flex: 1;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+.song-info h3 {
+    font-weight: 400;
+    margin: 8px 10px;
+}
+.song-info p {
+    margin: 5px 10px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.song-info p b {
+    margin: 0 10px;
+}
+.song-info p .music-ablum{
+    color: #cccccc;
+}
+.song-info i {
+    font-size: 30px;
+    color: $theme-active-color;
+}
+
+.listening-author {
+    padding-left: 20px;
+}
+.author-info {
+    width: 100%;
+}
+.song-album {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    margin-top: 10px;
+    .album-item {
+        position: relative;
+        border-radius: 10px;
+        padding: 14px 10px;
+        width: 140px;
+        text-align: center;
+        background-color: #fff;
+        img {
+            width: 60px;
+            height: 60px;
+            border-radius: 80px;
+        }
+        p {
+            margin-top: 6px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display:-webkit-box; //作为弹性伸缩盒子模型显示。
+            -webkit-box-orient:vertical; //设置伸缩盒子的子元素排列方式--从上到下垂直排列
+            -webkit-line-clamp:2; //显示的行
+        }
+    }
+}
+
+.player-controller-warp{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px 10px;
+    margin-top: 15px;
+    .player-controller{
+        margin: 0 10px;
+        background-color: $theme-background-coloor;
+        flex: 1;
+        border-radius: 5px;
+        height: 3px;
+    }
+    .player-controller-solid{
+        height: 100%;
+        background-color: $theme-active-color;
+        width: 50%;
+        border-radius: 5px;
+    }
+}
+
+
+.music-info {
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    .scrolling-text-container {
+        overflow: hidden;
+        position: relative;
+        width: 150px; /* 容器的宽度 */
+        height: 32px; /* 设置高度 */
+        padding-right: 100px; /* 添加这行代码 */
+        .scrolling-text{
+            white-space: nowrap;
+            animation: scroll-left 10s linear infinite; /* 动画名称，持续时间，动画类型和次数 */
+            position: absolute;
+            width: 100%;
+            top: 3px;
+            left: 0;
+        }
+        .music-other {
+            display: inline-block;
+            font-size: 12px;
+        }
+    }
+}
+.icon-solid {
+    color: #cccccc!important;
+    animation: spin 4s linear infinite !important;
+}
+
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}

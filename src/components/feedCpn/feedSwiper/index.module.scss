@@ -1,0 +1,23 @@
+.swiper{
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  padding: 10px 20px;
+  //width: 100%;
+  img {
+    border-radius: 10px;
+    height: 300px;
+  }
+  .swiper_main {
+    flex: 1;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .swiper_small {
+    width: 500px;
+    border-radius: 10px;
+    img  {
+      height: 300px;
+    }
+  }
+}

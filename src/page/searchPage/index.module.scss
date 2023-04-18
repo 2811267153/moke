@@ -1,0 +1,12 @@
+@import "src/assets/css/root.scss";
+.search_history_warp{
+  padding: 20px;
+  button {
+    padding: 10px 15px;
+    margin-right: 10px;
+    border-radius: 10px;
+    background-color: transparent;
+    border: 1px solid #000;
+    margin-top: 10px;
+  }
+}

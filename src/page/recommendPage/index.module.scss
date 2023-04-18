@@ -1,0 +1,215 @@
+@import "src/assets/css/root.scss";
+
+.recommend {
+  h2 {
+    text-align: left;
+    margin: 5px 0;
+    padding: 0 10px;
+  }
+
+  .recommend_flex {
+    display: flex;
+    justify-content: space-between;
+
+    .recommend_r {
+      width: 300px;
+    }
+  }
+
+  button {
+    background-color: transparent;
+  }
+
+  .recommend_warp {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    width: 100%;
+    grid-gap: 10px;
+    text-align: center;
+
+    img {
+      width: 180px;
+      height: 180px;
+      border-radius: 10px;
+    }
+
+    p {
+      text-align: center;
+      padding: 10px 5px 5px;
+      overflow: hidden; //超出的文本隐藏
+      text-overflow: ellipsis; //溢出用省略号显示
+      white-space: nowrap; //溢出不换行
+    }
+
+    i {
+      font-size: 0;
+    }
+
+    .album_item_warp {
+
+      &:hover {
+        .album_item {
+          height: 100%;
+        }
+      }
+    }
+
+    .recommend_info_item {
+      &:hover {
+
+        .album_item {
+          height: 40%;
+
+          p {
+            font-size: 10px;
+            opacity: 1;
+          }
+        }
+
+        span {
+          font-size: 10px;
+          opacity: 1;
+        }
+
+        i {
+          font-size: 30px !important;
+        }
+
+        .album_item_tage {
+          height: auto;
+          opacity: 1;
+        }
+      }
+    }
+  }
+}
+
+.album_item_warp {
+  position: relative;
+  height: 100%;
+
+  .album_item_tage {
+    position: absolute;
+    top: 0;
+    width: 180px;
+    right: -40px;
+    height: 0;
+    opacity: 0;
+
+    span {
+      font-size: 10px;
+      display: inline-block;
+      padding: 2px 15px;
+      border-radius: 5px;
+    }
+  }
+
+  .album_item {
+    position: absolute;
+    bottom: 36px;
+    height: 0;
+    line-height: 40%;
+    width: 180px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    border-radius: 10px;
+    font-size: 0;
+
+    span {
+      display: inline-block;
+      padding: 8px 10px;
+      border-radius: 5px;
+      margin-right: 10px;
+      cursor: progress;
+      opacity: 0;
+    }
+
+
+    .album_item_tags_warp {
+      padding-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      p {
+        white-space: nowrap;
+        overflow: hidden;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        text-overflow: ellipsis;
+        padding-top: 20px;
+      }
+    }
+  }
+}
+
+.recommend_one_warp {
+  display: inline-block;
+  text-align: center;
+  width: 200px;
+
+  p {
+    font-size: 14px !important;
+  }
+}
+
+.recommend_col {
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin: 10px 10px 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(70deg, #dceaf1, #fafafa);
+}
+
+.recommend_flex_c {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 15px 10px;
+  display: flex;
+  position: relative;
+  .recommend_artist {
+    margin-left: 20px;
+    font-size: 12px;
+    padding-top: 10px;
+    overflow: hidden;
+    p {
+      white-space: nowrap;
+    }
+    span {
+      margin-top: 10px;
+      display: inline-block;
+      margin-right: 10px;
+    }
+  }
+
+  .recommend_tage {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: $theme-active-color;
+    background-color: #f2f2f2;
+    padding: 5px 10px;
+    font-weight: 600;
+    border-radius: 5px;
+    font-size: 8px;
+  }
+  &:hover {
+    .artist_text{
+      animation: scroll-text 10s linear infinite;
+    }
+  }
+}
+
+
+@keyframes scroll-text {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}

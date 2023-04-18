@@ -1,0 +1,102 @@
+@import "src/assets/css/root.scss";
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 0 15px;
+  grid-gap: 20px;
+
+  & > div {
+    &:hover {
+      .grid_mask {
+        opacity: 1;
+      }
+      .grid_tage {
+        right: 20px;
+      }
+      .grid_info_desc {
+        font-size: 10px;
+        height: 40%;
+      }
+    }
+  }
+
+  .grid_content {
+    text-align: center;
+
+    img {
+      width: 180px;
+      height: 180px;
+      border-radius: 10px;
+    }
+
+    p {
+      margin-top: 5px;
+    }
+
+  }
+
+  .grid_mask {
+    position: absolute;
+    opacity: 0;
+    width: 180px;
+    height: 100%;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    border-radius: 10px;
+    right: 0;
+    margin: 0 auto; /* 可选：用于将 div 居中 */
+    overflow: hidden;
+    .grid_tage {
+      position: absolute;
+      right: -60px;
+      top: 10px;
+      font-weight: 600;
+      padding: 5px 8px;
+      border-radius: 5px;
+      font-size: 8px;
+      background: rgba(255, 255, 255, 0.25);
+      color: $theme-active-color;
+      backdrop-filter: blur(50px);
+    }
+    .gird_info_button {
+      display: flex !important;
+      justify-content: space-between;
+      flex: 1;
+      button {
+        background-color: transparent;
+        font-size: 10px !important;
+        border: 1px solid $theme-active-color;
+        padding: 5px 8px;
+        border-radius: 5px;
+        color: $theme-active-color;
+      }
+    }
+    & > p:last-of-type{
+      background-color: #fff;
+    }
+
+    .grid_info_desc {
+      position: absolute;
+      bottom: 19px;
+      width: 100%;
+      border-radius: 10px;
+      padding: 10px 15px;
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(60px);
+      font-size: 10px;
+      height: 0;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      p {
+        overflow: hidden;
+        text-overflow: ellipsis; //文本溢出显示省略号
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+      }
+    }
+  }
+}

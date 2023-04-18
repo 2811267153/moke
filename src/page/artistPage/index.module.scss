@@ -1,0 +1,44 @@
+@import "src/assets/css/root.scss";
+.artistItem {
+  background-color: #f4f5fe;
+}
+
+.navigate {
+  position: fixed;
+  background: rgba( 255, 255, 255, 0.55 );
+  top: 50px;
+  z-index: 10;
+  backdrop-filter: blur(20px);
+  width: 100%;
+  line-height: 50px;
+  padding-left: 15px;
+
+  a{
+    position: relative;
+    display: inline-block;
+    color: #cccccc;
+    margin: 0 20px;
+    &:hover {
+      color: $theme-active-color !important;
+      i {
+        width: 100%;
+      }
+    }
+    i {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      display: inline-block;
+      height: 2px;
+      width: 0;
+      background-color: $theme-active-color;
+    }
+  }
+}
+
+.activeNavigate {
+  color: $theme-active-color !important;
+  i{
+    width: 100% !important;
+  }
+}

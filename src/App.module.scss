@@ -1,0 +1,116 @@
+@import "assets/css/root.scss";
+// 全局样式
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  outline: none;
+  border: none;
+  transition: all .2s;
+}
+
+
+// App 根组件样式
+.App {
+  display: flex;
+  flex-direction: column ;
+}
+
+// header 头部组件样式
+.header {
+  height: 50px;
+  //background-color: #f4f5fe;
+  padding: 0 !important;
+  -webkit-app-region: drag;
+}
+
+// sider 侧边栏组件样式
+.sider {
+  width: 120px;
+  background-color: #fff !important;
+}
+
+// Content 内容区域组件样式
+.Content {
+  width: 100%;
+  background-color: #f4f5fe;
+  height: calc(100vh - 50px);
+  overflow: auto;
+  padding-bottom: 80px;
+}
+
+// Footer 底部组件样式
+.footer {
+  height: 80px;
+  width: calc(100% - 200px);
+  z-index: 100;
+  bottom: 0;
+  position: fixed;
+  background-color: #fff;
+  .audio-controller-warp {
+    height: 2px;
+    width: 100%;
+    .audio-controller {
+      height: 2px;
+      border-radius: 10px;
+      width: 50%;
+      background-color: $theme-active-color;
+    }
+  }
+  .audioArt {
+    width: 300px;
+    overflow: hidden;
+    display: flex;
+  }
+  .music-other {
+    white-space: nowrap;
+    animation: scroll-text 10s linear infinite;
+  }
+  .audio {
+    display: flex;
+    img {
+      margin: 10px 10px;
+      width: 60px;
+      border-radius: 5px;
+      height: 60px;
+    }
+    .footerSongs {
+      padding-top: 20px;
+      overflow: hidden;
+      & > span {
+        font-weight: 500;
+      }
+    }
+    .music-other {
+      margin-top: 5px;
+    }
+  }
+  .iconfont {
+    display: flex;
+    justify-content: space-around;
+    align-items: end;
+    padding-bottom: 20px;
+    flex: 1;
+    height: 80px;
+    i{
+      color: #ff59a9;
+      font-size: 30px ;
+    }
+  }
+}
+.feactive {
+  display: none;
+}
+// icon 图标样式
+.icon {
+  font-size: 30px;
+}
+
+@keyframes scroll-text {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}

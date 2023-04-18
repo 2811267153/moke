@@ -1,0 +1,103 @@
+@import "../../assets/css/root.scss";
+input {
+    -webkit-app-region: no-drag;
+}
+.header-warp {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    background-color: $header-background-color;
+    -webkit-app-region: drag;
+    .header-router {
+        padding: 0 20px;
+        button {
+            background-color: $header-button-background-color;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 15px;
+            margin: 0 5px;
+            -webkit-app-region: no-drag;
+
+            &:hover {
+                background-color: $header-button-font-color;
+                color: $header-font-color;
+            }
+        }
+    }
+    ._id-search-warp {
+        flex: 1;
+        position: relative;
+
+        ._id-search {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            padding: 5px 20px;
+            align-items: center;
+            justify-content: space-between;
+
+            .search {
+                background-color: $header-search-background-color;
+                flex: 1;
+                height: 30px;
+                font-size: 12px;
+                color: $header-search-font-color;
+                border-radius: $header-search-border-radius;
+                padding: $header-search-padding;
+                .search-result{
+                    background-color: #fff;
+                    border-radius: $theme-main-raduus-small;
+                    height: 300px;
+                    overflow: auto;
+                    width: 100%;
+                    .result-item {
+                        padding: 10px 15px;
+
+                    }
+                }
+            }
+        }
+
+        button {
+            position: absolute;
+            right: 30px;
+            background-color: transparent;
+            -webkit-app-region: no-drag;
+        }
+    }
+    .setting {
+        padding: 0 20px;
+        -webkit-app-region: no-drag;
+    }
+
+    .swing-in-right-bck {
+        -webkit-animation: swing-in-right-bck 0.6s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+        animation: swing-in-right-bck 0.6s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+        height: 100%;
+        width: 100%;
+    }
+}
+
+
+@keyframes swing-in-right-bck {
+    0% {
+        -webkit-transform: rotateY(70deg);
+        transform: rotateY(70deg);
+        -webkit-transform-origin: right;
+        transform-origin: right;
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: rotateY(0);
+        transform: rotateY(0);
+        -webkit-transform-origin: right;
+        transform-origin: right;
+        opacity: 1;
+    }
+}

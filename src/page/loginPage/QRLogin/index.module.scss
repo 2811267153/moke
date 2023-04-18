@@ -1,0 +1,38 @@
+.login-warp {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .login-erweima {
+    width: 180px;
+    height: 180px;
+  }
+  .login-state {
+    text-align: center;
+    flex: 1;
+    height: 180px;
+     & > p {
+       font-weight: 600;
+       font-size: 20px;
+     }
+     img {
+       vertical-align: top;
+       margin: 10px;
+       width: 80px;
+       height: 80px;
+       border-radius: 10px;
+       border: none;
+     }
+    svg {
+      vertical-align: center;
+      margin: 10px;
+    }
+  }
+}
+.rotate {
+  animation: spin 5s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

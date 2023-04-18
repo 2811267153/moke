@@ -1,0 +1,57 @@
+@import "../../assets/css/root.scss";
+
+.btn-warp {
+  display: flex;
+  height: 50px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 60px 0 40px;
+  -webkit-app-region: drag;
+  background-color: #fff;
+  z-index: 99;
+  position: sticky;
+  top: 0;
+  left: 0;
+  button {
+    width: 15px;
+    height: 15px;
+    -webkit-app-region: no-drag;
+    border-radius: 20px;
+
+    &:first-child {
+      /* 样式 */
+      cursor: pointer;
+      background-color: #ee1703;
+
+      &:hover {
+        /* 样式 */
+        box-shadow: 0 0 5px #ee1703;
+        background-color: #ee1703;
+      }
+    }
+
+    &:nth-of-type(2) {
+      /* 样式 */
+      background-color: #ffb000;
+      cursor: pointer;
+
+      &:hover {
+        /* 样式 */
+        box-shadow: 0 0 5px #ffb000;
+        background-color: #ffb000;
+      }
+    }
+
+    &:nth-of-type(3) {
+      /* 样式 */
+      background-color: #009c00;
+      cursor: pointer;
+
+      &:hover {
+        /* 样式 */
+        box-shadow: 0 0 5px #009c00;
+        background-color: #009c00;
+      }
+    }
+  }
+}
