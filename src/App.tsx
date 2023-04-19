@@ -19,7 +19,7 @@ import { ArtistPage } from '@/page/artistPage';
 import { ClassifyPage } from '@/page/classifyPage';
 import PubSub from 'pubsub-js';
 
-const { Footer, Sider, Content } = Layout;
+const { Sider } = Layout;
 
 
 // 渲染进程发送事件===这个可以放到一个点击事件里面去触发
@@ -35,7 +35,9 @@ export const App: React.FC = () => {
   const isPlaying = useSelector(state => state.audioData.isPlaying);
   const isLoading = useSelector(state => state.audioData.isLoading)
   const [hidden, setHidden] = useState(false);
+  const [header, setHeader] = useState(0);
   const paddingBottom = hidden ? 0 : "80px"
+  const height = header ! == 0 ? "100vh" : "calc(100vh - 50px)"
 
   useEffect(() => {
     ipcRenderer.send('getCookie');
@@ -56,6 +58,9 @@ export const App: React.FC = () => {
     ipcRenderer.on('getSongplayingListData', (e, data) => {
       dispatch(playingList(data));
     });
+    PubSub.subscribe('hiddenMenu', (_, data) => {
+      setHeader(data)
+    })
     const contentElement = document.getElementsByClassName(styles.Content)[0] as HTMLDivElement;
 
     if (contentElement) {
@@ -108,10 +113,6 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleToPayerPage = () => {
-    navigate('/playerPage')
-  }
-
   return (
     <div className={styles.App}>
       <Space direction='vertical' style={{ width: '100%' }} size={[0, 48]}>
@@ -122,8 +123,8 @@ export const App: React.FC = () => {
           </Sider>
           {/*<Layout>*/}
           <Layout style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-            <Header></Header>
-            <div className={styles.Content} style={{paddingBottom}}>
+            <Header height={header}></Header>
+            <div className={styles.Content} style={{paddingBottom, height:height}}>
               <Routes>
                 <Route path='/login' element={<QRLogin />}></Route>
                 <Route path='/searchPage/:searchKey' element={<SearchePage />}></Route>
@@ -138,7 +139,7 @@ export const App: React.FC = () => {
               </Routes>
             </div>
             <div className={hidden ? `${styles.hidden}` : styles.active}>
-              <AudioPlayer handleToPayerPage={handleToPayerPage}/>
+              <AudioPlayer />
             </div>
           </Layout>
         </Layout>

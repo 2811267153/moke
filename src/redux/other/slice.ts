@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getBannerUrl, getDjBanner, getHotArtistUrl, getNewLyric } from '@/axios/recommend/other';
 import { parseLyric } from '@/utils';
-import { parsePureDynamicLyric } from '@/core/lyric-parser';
 
 interface initialState {
   bannerLoading: boolean,
@@ -44,7 +43,6 @@ export const getLyricDispatch = createAsyncThunk(
   'other/getLyricDispatch',
   async (id: number) => {
     const data = await getNewLyric(id);
-    console.log('getLyricDispatch', data);
     return parseLyric(data.lrc.lyric)
     // if(Object.keys(data.klyric).length !== 0) {
     //   return parsePureDynamicLyric(data.klyric.lyric)

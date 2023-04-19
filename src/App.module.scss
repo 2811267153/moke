@@ -26,7 +26,6 @@
 
 // sider 侧边栏组件样式
 .sider {
-  width: 120px;
   background-color: #fff !important;
 }
 
@@ -34,8 +33,9 @@
 .Content {
   width: 100%;
   background-color: #f4f5fe;
-  height: calc(100vh - 50px);
+  //height: calc(100vh - 50px);
   overflow: auto;
+  height: 100vh;
 }
 .active {
   opacity: 1;

@@ -8,12 +8,11 @@ import {
 import { message } from 'antd';
 import { changeAudioPlay, isLoadingDispatch, isPlayingDispatch } from '@/redux/audioDetail/slice';
 import PubSub from 'pubsub-js';
-import { debounce } from '@/utils';
-interface PropsType {
-  handleToPayerPage: Function
-}
+import { useNavigate } from 'react-router-dom';
 
-export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
+
+export const AudioPlayer: React.FC = () => {
+  const navigate = useNavigate()
   const songsUrl = useSelector(state => state.musicDetailPage.songsUrl) || ''; //获取歌曲url
   const playList = useSelector(state => state.audioData.playingList || []);//保存正在播放的音乐
   const songsDuration = useSelector(state => state.musicDetailPage.songsDuration);
@@ -24,7 +23,7 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
 
   const dispatch = useAppDispatch();
   const audioRef = useRef<HTMLAudioElement>(null);
-  // const [isLoading, setIsLoading] = useState(true);
+
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -36,9 +35,14 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
     PubSub.subscribe('currentIndex', (_, index) => {
       setCurrentIndex(index);
     });
-    PubSub.subscribe('PlayerPageChangeSongs', (_, data) => {
-      handleNextClick(data[0], data[1])
-    });
+    PubSub.subscribe('UpDataTime', (_, Time) => {
+
+      if(audioRef.current){
+        audioRef.current.currentTime = Time / 1000 -1
+        audioRef.current.play()
+      }
+    })
+
     return () => {
       PubSub.unsubscribe('currentIndex');
       // PubSub.unsubscribe('RecommendedStation');
@@ -69,10 +73,11 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
         };
         dispatch(songsUrlDispatch(params));
         dispatch(songsDurationDispatch(currentsMusic?.id));
-
         setFlag(false)
       }
-
+      PubSub.subscribe("PlayerPageChangeSongs", (_, data) => {
+        handleNextClick(data[0], data[1])
+      })
       const audio = audioRef.current;
       if (!audio) {
         return;
@@ -135,7 +140,7 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
     }
   }, [currentsMusic]);
   useEffect(() => {
-    PubSub.publish('AudioCurretTime', [currentTime, duration , isLoading, isPlaying, playList[currentIndex]]);
+    PubSub.publish('AudioCurretTime', [currentTime, duration , isLoading, isPlaying, playList[currentIndex], currentIndex]);
   }, [currentTime]);
 
   useEffect(() => {
@@ -182,6 +187,7 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
     if(e !== undefined) {
       e.stopPropagation()
     }
+    console.log(currentIndex);
     switch (type) {
       case 'next': {
         if (currentIndex < playList.length - 1) {
@@ -218,7 +224,8 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
   };
 
   const handelClick = () => {
-    handleToPayerPage()
+    console.log('abc');
+    navigate('/playerPage')
   }
 
   return <div className={`${styles['footer']}`} onClick={handelClick}>

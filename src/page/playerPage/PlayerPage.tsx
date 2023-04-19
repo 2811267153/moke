@@ -4,8 +4,9 @@ import { useAppDispatch, useSelector } from '@/redux/hooks';
 import styles from './index.module.scss';
 import { format } from '@/utils';
 import Color from 'color-thief-react';
-import { isPlayingDispatch } from '@/redux/audioDetail/slice';
+import { changeAudioPlay, isPlayingDispatch } from '@/redux/audioDetail/slice';
 import { getLyricDispatch } from '@/redux/other/slice';
+
 
 export const PlayerPage: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -16,11 +17,14 @@ export const PlayerPage: React.FC = () => {
   const isLoading = useSelector(state => state.audioData.isLoading)
   const lyricData = useSelector(state => state.otherSlice.lyricData) || []; //获取当前歌曲的歌曲数据
   const lyricLoading = useSelector(state => state.otherSlice.lyricLoading)
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [hidden, setHidden] = useState(false);
   useEffect(() => {
     PubSub.subscribe('AudioCurretTime', (_, data) => {
       setCountTime(data[0]);
       setCurrentMusic(data[4]);
       setDuration(data[1]);
+      setCurrentIndex(data[5])
     });
     PubSub.subscribe("AudioCurrentMusic", (_, data) => {
       setCurrentMusic(data);
@@ -31,11 +35,19 @@ export const PlayerPage: React.FC = () => {
     };
   }, []);
 
-  const handleNextClick = (e: any, type: "next" | "piece") => {
-    PubSub.publish("PlayerPageChangeSongs", [e, type])
+  const handleNextClick = (e: any, type: "next" | "piece", ) => {
+    PubSub.publish("PlayerPageChangeSongs", [e, type, currentIndex])
   }
   const handlePlayPauseClick = () => {
     dispatch(isPlayingDispatch(!isPlaying))
+    dispatch(changeAudioPlay(true))
+  }
+
+  const handleHiddenMeun = () => {
+    setHidden(!hidden)
+    let height = ''
+    hidden ? height = "0" : height = "50"
+    PubSub.publish("hiddenMenu", height)
   }
 
   useEffect(() => {
@@ -43,13 +55,9 @@ export const PlayerPage: React.FC = () => {
       dispatch(getLyricDispatch(currentMusic.id as number))
     }
   }, [currentMusic?.id]);
-  useEffect(() => {
-    console.log("lyricData",lyricData);
-  }, [lyricData]);
-
 
   return (
-    <div className={styles.player_page}>
+    <div className={styles.player_page} >
       <img src={currentMusic?.al.picUrl} alt='' />
               <div className={styles.player_filter}>
                 <div className={styles.player_info}>
@@ -70,11 +78,18 @@ export const PlayerPage: React.FC = () => {
                   </div>
                   <div className={styles.player_controller_warp}>
                     <span>{format(countTime)}</span>
-                    <div className={styles.player_controller}>
-                      <div className={styles.player_controller_solid}
-                           style={{ width: (countTime / duration) * 100 + "%" }}></div>
-                    </div>
-                    <span>{format(duration)}</span>
+
+                    <Color src={currentMusic?.al.picUrl} format='hex'>
+                      {
+                        ({data}) => (
+                            <div className={styles.player_controller}>
+                              <div className={styles.player_controller_solid}
+                                   style={{ width: (countTime / duration) * 100 + "%", backgroundColor: data }}></div>
+                            </div>
+                        )
+                      }
+                    </Color>
+                    <span>{format(duration)} </span>
                   </div>
                   <div className={styles.player_controller_warp}>
                     <i className='icon iconfont icon-shangyiqu' style={{ fontSize: 30 }} onClick={(e) => handleNextClick( e,'piece')} />
@@ -117,6 +132,7 @@ export const PlayerPage: React.FC = () => {
                   {!lyricLoading && <Lyrics lyrics={lyricData} currentTime={countTime}></Lyrics>}
                 </div>
               </div>
+        <i onClick={handleHiddenMeun} className={`${styles.iconfonts} icon iconfont icon-touying`}></i>
     </div>
   );
 };

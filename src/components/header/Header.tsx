@@ -6,8 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '@/redux/hooks';
 import { setSearchKey } from '@/redux/TestRedux/slice';
 import { songsSearch, updateKeyword } from '@/redux/musicDetailProduct/slice';
-
-export const Header: React.FC = () => {
+interface PropsType {
+  height: number
+}
+export const Header: React.FC<PropsType> = ({height}) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [value, setValue] = useState('');
@@ -34,12 +36,11 @@ export const Header: React.FC = () => {
     if (e.key === 'Enter') {
       dispatch(songsSearch({ value, offset }));
       dispatch(setSearchKey(value));
-
       navigate(`/searchPage/:${value}`);
     }
   };
   return (
-    <div className={styles['header-warp']}>
+    <div className={styles['header-warp']} style={{height: height + "px", overflow: 'hidden'}}>
       <div className={styles['header-router']}>
         <button onClick={() => history.go(-1)} className='iconfont icon-zuo-01'></button>
         <button onClick={() => history.go(+1)} className='iconfont icon-you-01'></button>

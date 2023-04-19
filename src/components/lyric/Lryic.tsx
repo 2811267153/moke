@@ -18,9 +18,10 @@ export function Lyrics({ lyrics, currentTime }: LyricsProps) {
     }
   }, [currentTime]);
   const handleItemClick = (time: string | number) => {
+    PubSub.publish("UpDataTime", time)
   }
   useEffect(() => {
-    setMarginTop(-(currentIndex * 27));
+    setMarginTop(-(currentIndex * 25));
   }, [currentIndex]);
 
   return (
