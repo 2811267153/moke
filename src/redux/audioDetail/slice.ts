@@ -9,6 +9,7 @@ interface initialAudioDetailState {
   songHistoryList: ListItem[]
   playingList: ListItem[]
   isPlaying: boolean
+  isLoading: boolean
   isAudioPlay: boolean
 }
 
@@ -18,7 +19,8 @@ const initialCounterState: initialAudioDetailState = {
   songHistoryList: [],
   playingList: [],
   isPlaying: false,
-  isAudioPlay: false
+  isAudioPlay: false,
+  isLoading: true
 };
 
 const audioSlice = createSlice({
@@ -27,6 +29,9 @@ const audioSlice = createSlice({
   reducers: {
     isPlayingDispatch(state, action) {
       state.isPlaying = action.payload;
+    },
+    isLoadingDispatch(state, action) {
+      state.isLoading = action.payload
     },
     addAudioData(state, action: PayloadAction<ListItem>) {
       const { id } = action.payload;
@@ -84,6 +89,7 @@ export const {
   clearHistoryList,
   changeAudioPlay,
   clearPlayingList,
+  isLoadingDispatch,
   removeAudioData
 } = audioSlice.actions;
 

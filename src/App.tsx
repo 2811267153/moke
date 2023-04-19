@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './App.module.scss';
 import { HomePage, QRLogin, RoutePage } from '@/page';
 import { Layout, Space } from 'antd';
@@ -32,13 +32,17 @@ export const App: React.FC = () => {
   const monitorLoginState = useSelector(state => state.loginUnikey.monitorLoginStates);
   const accountData = useSelector(state => state.userSlice.accountInfoData);
   const playList = useSelector(state => state.audioData.playingList);
+  const isPlaying = useSelector(state => state.audioData.isPlaying);
+  const isLoading = useSelector(state => state.audioData.isLoading)
+  const [hidden, setHidden] = useState(false);
+  const paddingBottom = hidden ? 0 : "80px"
 
   useEffect(() => {
     ipcRenderer.send('getCookie');
     ipcRenderer.send('getCurrentMusic');
     ipcRenderer.send('getSongHistoryListData');
     ipcRenderer.send('getSongplayingList');
-    PubSub.publish('AudioCurretTime', [0, 0.000 / 1000, true, false, playList[0]]);
+
     // 在渲染进程中接收来自主进程的响应
     ipcRenderer.on('getCookie', (event, arg) => {
       dispatch(CheckCookie(arg.getCookie));
@@ -57,12 +61,9 @@ export const App: React.FC = () => {
     if (contentElement) {
       contentElement.addEventListener('scroll', handleScroll);
       PubSub.subscribe('ArtistScrollTo', (_, scroll) => {
-        console.log('监测到点击事件', scroll);
         contentElement.scrollTo({ top: scroll, behavior: 'smooth' });
       });
     }
-
-
     return () => {
       if (contentElement) {
         contentElement.removeEventListener('scroll', handleScroll);
@@ -79,10 +80,16 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     console.log(location.pathname);
-    if (location.pathname === '/') {
-      PubSub.publish('AudioCurretTime', [0, 0.000 / 1000, true, false, playList[0]]);
+    if (location.pathname === '/' || location.pathname ==="/playerPage") {
+      PubSub.publish('AudioCurretTime', [0, 0.000 / 1000, isLoading, isPlaying, playList[0]]);
+      setHidden(true)
+    }else {
+      setHidden(false)
     }
   }, [location]);
+  useEffect(() => {
+    PubSub.publish('AudioCurrentMusic',  playList[0]);
+  }, [playList]);
 
   useEffect(() => {
     if (monitorLoginState.code === 200 && monitorLoginState.account === null) {
@@ -116,7 +123,7 @@ export const App: React.FC = () => {
           {/*<Layout>*/}
           <Layout style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
             <Header></Header>
-            <div className={styles.Content}>
+            <div className={styles.Content} style={{paddingBottom}}>
               <Routes>
                 <Route path='/login' element={<QRLogin />}></Route>
                 <Route path='/searchPage/:searchKey' element={<SearchePage />}></Route>
@@ -130,7 +137,9 @@ export const App: React.FC = () => {
                 <Route path='/' element={<HomePage />} />
               </Routes>
             </div>
-            <AudioPlayer handleToPayerPage={handleToPayerPage}/>
+            <div className={hidden ? `${styles.hidden}` : styles.active}>
+              <AudioPlayer handleToPayerPage={handleToPayerPage}/>
+            </div>
           </Layout>
         </Layout>
       </Space>

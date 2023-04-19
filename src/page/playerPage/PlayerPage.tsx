@@ -1,194 +1,122 @@
-/*
-import React, { useEffect, useRef, useState } from 'react';
-import styles from './index.css';
-import { useNavigate, useParams } from 'react-router-dom';
-import { AudioController, AudioControllerRef, ListItem, Skeleton } from '@/components';
-import { Image } from '@/components';
+import React, { useEffect, useState } from 'react';
+import { ListItem, Lyrics } from '@/components';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
-
-// @ts-ignore
-import { format } from '@/utils/index';
-import { musicDetailPage, musicUrl, songsDurationDispatch } from '@/redux/musicDetailProduct/slice';
-import { musicLyric } from '@/redux/getLyric/slice';
-import { Lyrics } from '@/components';
-import { currentMusicData } from '@/redux/audioDetail/slice';
-import { searchProduct } from '@/redux/searchProduct/slice';
-// import { ipcRenderer } from 'electron';
+import styles from './index.module.scss';
+import { format } from '@/utils';
+import Color from 'color-thief-react';
+import { isPlayingDispatch } from '@/redux/audioDetail/slice';
+import { getLyricDispatch } from '@/redux/other/slice';
 
 export const PlayerPage: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const [musicObj, setMusicObj] = useState<ListItem | null>(null);
-  const [id, setId] = useState<number>(0);  //歌曲的id
-  const [level, setLevel] = useState('standard'); //选择歌曲的品质
-  const [currentTime, setCurrentTime] = useState(0); //当前播放的秒数
-  const [duration, setDuration] = useState(50); //歌曲的总时长
-  const [width, setWidth] = useState(0); //进度条宽度
-  const [musicLoading, setMusicLoading] = useState(true);
-  const [musicState, setMusicStates] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);  //控制音乐的播放状态
-
-  const { songsid } = useParams();
-
-  const loading = useSelector(state => state.musicDetailPage.songsLoading); // 歌词加载loading
-  const songsUrl = useSelector(state => state.musicDetailPage.songsUrl); //音乐的url
-  const error = useSelector(state => state.musicDetail.error);
-  const lyricErr = useSelector(state => state.musicLyric.error);
-  const lyricLoaing = useSelector(state => state.musicLyric.loading);
-  const lyricData = useSelector(state => state.musicLyric.data); //获取当前歌曲的歌曲数据
-  const searchData = useSelector(state => state.musicDetailPage.data); //获取搜索该歌曲后的信息<主要是获取歌曲的总播放时长>
-  const songsData = useSelector(state => state.audioData.audioInfo); //获取全部播放列表
-  const currentMusic = useSelector(state => state.audioData.currentMusic)
-  const songsLoading = useSelector(state => state.musicDetailPage.songsLoading)
-  const [currentIndex, setCurrentIndex] = useState(0); //当前播放歌曲的索引值
-  const audioRef = useRef<AudioControllerRef>(null);
-
-
+  const dispatch = useAppDispatch()
+  const [countTime, setCountTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [currentMusic, setCurrentMusic] = useState<ListItem>(); //获取正在播放的歌曲
+  const isPlaying = useSelector(state => state.audioData.isPlaying);
+  const isLoading = useSelector(state => state.audioData.isLoading)
+  const lyricData = useSelector(state => state.otherSlice.lyricData) || []; //获取当前歌曲的歌曲数据
+  const lyricLoading = useSelector(state => state.otherSlice.lyricLoading)
   useEffect(() => {
-    dispatch(songsDetail(songsid!))
-    setWidth(0);
+    PubSub.subscribe('AudioCurretTime', (_, data) => {
+      setCountTime(data[0]);
+      setCurrentMusic(data[4]);
+      setDuration(data[1]);
+    });
+    PubSub.subscribe("AudioCurrentMusic", (_, data) => {
+      setCurrentMusic(data);
+    })
+
+    return () => {
+      PubSub.unsubscribe('AudioCurretTime');
+    };
   }, []);
-  useEffect(() => {
-    if (musicObj) {
-      setId(musicObj?.id);
-      //将当前播放的歌曲保存到store中
-      // dispatch(currentMusicData(musicObj))
-    }
-  }, [musicObj]);
-  useEffect(() => {
-    const params = {
-      value: songsid,
-      offset: 1
-    }
-    if (songsid) {
-      console.log("id -----------",id);
-      dispatch(musicUrl({ songsid, level }));
-      dispatch(musicDetailPage({ songsid }));
-      dispatch(musicLyric({ songsid }));
-    }
-  }, [id]);
 
-
-  useEffect(() => {
-    console.log('songsData', songsData);
-  }, [songsData]);
-
-
-  useEffect(() => {
-    setWidth((currentTime / (searchData.duration / 1000)) * 100);
-  }, [currentTime]);
-
-
-  const previous = (type: string, index: number) => {
-    if (type === 'previous') {
-      if (index > 0) {
-        setCurrentIndex(--index);
-      } else {
-        setCurrentIndex(songsData.length - 1);
-      }
-    } else if (type === 'next') {
-      if (index < songsData.length - 1) {
-        setCurrentIndex(++index);
-      } else {
-        setCurrentIndex(0);
-      }
-    }
-    setMusicObj(songsData[currentIndex]);
-    dispatch(currentMusicData(songsData[currentIndex]));
-    // ipcRenderer.send('currentMusic', songsData[currentIndex]);
-  };
-
-  if (songsLoading) {
-    return (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-      <Skeleton />;
-    </div>);
+  const handleNextClick = (e: any, type: "next" | "piece") => {
+    PubSub.publish("PlayerPageChangeSongs", [e, type])
+  }
+  const handlePlayPauseClick = () => {
+    dispatch(isPlayingDispatch(!isPlaying))
   }
 
+  useEffect(() => {
+    if(currentMusic) {
+      dispatch(getLyricDispatch(currentMusic.id as number))
+    }
+  }, [currentMusic?.id]);
+  useEffect(() => {
+    console.log("lyricData",lyricData);
+  }, [lyricData]);
 
-  const handleTimeUpdate = (currentTime: number) => {
-    setCurrentTime(currentTime);
-  };
-  const handleLoadedData = (loadig: boolean) => {
-    setMusicLoading(loadig);
-  };
-  const handleDuration = (duration: number) => {
-    setDuration((duration / (searchData.duration / 1000) * 100));
-  };
-  const handleEnded = () => {
-    setMusicStates(false);
-  };
-  const toggleAudio = () => {
-    // console.log(audio);
-    if (isPlaying ) {
-      if(audioRef.current) {
-        audioRef.current.pause();
-      }
-    } else {
-      if(audioRef.current) {
-        audioRef.current.play();
-      }
-    }
-    setIsPlaying(!isPlaying);
-  }
-  const handleOnPause = () => {
-    setMusicStates(true);
-    if(audioRef.current) {
-      audioRef.current.pause();
-    }
-  };
-  const handleOnPlaying = () => {
-    if (audioRef.current) {
-      audioRef.current.play()
-    }
-  };
+
   return (
-    <div className={styles['page-warp']}>
-      <div className={styles['player-info']}>
-        <h3>{currentMusic?.name}</h3>
-        <p style={{ display: 'inline-block' }} className={styles['player-ar']}>
-          {
-            currentMusic?.ar[0].name && (currentMusic?.ar.map((item: string) => {
-              return <a key={item.id}>{item.name}</a>;
-            }))
-          }
-        </p>
-        <div className={styles['player-image']}>
-          {currentMusic?.al ? <Image width={200} style={{ borderRadius: '20px' }} src={currentMusic?.al.picUrl}></Image> :
-            <Image width={200} style={{ borderRadius: '20px' }} src={musicObj?.blurPicUrl}></Image>}
-        </div>
-        <div className={styles['controller']}>
-          <span> {format(currentTime)}</span>
-          <div className={styles['player-controller']}>
-            <div className={styles['player-controller-solid']} style={{ width: width + '%' }} />
-            {duration <= 30 &&
-              <div className={styles['player-controller-point']} style={{ width: duration + '%' }}></div>}
-          </div>
-          {searchData && searchData.duration && <span>{format(searchData.duration / 1000)}</span>}
-          {!searchData && searchData.duration && <span>00: 00</span>}
-        </div>
-        <div className={styles['controller']}>
-          <div><i className='icon iconfont icon-aixin'></i></div>
-          <div><i className='icon iconfont icon-zuo-02' onClick={() => previous('previous', currentIndex)}></i></div>
-          <div><i className='icon iconfont icon-zanting-01' style={{ fontSize: 35 }}></i></div>
-          <div><i className='icon iconfont icon-you-02' onClick={() => previous('next', currentIndex)}></i></div>
-          <div><i className='icon iconfont icon-yinliang'></i></div>
-        </div>
-        <AudioController onDuration={handleDuration} src={songsUrl} onTimeUpdate={handleTimeUpdate}
-                         ref={audioRef} autoplay={currentMusic?.autoplay}
-                         onLoadedData={handleLoadedData}  onEnded={handleEnded} pause={handleOnPause} play={handleOnPlaying}/>
-      </div>
-      <div className={styles['player-lyrics']}>
-        {lyricLoaing ? (
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-            <Skeleton />;
-          </div>) : <Lyrics currentTime={currentTime} lyrics={lyricData}></Lyrics>}
-      </div>
+    <div className={styles.player_page}>
+      <img src={currentMusic?.al.picUrl} alt='' />
+              <div className={styles.player_filter}>
+                <div className={styles.player_info}>
+                  <img src={currentMusic?.al.picUrl} alt='' />
+                  <h3>{currentMusic?.name}</h3>
+                  <div className={styles.player_artist}>
+                    <span>{currentMusic?.al.name}</span>
+                    <p style={{ marginTop: 20 }}>
+                      {currentMusic?.ar.map((artist, index) => {
+                        return (
+                          <React.Fragment key={artist.id}>
+                            <span>{artist.name}</span>
+                            {index !== currentMusic?.ar.length - 1 && ' & '}
+                          </React.Fragment>
+                        );
+                      })}
+                    </p>
+                  </div>
+                  <div className={styles.player_controller_warp}>
+                    <span>{format(countTime)}</span>
+                    <div className={styles.player_controller}>
+                      <div className={styles.player_controller_solid}
+                           style={{ width: (countTime / duration) * 100 + "%" }}></div>
+                    </div>
+                    <span>{format(duration)}</span>
+                  </div>
+                  <div className={styles.player_controller_warp}>
+                    <i className='icon iconfont icon-shangyiqu' style={{ fontSize: 30 }} onClick={(e) => handleNextClick( e,'piece')} />
+                    {/*如果isPlaying是true显示播放按钮,否则显示暂停*/}
+                    {!isPlaying && !isLoading &&
+                      <i className='icon iconfont icon-bofangzhong' onClick={ handlePlayPauseClick} style={{ fontSize: 35 }} />}
+                    {isPlaying && !isLoading &&
+                      <i className='icon iconfont icon-zanting' onClick={ handlePlayPauseClick} style={{ fontSize: 35 }} />}
+                    {isLoading && <div style={{ position: 'relative', height: 30 }}>
+                      <svg className={styles['icon-solid']} version='1.0' xmlns='http://www.w3.org/2000/svg'
+                           width='25.000000pt' height='25.000000pt' viewBox='0 0 200.000000 200.000000'
+                           preserveAspectRatio='xMidYMid meet'>
+                        <g transform='translate(0.000000,200.000000) scale(0.100000,-0.100000)'
+                           fill='#ff59a9' stroke='none'>
+                          <path d='M874 1910 c-85 -12 -136 -26 -233 -66 -211 -87 -397 -274 -485 -487
+                    -56 -134 -69 -203 -69 -357 0 -154 13 -223 69 -357 45 -111 115 -211 207 -300
+                    93 -89 173 -143 280 -188 132 -54 204 -68 357 -69 152 -1 242 18 378 80 148
+                    67 291 186 381 318 50 73 107 201 132 301 33 130 32 305 -1 433 -13 51 -32
+                    101 -42 112 -23 24 -61 26 -83 3 -19 -19 -17 -47 10 -163 27 -117 23 -273 -9
+                    -383 -70 -237 -212 -401 -438 -506 -214 -101 -481 -93 -698 19 -176 92 -317
+                    256 -380 442 -143 420 81 873 500 1012 148 49 340 51 484 6 38 -12 78 -19 90
+                    -16 29 7 50 47 41 76 -20 62 -311 116 -491 90z' />
+                        </g>
+                      </svg>
+                      <svg style={{ position: 'absolute', left: 0 }} version='1.0' xmlns='http://www.w3.org/2000/svg'
+                           width='25.000000pt' height='25.000000pt' viewBox='0 0 200.000000 200.000000'
+                           preserveAspectRatio='xMidYMid meet'>
+                        <g transform='translate(0.000000,200.000000) scale(0.100000,-0.100000)'
+                           fill='#ff59a9' stroke='none'>
+                          <path d='M861 1347 c-19 -7 -44 -25 -55 -40 -20 -27 -21 -43 -24 -292 -3 -290
+                        1 -317 54 -352 16 -10 46 -18 69 -18 36 0 65 16 234 130 201 135 231 165 231
+                        230 0 55 -28 82 -214 208 -213 145 -235 155 -295 134z' />
+                        </g>
+                      </svg>
+                    </div>}
+                    <i className={`icon iconfont icon-xiayiqu`} style={{ fontSize: 30 }}  onClick={(e) => handleNextClick(e,'next')} />
+                  </div>
+                </div>
+                <div className={styles.player_lyric}>
+                  {!lyricLoading && <Lyrics lyrics={lyricData} currentTime={countTime}></Lyrics>}
+                </div>
+              </div>
     </div>
-  );v
+  );
 };
-*/
-import React from 'react';
-
-
-export const PlayerPage: React.FC = () => {
-  return <div></div>
-}

@@ -46,7 +46,6 @@ export const Image: React.FC<ImageProps> = ({ src, alt, type, ...restProps }) =>
   // }
 
   const imageLoading = () => {
-    console.log('---------------');
     PubSub.publish("imageLoading")
   }
 

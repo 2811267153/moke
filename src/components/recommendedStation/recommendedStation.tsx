@@ -38,21 +38,23 @@ export const RecommendedStation: React.FC = () => {
     PubSub.subscribe('AudioCurrentMusic', (_, data) => {
       setCurrentMusic(data);
     });
+
     PubSub.subscribe('AudioCurretTime', (_, data) => {
       setWidth(data[0] / data[1] * 100);
       setCurrentTime(data[0]);
       setDuration(data[1]);
       setIsLoading(data[2]);
-
       setCurrentMusic(data[4]); //获取当前歌曲的推荐歌单
-
       dispatch(isPlayingDispatch(data[3]));
     });
     PubSub.subscribe('AudioCurrentLoadingMusicData', (_, data) => {
       setIsLoading(data);
     });
     return () => {
-      PubSub.unsubscribe('AudioCurrentMusic');
+      PubSub.unsubscribe('AudioCurretTime');
+
+      PubSub.unsubscribe('AudioCurrentMusic')
+      PubSub.unsubscribe('RecommendedStation')
     };
   }, []);
   useEffect(() => {
@@ -67,7 +69,8 @@ export const RecommendedStation: React.FC = () => {
 
 
   const handlePlayPauseClick = () => {
-    PubSub.publish('RecommendedStation', isPlaying);
+    console.log('aaaa',isPlaying);
+    dispatch(isPlayingDispatch(!isPlaying))
   };
 
   return <div className={styles['recommend-station']} style={{ display: 'flex', width: '100%' }}>

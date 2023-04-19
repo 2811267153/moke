@@ -3,11 +3,10 @@ import styles from '@/App.module.scss';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import {
   songsDurationDispatch,
-  songsStateDisptch,
   songsUrlDispatch
 } from '@/redux/musicDetailProduct/slice';
 import { message } from 'antd';
-import { changeAudioPlay, isPlayingDispatch } from '@/redux/audioDetail/slice';
+import { changeAudioPlay, isLoadingDispatch, isPlayingDispatch } from '@/redux/audioDetail/slice';
 import PubSub from 'pubsub-js';
 import { debounce } from '@/utils';
 interface PropsType {
@@ -17,34 +16,32 @@ interface PropsType {
 export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
   const songsUrl = useSelector(state => state.musicDetailPage.songsUrl) || ''; //获取歌曲url
   const playList = useSelector(state => state.audioData.playingList || []);//保存正在播放的音乐
-  const songsState = useSelector(state => state.musicDetailPage.songsState);
   const songsDuration = useSelector(state => state.musicDetailPage.songsDuration);
   const autoPlay = useSelector(state => state.audioData.isAudioPlay);
   const isPlaying = useSelector(state => state.audioData.isPlaying);
   const cookie = useSelector(state => state.loginUnikey.cookie) || ''
+  const isLoading = useSelector(state => state.audioData.isLoading)
 
   const dispatch = useAppDispatch();
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const currentsMusic = playList?.[currentIndex] || {};
   const [flag, setFlag] = useState(true); //控制页面是否初次打开
-  // const cachePlayList
 
   useEffect(() => {
 
     PubSub.subscribe('currentIndex', (_, index) => {
-      console.log(index);
       setCurrentIndex(index);
     });
-    PubSub.subscribe('RecommendedStation', (_, isPlay) => {
-      dispatch(isPlayingDispatch(!isPlay));
+    PubSub.subscribe('PlayerPageChangeSongs', (_, data) => {
+      handleNextClick(data[0], data[1])
     });
     return () => {
       PubSub.unsubscribe('currentIndex');
-      PubSub.unsubscribe('RecommendedStation');
+      // PubSub.unsubscribe('RecommendedStation');
       PubSub.unsubscribe('AudioCurrentMusic');
     };
   }, []);
@@ -82,9 +79,9 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
       }
 
       const onLoadedData = () => {
-        setIsLoading(false);
+        dispatch(isLoadingDispatch(false))
         dispatch(isPlayingDispatch(true));
-        setDuration(audio.duration);
+        setDuration(audio.duration > 31 ? audio.duration : (songsDuration / 1000));
         if (audio.duration <= 32) {
           message.info('当前歌曲为30秒试听版本');
         }
@@ -102,19 +99,32 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
       };
 
       const onEnded = () => {
-        handleNextClick('next');
+        handleNextClick(undefined,'next');
         setCurrentTime(0);
         dispatch(isPlayingDispatch(true));
       };
       const onPlaying = () => {
+        dispatch(isLoadingDispatch(false))
         dispatch(isPlayingDispatch(false));
       };
+      const onwaiting = () => {
+        dispatch(isLoadingDispatch(true))
+        dispatch(isPlayingDispatch(false))
+      }
+      const onloadedmetadata = () => {
+        if(autoPlay) {
+          audio.play()
+          dispatch(isPlayingDispatch(true))
+        }
+      }
 
       audio.addEventListener('loadeddata', onLoadedData);
       audio.addEventListener('timeupdate', onTimeUpdate);
       audio.addEventListener('ended', onEnded);
       audio.addEventListener('playing', onPlaying);
       audio.addEventListener('progress', onprogress);
+      audio.addEventListener('waiting', onwaiting);
+      audio.addEventListener('loadedmetadata', onloadedmetadata);
 
       return () => {
         audio.removeEventListener('loadeddata', onLoadedData);
@@ -125,7 +135,7 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
     }
   }, [currentsMusic]);
   useEffect(() => {
-    PubSub.publish('AudioCurretTime', [currentTime, songsDuration / 1000, isLoading, isPlaying, playList[currentIndex]]);
+    PubSub.publish('AudioCurretTime', [currentTime, duration , isLoading, isPlaying, playList[currentIndex]]);
   }, [currentTime]);
 
   useEffect(() => {
@@ -140,7 +150,6 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
 
   useEffect(() => {
     PubSub.publish('AudioCurrentMusic', playList[currentIndex]);
-    console.log('currentIndex', currentIndex);
     const params = {
       id: playList[currentIndex]?.id,
       level: 'level',
@@ -163,12 +172,16 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
       setCurrentTime(0);
     }
   }, [isPlaying]);
-  const handlePlayPauseClick = () => {
+  const handlePlayPauseClick = (e:MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
     dispatch(isPlayingDispatch(!isPlaying));
     dispatch(changeAudioPlay(true));
   };
 
-  const handleNextClick = debounce((type: string) => {
+  const handleNextClick = (e: MouseEvent<HTMLDivElement>, type: "next" | "piece") => {
+    if(e !== undefined) {
+      e.stopPropagation()
+    }
     switch (type) {
       case 'next': {
         if (currentIndex < playList.length - 1) {
@@ -191,7 +204,7 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
         }
       }
     }
-  }, 0);
+  }
 
   const handleTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const audio = audioRef.current;
@@ -211,7 +224,7 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
   return <div className={`${styles['footer']}`} onClick={handelClick}>
     <div className={styles['audio-controller-warp']}>
       <div className={styles['audio-controller']}
-           style={{ width: (currentTime / (songsDuration / 1000)) * 100 + '%' }}></div>
+           style={{ width: (currentTime / duration ) * 100 + '%' }}></div>
     </div>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       {currentsMusic && currentsMusic.name && <div className={styles['audio']}>
@@ -229,12 +242,12 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
         </div>
       </div>}
       <div className={styles['iconfont']}>
-        <i className='icon iconfont icon-shangyiqu' onClick={() => handleNextClick('piece')} />
+        <i className='icon iconfont icon-shangyiqu' onClick={(event) => handleNextClick(event, 'piece')} />
         {/*如果isPlaying是true显示播放按钮,否则显示暂停*/}
         {!isPlaying && !isLoading &&
-          <i className='icon iconfont icon-bofangzhong' onClick={handlePlayPauseClick} style={{ fontSize: 35 }} />}
+          <i className='icon iconfont icon-bofangzhong' onClick={(e) => handlePlayPauseClick(e)} style={{ fontSize: 35 }} />}
         {isPlaying && !isLoading &&
-          <i className='icon iconfont icon-zanting' onClick={handlePlayPauseClick} style={{ fontSize: 35 }} />}
+          <i className='icon iconfont icon-zanting' onClick={e => handlePlayPauseClick(e)} style={{ fontSize: 35 }} />}
         {isLoading && <div style={{ position: 'relative', height: 30 }}>
           <svg className={styles['icon-solid']} version='1.0' xmlns='http://www.w3.org/2000/svg'
                width='25.000000pt' height='25.000000pt' viewBox='0 0 200.000000 200.000000'
@@ -262,7 +275,7 @@ export const AudioPlayer: React.FC<PropsType> = ({handleToPayerPage}) => {
             </g>
           </svg>
         </div>}
-        <i className='icon iconfont icon-xiayiqu' onClick={() => handleNextClick('next')} />
+        <i className='icon iconfont icon-xiayiqu' onClick={(event) => handleNextClick(event, 'next')} />
       </div>
       <div style={{ width: 300, textAlign: 'right', paddingRight: 30 }}>
         <i className='icon iconfont icon-yinliang1' style={{ fontSize: 20, marginRight: 20 }}></i>

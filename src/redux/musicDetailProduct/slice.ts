@@ -50,7 +50,6 @@ export const songsSearch = createAsyncThunk(
   }, thunkAPI) => {
     // const data = await  getSearchSuggest(key)
     const { result } = await getSongsSearch_c(params.value, params.offset);
-    console.log(result);
     return result.songs;
   }
 );
