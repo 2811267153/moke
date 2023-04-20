@@ -33,25 +33,6 @@ const audioSlice = createSlice({
     isLoadingDispatch(state, action) {
       state.isLoading = action.payload
     },
-    addAudioData(state, action: PayloadAction<ListItem>) {
-      const { id } = action.payload;
-      const exists = state.audioInfo.some(info => info.id === id);
-      if (!exists) {
-        state.audioInfo.unshift(action.payload);
-      }
-    },
-    currentMusicData(state, action: PayloadAction<ListItem>) {
-      const payload = action.payload;
-      console.log('copyCurrentMusic', payload);
-
-      if (!payload) {
-        return;
-      }
-      const copyCurrentMusic = deepClone(payload);
-      copyCurrentMusic.time = Date.now();
-      state.currentMusic = copyCurrentMusic;
-      ipcRenderer.send('currentMusic', copyCurrentMusic);
-    },
     changeAudioPlay(state, action) {
       state.isAudioPlay = action.payload
     },
@@ -82,8 +63,6 @@ const audioSlice = createSlice({
 
 export const {
   isPlayingDispatch,
-  addAudioData,
-  currentMusicData,
   songHistoryListData,
   playingList,
   clearHistoryList,

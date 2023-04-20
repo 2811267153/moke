@@ -9,7 +9,7 @@ import { PlayerPage } from '@/page/playerPage';
 import { AlbumPage } from '@/page/albumPage';
 import { ipcRenderer } from 'electron';
 import { CheckCookie, monitorLoginStates } from '@/redux/accountLogin/slice';
-import { currentMusicData, playingList, songHistoryListData } from '@/redux/audioDetail/slice';
+import { playingList, songHistoryListData } from '@/redux/audioDetail/slice';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { accountInfo, userDataInfo } from '@/redux/accountLogin/accountSlice';
 import { ListPage } from '@/page/listPage';
@@ -48,9 +48,6 @@ export const App: React.FC = () => {
     // 在渲染进程中接收来自主进程的响应
     ipcRenderer.on('getCookie', (event, arg) => {
       dispatch(CheckCookie(arg.getCookie));
-    });
-    ipcRenderer.on('currentMusic', (e, arg) => {
-      dispatch(currentMusicData(arg));
     });
     ipcRenderer.on('getsongHistoryList', (e, data) => {
       dispatch(songHistoryListData(data));

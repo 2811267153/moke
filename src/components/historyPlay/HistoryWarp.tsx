@@ -3,7 +3,7 @@ import styles from './index.module.scss';
 import { HistoryItem } from '@/components/historyPlay/HistoryItem';
 import { ListItem } from '@/components';
 import { useAppDispatch } from '@/redux/hooks';
-import { clearHistoryList, currentMusicData, playingList } from '@/redux/audioDetail/slice';
+import { clearHistoryList, playingList } from '@/redux/audioDetail/slice';
 import useScrollbarSize from 'react-scrollbar-size';
 import { useHorizontalScroll } from '@/hooks/scrollHook';
 
@@ -20,7 +20,6 @@ export const HistoryWarp: React.FC<List> = ({ list, listAll, type }) => {
 
   const handleItemClick = (index: number) => {
     const copyList = {...list[index], autoplay: true, index: index};
-    dispatch(currentMusicData(copyList));
     dispatch(playingList(listAll));
   }
 

@@ -4,8 +4,8 @@ import { Image, List, ListItem, Skeleton } from '@/components';
 import { useParams } from 'react-router-dom';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { getSongsInfoData, musicAlbumData } from '@/redux/albumInfo/slice';
-import { copyWritableProperties, formatStr, formatTimeDate } from '@/utils';
-import { changeAudioPlay, currentMusicData, playingList } from '@/redux/audioDetail/slice';
+import { formatStr, formatTimeDate } from '@/utils';
+import { changeAudioPlay, playingList } from '@/redux/audioDetail/slice';
 
 
 export const AlbumPage: React.FC = () => {

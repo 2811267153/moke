@@ -6,7 +6,6 @@ import { Image, Skeleton } from '@/components';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { recommendAlbumListState, recommendPlayListState } from '@/redux/recommendPlayList/slice';
-import { currentMusicData } from '@/redux/audioDetail/slice';
 
 export const RecommendPlayList: React.FC = () => {
   const [selectedValue, setSelectedValue] = useState<string>('ALL');
@@ -33,7 +32,6 @@ export const RecommendPlayList: React.FC = () => {
   };
   const handleToPlayer = (item: any) => {
     navigate(`/playerPage/${item.id}`);
-    dispatch(currentMusicData(item))
   }
 
   return <div className={styles['recommend-play-list-warp']}>
