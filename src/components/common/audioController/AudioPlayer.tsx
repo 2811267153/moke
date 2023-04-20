@@ -6,10 +6,11 @@ import {
   songsUrlDispatch
 } from '@/redux/musicDetailProduct/slice';
 import { message } from 'antd';
-import { changeAudioPlay, isLoadingDispatch, isPlayingDispatch, songHistoryListData } from '@/redux/audioDetail/slice';
+import { changeAudioPlay, isLoadingDispatch, isPlayingDispatch } from '@/redux/audioDetail/slice';
 import PubSub from 'pubsub-js';
 import { useNavigate } from 'react-router-dom';
 import { ipcRenderer } from 'electron';
+import { getScrobbleDispatch } from '@/redux/other/slice';
 
 export const AudioPlayer: React.FC = () => {
   const navigate = useNavigate()
@@ -159,15 +160,17 @@ export const AudioPlayer: React.FC = () => {
     const params = {
       id: playList[currentIndex]?.id,
       level: 'level',
+      sourceid: playList[currentIndex]?.al.id,
+      time: currentTime,
       cookie
     };
-    // const copyList = [playList[currentIndex],...songHistoryList]
-    // dispatch(songHistoryListData(copyList))
     dispatch(songsUrlDispatch(params));
     dispatch(songsDurationDispatch(currentsMusic?.id));
-    if(currentIndex != 0) {
-      ipcRenderer.send('changeSongs', playList[currentIndex])
-    }
+    // if(currentIndex != 0) {
+    //   ipcRenderer.send('changeSongs', playList[currentIndex])
+    // }
+
+    dispatch(getScrobbleDispatch(params))
   }, [currentIndex]);
 
   useEffect(() => {

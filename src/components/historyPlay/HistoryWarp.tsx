@@ -1,26 +1,25 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import styles from './index.module.scss';
 import { HistoryItem } from '@/components/historyPlay/HistoryItem';
 import { ListItem } from '@/components';
 import { useAppDispatch } from '@/redux/hooks';
-import { clearHistoryList, playingList } from '@/redux/audioDetail/slice';
-import useScrollbarSize from 'react-scrollbar-size';
+import { playingList } from '@/redux/audioDetail/slice';
 import { useHorizontalScroll } from '@/hooks/scrollHook';
 
 
 export interface List {
-  list: ListItem[],
+  list: any,
   type?: string,
-  listAll?: ListItem[]
+  playlist: ListItem[]
 }
 
-export const HistoryWarp: React.FC<List> = ({ list, listAll, type }) => {
+export const HistoryWarp: React.FC<List> = ({ list, playlist, type }) => {
   const dispatch = useAppDispatch();
   const scrollRef = useHorizontalScroll();
 
   const handleItemClick = (index: number) => {
-    const copyList = {...list[index], autoplay: true, index: index};
-    dispatch(playingList(listAll));
+    const copyPlaylist = [list?.[index].data, ...playlist]
+    dispatch(playingList(copyPlaylist));
   }
 
   return (
@@ -30,15 +29,14 @@ export const HistoryWarp: React.FC<List> = ({ list, listAll, type }) => {
         ref={scrollRef}
       >
         {list?.length !== 0 ? (
-          list.map((item, index) => (
+          list.map((item: any, index: number) => (
             <HistoryItem
-              key={item.id}
+              key={item.data.id}
               type={type}
-              imgUrl={item.al?.picUrl ?? ''}
-              singer={item.ar?.[0]?.name ?? ''}
-              songName={item.name}
-              count={item.count}
               index={index}
+              imgUrl={item.data.al?.picUrl ?? ''}
+              singer={item.data.ar?.[0]?.name ?? ''}
+              songName={item.data.name}
               onClick={handleItemClick}
             />
           ))

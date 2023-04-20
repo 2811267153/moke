@@ -1,5 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getBannerUrl, getDjBanner, getHotArtistUrl, getNewLyric } from '@/axios/recommend/other';
+import {
+  getBannerUrl,
+  getDjBanner,
+  getHotArtistUrl,
+  getNewLyric,
+  getRecentSongs,
+  getScrobble
+} from '@/axios/recommend/other';
 import { parseLyric } from '@/utils';
 
 interface initialState {
@@ -12,6 +19,12 @@ interface initialState {
   lyricLoading: boolean
   lyricData: any
   lyrErr: null | string
+  scrobbleData: any,
+  scrobbleLoading: boolean,
+  scrobbleErr: string | null
+  recentSongsData: any[]
+  recentSongsLoading: boolean
+  recentSongsErr: string | null
 }
 
 const initialState: initialState = {
@@ -23,13 +36,27 @@ const initialState: initialState = {
   hotArtistErr: null,
   lyricLoading: true,
   lyricData: {},
-  lyrErr: null
+  lyrErr: null,
+  scrobbleData: "",
+  scrobbleLoading: true,
+  scrobbleErr: null,
+  recentSongsData: [],
+  recentSongsLoading: true,
+  recentSongsErr: null,
 };
 export const getBanner = createAsyncThunk(
   'other/getBanner',
   async () => {
     const { banners } = await getBannerUrl();
     return banners;
+  }
+);
+export const getRecentSongsDispatch = createAsyncThunk(
+  'other/getRecentSongsDispatch',
+  async (params: paramsType) => {
+    const {limit, cookie} = params
+    const {data} = await getRecentSongs(limit, cookie);
+    return data.list;
   }
 );
 export const getHotArtist = createAsyncThunk(
@@ -43,12 +70,28 @@ export const getLyricDispatch = createAsyncThunk(
   'other/getLyricDispatch',
   async (id: number) => {
     const data = await getNewLyric(id);
-    return parseLyric(data.lrc.lyric)
+    return parseLyric(data.lrc.lyric);
     // if(Object.keys(data.klyric).length !== 0) {
     //   return parsePureDynamicLyric(data.klyric.lyric)
     // }else{
     //   return parseLyric(data.lrc.lyric)
     // }
+  }
+);
+interface paramsType {
+  id?: string | number
+  sourceid?: string | number
+  time?: number
+  cookie: string
+  limit?: number
+}
+export const getScrobbleDispatch = createAsyncThunk(
+  'other/getScrobbleDispatch',
+  async (params : paramsType) => {
+    const {id, sourceid, time, cookie} = params
+    const data = await getScrobble(id, sourceid, time, cookie);
+    console.log(data);
+    return data
   }
 );
 
@@ -89,6 +132,28 @@ export const otherSlice = createSlice({
     [getLyricDispatch.rejected.type]: (state, action) => {
       state.lyricLoading = false;
       state.lyrErr = action.payload;
+    },
+    [getScrobbleDispatch.pending.type]: state => {
+      state.scrobbleLoading = true;
+    },
+    [getScrobbleDispatch.fulfilled.type]: (state, action) => {
+      state.scrobbleLoading = false;
+      state.scrobbleData = action.payload;
+    },
+    [getScrobbleDispatch.rejected.type]: (state, action) => {
+      state.scrobbleLoading = false;
+      state.scrobbleErr = action.payload;
+    },
+    [getRecentSongsDispatch.pending.type]: state => {
+      state.recentSongsLoading = true;
+    },
+    [getRecentSongsDispatch.fulfilled.type]: (state, action) => {
+      state.recentSongsLoading = false;
+      state.recentSongsData = action.payload;
+    },
+    [getRecentSongsDispatch.rejected.type]: (state, action) => {
+      state.recentSongsLoading = false;
+      state.recentSongsErr = action.payload;
     }
   }
 });

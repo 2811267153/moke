@@ -11,12 +11,11 @@ interface PropsTypes {
   songName: string | number;
   type: string | undefined,
   key: number
-  count: number
   index: number
   onClick: Function
 }
 
-export const HistoryItem: React.FC<PropsTypes> = ({ imgUrl, singer, songName, type, key, count, index, onClick }) => {
+export const HistoryItem: React.FC<PropsTypes> = ({ imgUrl, singer, songName, type, key, index, onClick }) => {
   const handleItemClicks = (i: number) => {
     onClick(index)
   };

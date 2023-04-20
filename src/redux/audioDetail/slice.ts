@@ -36,10 +36,6 @@ const audioSlice = createSlice({
     changeAudioPlay(state, action) {
       state.isAudioPlay = action.payload
     },
-    songHistoryListData(state, action: PayloadAction<ListItem[]>) {
-      state.songHistoryList = action.payload;
-      ipcRenderer.send('setSongHistoryListData', action.payload);
-    },
     clearHistoryList(state, action) {
       state.songHistoryList = [];
       ipcRenderer.send('setSongHistoryListData', []);
@@ -63,7 +59,6 @@ const audioSlice = createSlice({
 
 export const {
   isPlayingDispatch,
-  songHistoryListData,
   playingList,
   clearHistoryList,
   changeAudioPlay,

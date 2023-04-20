@@ -167,15 +167,10 @@ ipcMain.on("getCurrentMusic", (e) => {
   const currentMusic = store.get("currentMusic")
   e.sender.send("currentMusic", currentMusic)
 })
-ipcMain.on("setSongHistoryListData", (e, data: any) => {
-  if(store.get("songHistoryListData")){
-    store.set("songHistoryListData", [])
-    store.set("songHistoryListData", data)
-  }
-  store.set("songHistoryListData", data)
-})
+
 ipcMain.on("getSongHistoryListData", (e) => {
-  const songHistoryListData = store.get("songHistoryListData")
+  const songHistoryListData = store.get("songHistoryListData")|| []
+  console.log("you ren du qu le data",songHistoryListData);
   e.sender.send("getsongHistoryList", songHistoryListData)
 })
 ipcMain.on("setSongplayingList", (e, data: any) => {
@@ -216,8 +211,6 @@ function createSongsWindow(data) {
     resizable: false,
     alwaysOnTop: true
   })
-
-
 
   songsWindow.loadFile(join( 'songs.html'))
   songsWindow.webContents.on('did-finish-load', () => {
