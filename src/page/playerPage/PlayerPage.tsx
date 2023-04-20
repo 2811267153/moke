@@ -46,7 +46,7 @@ export const PlayerPage: React.FC = () => {
   const handleHiddenMeun = () => {
     setHidden(!hidden)
     let height = ''
-    hidden ? height = "0" : height = "50"
+    hidden ? height = "50" : height = "0"
     PubSub.publish("hiddenMenu", height)
   }
 

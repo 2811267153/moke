@@ -26,7 +26,6 @@ const { Sider } = Layout;
 export const App: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
-  const navigate = useNavigate()
 
   const cookie = useSelector(state => state.loginUnikey.cookie);
   const monitorLoginState = useSelector(state => state.loginUnikey.monitorLoginStates);
@@ -35,11 +34,12 @@ export const App: React.FC = () => {
   const isPlaying = useSelector(state => state.audioData.isPlaying);
   const isLoading = useSelector(state => state.audioData.isLoading)
   const [hidden, setHidden] = useState(false);
-  const [header, setHeader] = useState(0);
+  const [header, setHeader] = useState(50);
   const paddingBottom = hidden ? 0 : "80px"
   const height = header ! == 0 ? "100vh" : "calc(100vh - 50px)"
 
   useEffect(() => {
+
     ipcRenderer.send('getCookie');
     ipcRenderer.send('getCurrentMusic');
     ipcRenderer.send('getSongHistoryListData');
@@ -58,6 +58,7 @@ export const App: React.FC = () => {
     ipcRenderer.on('getSongplayingListData', (e, data) => {
       dispatch(playingList(data));
     });
+
     PubSub.subscribe('hiddenMenu', (_, data) => {
       setHeader(data)
     })
@@ -84,12 +85,12 @@ export const App: React.FC = () => {
   }, [cookie, accountData]);
 
   useEffect(() => {
-    console.log(location.pathname);
     if (location.pathname === '/' || location.pathname ==="/playerPage") {
       PubSub.publish('AudioCurretTime', [0, 0.000 / 1000, isLoading, isPlaying, playList[0]]);
       setHidden(true)
     }else {
       setHidden(false)
+      setHeader(50)
     }
   }, [location]);
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { getSongsCheckState, getSongsSearch_c, getSongsUrl } from '@/axios/recommend/songs';
-import { ipcRenderer } from 'electron';
+
 
 interface MusiceDeatilState {
   loading: boolean,

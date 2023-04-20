@@ -1,5 +1,5 @@
 // @ts-ignore
-import { app, BrowserWindow, shell, ipcMain, session } from 'electron'
+import { app, BrowserWindow, shell, ipcMain } from 'electron'
 
 import { release } from 'node:os'
 import { join } from 'node:path'
@@ -61,7 +61,6 @@ async function createWindow() {
       // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       nodeIntegration: true,
       contextIsolation: false,
-
     },
   })
   // 启动 Service Worker
@@ -123,7 +122,7 @@ ipcMain.handle('open-win', (_, arg) => {
     webPreferences: {
       preload,
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation : false,
 
     },
   })
@@ -200,5 +199,3 @@ ipcMain.on("getHistorySearchList", (e) => {
   const songHistoryListData = store.get("setHistorySearchList")
   e.sender.send("getHistorySearchList", songHistoryListData)
 })
-
-

@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { HistoryPlay, RecommendedStation, RecommendPlayList } from '@/components';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { RecommendSongs } from '@/components/recommendSongs';
-import { ipcRenderer } from 'electron';
-import { CheckCookie, isShowLoading } from '@/redux/accountLogin/slice';
-import { recommendSongs } from '@/redux/recmmendSongs/slice';
+import { isShowLoading } from '@/redux/accountLogin/slice';
+// import { recommendSongs } from '@/redux/recmmendSongs/slice';
 import { Modal } from 'antd';
 import { QRLogin } from '../loginPage';
 
