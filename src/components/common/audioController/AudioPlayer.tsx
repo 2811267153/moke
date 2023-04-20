@@ -6,10 +6,10 @@ import {
   songsUrlDispatch
 } from '@/redux/musicDetailProduct/slice';
 import { message } from 'antd';
-import { changeAudioPlay, isLoadingDispatch, isPlayingDispatch } from '@/redux/audioDetail/slice';
+import { changeAudioPlay, isLoadingDispatch, isPlayingDispatch, songHistoryListData } from '@/redux/audioDetail/slice';
 import PubSub from 'pubsub-js';
 import { useNavigate } from 'react-router-dom';
-
+import { ipcRenderer } from 'electron';
 
 export const AudioPlayer: React.FC = () => {
   const navigate = useNavigate()
@@ -20,6 +20,7 @@ export const AudioPlayer: React.FC = () => {
   const isPlaying = useSelector(state => state.audioData.isPlaying);
   const cookie = useSelector(state => state.loginUnikey.cookie) || ''
   const isLoading = useSelector(state => state.audioData.isLoading)
+  const songHistoryList = useSelector(state => state.audioData.songHistoryList)
 
   const dispatch = useAppDispatch();
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -160,8 +161,13 @@ export const AudioPlayer: React.FC = () => {
       level: 'level',
       cookie
     };
+    // const copyList = [playList[currentIndex],...songHistoryList]
+    // dispatch(songHistoryListData(copyList))
     dispatch(songsUrlDispatch(params));
     dispatch(songsDurationDispatch(currentsMusic?.id));
+    if(currentIndex != 0) {
+      ipcRenderer.send('changeSongs', playList[currentIndex])
+    }
   }, [currentIndex]);
 
   useEffect(() => {

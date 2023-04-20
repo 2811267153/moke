@@ -50,7 +50,8 @@ export const App: React.FC = () => {
       dispatch(CheckCookie(arg.getCookie));
     });
     ipcRenderer.on('getsongHistoryList', (e, data) => {
-      dispatch(songHistoryListData(data));
+      console.log(data);
+      dispatch(songHistoryListData([]));
     });
     ipcRenderer.on('getSongplayingListData', (e, data) => {
       dispatch(playingList(data));

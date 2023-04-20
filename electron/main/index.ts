@@ -1,5 +1,5 @@
 // @ts-ignore
-import { app, BrowserWindow, shell, ipcMain } from 'electron'
+import { screen ,app, BrowserWindow, shell, ipcMain, Notification } from 'electron'
 
 import { release } from 'node:os'
 import { join } from 'node:path'
@@ -47,6 +47,7 @@ const url = process.env.VITE_DEV_SERVER_URL
 const indexHtml = join(process.env.DIST, 'index.html')
 
 async function createWindow() {
+
   win = new BrowserWindow({
     frame: false,
     titleBarStyle: 'hidden',
@@ -198,4 +199,39 @@ ipcMain.on("setHistorySearchList", (e, data: any) => {
 ipcMain.on("getHistorySearchList", (e) => {
   const songHistoryListData = store.get("setHistorySearchList")
   e.sender.send("getHistorySearchList", songHistoryListData)
+})
+//创建新窗口
+let songsWindow = null;
+function createSongsWindow(data) {
+  let display = screen.getPrimaryDisplay()
+  let width = display.bounds.width
+  let height = display.bounds.height
+  songsWindow = new BrowserWindow({
+
+    width: 250,
+    height: 70,
+    x: width - 260,
+    y: 30,
+    frame: false,
+    resizable: false,
+    alwaysOnTop: true
+  })
+
+
+
+  songsWindow.loadFile(join( 'songs.html'))
+  songsWindow.webContents.on('did-finish-load', () => {
+    songsWindow.webContents.send('songsData', data)
+  })
+
+  songsWindow.on('closed', () => {
+    songsWindow = null
+  })
+}
+ipcMain.on('changeSongs', (event, data) => {
+  if (!songsWindow) {
+    createSongsWindow(data)
+  } else {
+    songsWindow.webContents.send('songsData', data)
+  }
 })

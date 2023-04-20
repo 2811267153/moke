@@ -4,7 +4,7 @@ import styles from './index.module.scss';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { recommedUserListDataState } from '@/redux/recommendPlayList/slice';
 import { format } from '@/utils';
-import { isPlayingDispatch } from '@/redux/audioDetail/slice';
+import { changeAudioPlay, isPlayingDispatch } from '@/redux/audioDetail/slice';
 import { useNavigate } from 'react-router-dom';
 import PubSub from 'pubsub-js';
 import { recommendSongs } from '@/redux/recmmendSongs/slice';
@@ -69,7 +69,7 @@ export const RecommendedStation: React.FC = () => {
 
 
   const handlePlayPauseClick = () => {
-    console.log('aaaa',isPlaying);
+    dispatch(changeAudioPlay(true))
     dispatch(isPlayingDispatch(!isPlaying))
   };
 
