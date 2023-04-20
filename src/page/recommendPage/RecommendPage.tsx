@@ -49,7 +49,6 @@ export const RecommendPage: React.FC = () => {
         }else {
           setRecommendDiscoverPlaylist(recommendDiscoverData?.data?.blocks[1].creatives);
           setSlideSongListAlign(recommendDiscoverData?.data?.blocks[2].creatives)
-          // setSlideSongListAlign(recommendDiscoverData?.data?.blocks[2].creatives)
           console.log(recommendDiscoverData?.data?.blocks[2]);
           setSlideSongListAlignTitle(recommendDiscoverData?.data?.blocks[2].uiElement.subTitle.title)
           setRecommendNewSongsNewAlbum(recommendDiscoverData?.data?.blocks[3].creatives);
@@ -99,8 +98,6 @@ export const RecommendPage: React.FC = () => {
     copyItem.ar = [...item.artists]
     copyItem.al.picUrl = item.album.blurPicUrl
     copyItem.al.name = item.album.name
-    console.log(copyItem);
-
     const index = playList.findIndex((el) => el.id === copyItem.id);
     if (index !== -1) {
       const newPlayList = playList.slice();

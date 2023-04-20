@@ -166,10 +166,6 @@ export const AudioPlayer: React.FC = () => {
     };
     dispatch(songsUrlDispatch(params));
     dispatch(songsDurationDispatch(currentsMusic?.id));
-    // if(currentIndex != 0) {
-    //   ipcRenderer.send('changeSongs', playList[currentIndex])
-    // }
-
     dispatch(getScrobbleDispatch(params))
   }, [currentIndex]);
 

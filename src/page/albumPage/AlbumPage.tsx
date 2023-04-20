@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './index.module.scss';
-import { Image, List, ListItem, Skeleton } from '@/components';
+import { Image, List, Skeleton } from '@/components';
 import { useParams } from 'react-router-dom';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { getSongsInfoData, musicAlbumData } from '@/redux/albumInfo/slice';
@@ -79,7 +79,7 @@ export const AlbumPage: React.FC = () => {
                 verticalAlign: 'middle',
                 marginRight: 10
               }}></div>
-              {ablumInfo?.name}</h2>
+              {ablumInfo?.name.trim()}</h2>
             <p className={styles['description']}>{ablumInfo?.description}</p>
             <p className={styles['songs-other']}>创建时间: {formatTimeDate(ablumInfo?.createTime)}
               <i /> {formatStr(ablumInfo?.subscribedCount)}人喜欢 <i />{formatStr(ablumInfo?.commentCount)}条评论<i /> {formatStr(ablumInfo?.playCount)}次播放 <i /> {formatStr(ablumInfo?.shareCount)}次分享

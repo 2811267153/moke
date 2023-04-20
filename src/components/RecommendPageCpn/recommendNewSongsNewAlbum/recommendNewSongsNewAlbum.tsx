@@ -15,10 +15,8 @@ interface PropsTypes {
 
 export const RecommendNewSongsNewAlbum: React.FC<PropsTypes> = ({ cookie, imgUrl, data, scrollImgUrl }) => {
   const dispatch = useAppDispatch()
-
   const playList = useSelector(state => state.audioData.playingList)
   const handleToAlbum = (_: any, resource: any) => {
-    console.log(resource);
     if(resource.resourceType === 'song') {
       const params = {
         id: ''

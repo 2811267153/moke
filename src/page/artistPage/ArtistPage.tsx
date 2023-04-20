@@ -7,8 +7,7 @@ import {
   getTopListArtistOccidentDispatch
 } from '@/redux/artist/slice';
 import styles from './index.module.scss';
-import { CommonGrid } from '@/components';
-import { animate, format, formatTimestamp } from '@/utils';
+import { CommonGrid, Skeleton } from '@/components';
 
 export const ArtistPage: React.FC = () => {
   const artistList = useSelector(state => state.artistInfo.topListArtistData.slice(0, 15)) || [];
@@ -64,7 +63,6 @@ export const ArtistPage: React.FC = () => {
   }, []);
 
   const handleNavigateClick = (index: number) => {
-    console.log(scrollTo[index]);
     PubSub.publish('ArtistScrollTo', scrollTo[index]);
     setNavigateIndex(index);
   };
@@ -82,20 +80,37 @@ export const ArtistPage: React.FC = () => {
       <div style={{ height: 55 }}></div>
       <h2>歌手排行榜（收集各地最受欢迎的歌手）</h2>
       <div ref={artistListRef}>
-        <p style={{ padding: '10px 15px'}}>华语</p>
-        <CommonGrid type='artist' data={artistList}></CommonGrid>
+        {artistLoading && (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '651px', width: "100%" }}>
+          <Skeleton />
+        </div>)}
+        {!artistLoading && <>
+          <p style={{ padding: '10px 15px' }}>华语</p>
+          <CommonGrid type='artist' data={artistList}></CommonGrid></>}
       </div>
       <div ref={OccidentRef}>
-        <p style={{ padding: '10px 15px'}}>欧美</p>
-        <CommonGrid type="artist" data={artistListInOccident}></CommonGrid>
+        {artistLoading && (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '651px', width: "100%" }}>
+          <Skeleton />
+        </div>)}
+        {!artistLoading && <>
+          <p style={{ padding: '10px 15px' }}>欧美</p>
+          <CommonGrid type="artist" data={artistListInOccident}></CommonGrid>
+        </>}
       </div>
       <div ref={JapanRef}>
-        <p style={{ padding: '10px 15px'}}>韩国</p>
-        <CommonGrid type="artist" data={artistListInJapan}></CommonGrid>
+        {artistLoading && (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '651px', width: "100%" }}>
+          <Skeleton />
+        </div>)}
+        {!artistLoading && <>
+          <p style={{ padding: '10px 15px' }}>韩国</p>
+          <CommonGrid type="artist" data={artistListInJapan}></CommonGrid></>}
       </div>
       <div ref={KoreaRef}>
-        <p style={{ padding: '10px 15px'}}>日本</p>
-        <CommonGrid type='artist' data={artistListInKorea}></CommonGrid>
+        {artistLoading && (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '651px', width: "100%" }}>
+          <Skeleton />
+        </div>)}
+        {!artistLoading &&<>
+          <p style={{ padding: '10px 15px' }}>日本</p>
+          <CommonGrid type='artist' data={artistListInKorea}></CommonGrid></>}
       </div>
     </div>
   </>;

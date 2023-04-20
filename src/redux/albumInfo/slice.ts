@@ -160,9 +160,13 @@ export const musicAlbumSlice = createSlice({
       state.updateLoading = false
       state.updatePlayListCount = action.payload
     },
-    [getAlbumidData.rejected.type]: (state, action) => {
+    [updatePlayListCount.rejected.type]: (state, action) => {
+      state.updateLoading = false
+      state.updatePlayListCount = action.payload
+    },
+    [getAlbumidData.pending.type]: (state, action) => {
       state.albumidLoading = false
-      state.error = action.payload
+      state.albumidData = ''
     },
     [getAlbumidData.fulfilled.type]: (state, action) => {
       state.albumidLoading = false
@@ -170,6 +174,7 @@ export const musicAlbumSlice = createSlice({
     },
     [getAlbumidData.rejected.type]: (state, action) => {
       state.albumidLoading = false
+      state.albumidData = ''
       state.albumidError = action.payload
     },
   }
