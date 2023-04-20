@@ -7,6 +7,7 @@ import { getRecommendMvDispatch, getTopListDispatch } from '@/redux/feedInfo/sli
 import { CommonGrid, CommonFlex } from '@/components';
 import { Segmented } from 'antd';
 import { SegmentedLabeledOption } from 'antd/es/segmented';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -22,15 +23,7 @@ export const FeedPage: React.FC = () => {
   const recommendMv = useSelector(state => state.feedInfo.personalizedMv)
   const recommendMvLoading = useSelector(state => state.feedInfo.personalizedMvLoading)
   const [area, setArea] = useState<string>('');
-
-  const items: SegmentedLabeledOption[] = [
-    { label: '全部', value: '1',},
-    { label: '内地', value: '2', },
-    { label: '港台', value: '3', },
-    { label: '欧美', value: '4', },
-    { label: '日本', value: '5', },
-    { label: '韩国', value: '6', },
-  ];
+  const navigate = useNavigate()
 
   useEffect(() => {
     dispatch(getTopListDispatch());
@@ -49,7 +42,8 @@ export const FeedPage: React.FC = () => {
   }, [recommendMv]);
 
   const handleToAlbum = (data: any) => {
-    console.log(data);
+    navigate(`/album/${data.id}`);
+
   };
   const handelClick = (item: any) => {
     let params = {}
@@ -64,11 +58,11 @@ export const FeedPage: React.FC = () => {
   return <div className={styles.feed}>
     <FeedSwiper></FeedSwiper>
     <h2 style={{ margin: "20px 0" }}>排行榜(这里汇集了最近最潮的歌曲,试试?)</h2>
-    <CommonGrid data={topList.slice(0, 15)}></CommonGrid>
+    <CommonGrid handleToAlbum={handleToAlbum} data={topList.slice(0, 15)}></CommonGrid>
     <div style={{display: 'flex', justifyContent: 'space-between', height: 30, margin: "10px 20px"}}>
       <h2>推荐MV(最近比较火的MV都在这里,试试?)</h2>
       <Segmented options={['全部', '内地', '港台', '欧美', '日本','韩国']} defaultValue={"全部"} onChange={handelClick}/>
     </div>
-    <CommonFlex data={recommendMv}></CommonFlex>
+    <CommonFlex  data={recommendMv}></CommonFlex>
   </div>;
 };

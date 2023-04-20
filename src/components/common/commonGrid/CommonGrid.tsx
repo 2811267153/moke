@@ -5,13 +5,17 @@ import Color from 'color-thief-react';
 interface PropsType {
   data: any[];
   type?: "artist" | ""
+  handleToAlbum: Function
 }
 
-export const CommonGrid: React.FC<PropsType> = ({ data, type }) => {
+export const CommonGrid: React.FC<PropsType> = ({ data, type, handleToAlbum }) => {
+  const handleToAlbumSongs = (item: any) => {
+    handleToAlbum(item);
+  }
   return <div className={styles.grid}>
     {data?.map(item => {
       return (
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative' }} onClick={() => handleToAlbumSongs(item)}>
           <Color src={item.coverImgUrl || item.picUrl} crossOrigin='anonymous' format='hex'>
             {({ data }) => (
               <>

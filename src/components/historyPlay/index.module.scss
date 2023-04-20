@@ -6,20 +6,20 @@
 .history-play{
     user-select: none;
     padding-right: 20px;
-}
-h2 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    button {
-        padding: 5px 10px;
-        font-size: 10px;
-        background-color: transparent;
-        border: 1px solid #2b253b;
-        border-radius: 5px;
+    h2 {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        button {
+            padding: 5px 10px;
+            font-size: 10px;
+            background-color: transparent;
+            border: 1px solid #2b253b;
+            border-radius: 5px;
 
-        i {
-            font-size: 10px !important;
+            i {
+                font-size: 10px !important;
+            }
         }
     }
 }

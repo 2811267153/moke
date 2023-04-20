@@ -7,6 +7,7 @@ interface PropsType {
   data: any[]
 }
 export const CommonFlex:React.FC<PropsType> = ({data}) => {
+
   return(
     <div className={styles.common_warp}>
       {
