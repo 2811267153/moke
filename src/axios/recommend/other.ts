@@ -39,8 +39,8 @@ export function getRecentSongs(limit = 20, cookie: string) {
     url: `${Other.recentSongs}limit=${limit}&cookie=${cookie}`
   })
 }
-export function getScrobble(id: string | number | undefined, sourceid: string | number | undefined, time: number | undefined, cookie: string) {
+export function getScrobble(id: string | number | undefined, sourceid: string | number | undefined, cookie: string) {
   return hyRequest.get({
-    url: `${Other.scrobble}id=${id}&sourceid=${sourceid}&time=&cookie=${cookie}`
+    url: `${Other.scrobble}id=${id}&sourceid=${sourceid}&time=${Date.now()}&cookie=${cookie}`
   })
 }

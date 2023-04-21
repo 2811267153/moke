@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 export interface ListItem {
   singer: string | undefined;
   count: number;
+  type: string
   al: any
   ar: any[],
   artists: any[],

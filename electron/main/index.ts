@@ -5,9 +5,6 @@ import { release } from 'node:os'
 import { join } from 'node:path'
 import * as path from 'path';
 
-
-const Store = require("electron-store");
-const store = new Store();
 // The built directory structure
 //
 // ├─┬ dist-electron
@@ -62,6 +59,7 @@ async function createWindow() {
       // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       nodeIntegration: true,
       contextIsolation: false,
+      // sandbox: true
     },
   })
   // 启动 Service Worker
@@ -94,7 +92,6 @@ app.on('window-all-closed', () => {
   console.log("tui chu ");
   win = null
   if (process.platform !== 'darwin') {
-    store.store; // 保存数据到文件
     app.quit()
   }
 })
@@ -108,7 +105,6 @@ app.on('second-instance', () => {
 })
 
 app.on('activate', () => {
-  console.log("da kai");
   const allWindows = BrowserWindow.getAllWindows()
   if (allWindows.length) {
     allWindows[0].focus()
@@ -117,14 +113,13 @@ app.on('activate', () => {
   }
 })
 
-// New window example arg: new windows url
 ipcMain.handle('open-win', (_, arg) => {
   const childWindow = new BrowserWindow({
     webPreferences: {
       preload,
       nodeIntegration: true,
       contextIsolation : false,
-
+      // sandbox: true
     },
   })
 
@@ -133,17 +128,6 @@ ipcMain.handle('open-win', (_, arg) => {
   } else {
     childWindow.loadFile(indexHtml, { hash: arg })
   }
-})
-
-ipcMain.on('setCookie', (e, cookie = "") => {
-  //清楚上一次添加的cookie
-  //设置新的cookie
-  store.set("cookie", '')
-  store.set("cookie", cookie)
-})
-ipcMain.on('getCookie', (e) => {
-  const getCookie = store.get("cookie")
-  e.sender.send('getCookie', {getCookie})
 })
 ipcMain.on("btn0", (e) => {
   win.close();
@@ -157,43 +141,6 @@ ipcMain.on("btn1", (e) => {
 })
 ipcMain.on("btn2", (e) => {
   win.minimize();
-})
-
-ipcMain.on("currentMusic", (e, data) => {
-  store.set("currentMusic", [])
-  store.set("currentMusic", data)
-})
-ipcMain.on("getCurrentMusic", (e) => {
-  const currentMusic = store.get("currentMusic")
-  e.sender.send("currentMusic", currentMusic)
-})
-
-ipcMain.on("getSongHistoryListData", (e) => {
-  const songHistoryListData = store.get("songHistoryListData")|| []
-  console.log("you ren du qu le data",songHistoryListData);
-  e.sender.send("getsongHistoryList", songHistoryListData)
-})
-ipcMain.on("setSongplayingList", (e, data: any) => {
-  if(store.get("setSongplayingList")){
-    store.set("setSongplayingList", [])
-    store.set("setSongplayingList", data)
-  }
-  store.set("setSongplayingList", data)
-})
-ipcMain.on("getSongplayingList", (e) => {
-  const songHistoryListData = store.get("setSongplayingList")
-  e.sender.send("getSongplayingListData", songHistoryListData)
-})
-ipcMain.on("setHistorySearchList", (e, data: any) => {
-  if(store.get("setHistorySearchList")){
-    store.set("setHistorySearchList", [])
-    store.set("setHistorySearchList", data)
-  }
-  store.set("setHistorySearchList", data)
-})
-ipcMain.on("getHistorySearchList", (e) => {
-  const songHistoryListData = store.get("setHistorySearchList")
-  e.sender.send("getHistorySearchList", songHistoryListData)
 })
 //创建新窗口
 let songsWindow = null;

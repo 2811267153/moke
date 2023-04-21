@@ -2,19 +2,20 @@ import React, { useEffect } from 'react';
 import styles from "./index.module.scss"
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 
-import { playingList } from '@/redux/audioDetail/slice';
+import { addPlayingList } from '@/redux/audioDetail/slice';
 import { recommendSongs } from '@/redux/recmmendSongs/slice';
 import { FlexCol } from '@/components/common/FlexCol/FlexCol';
-import { Skeleton } from '@/components';
+import { ListItem, Skeleton } from '@/components';
 
 export const RecommendSongs: React.FC = () => {
   const dispatch = useAppDispatch()
   const playList = useSelector(state => state.audioData.playingList) || []
 
   const cookie = useSelector(state => state.loginUnikey.cookie);
-  const { dailySongs } = useSelector(state => state.recommendSongs.data)|| []
+  // const { dailySongs } = useSelector(state => state.recommendSongs.data)|| []
   const recommendSongsLoading = useSelector(state => state.recommendSongs.loading)
 
+  const dailySongs: any[] = []
   useEffect(() => {
     if(cookie != "") {
       dispatch(recommendSongs(cookie));
@@ -26,9 +27,9 @@ export const RecommendSongs: React.FC = () => {
     if (index !== -1) {
       const newPlayList = playList.slice();
       newPlayList.splice(index, 1);
-      dispatch(playingList([item, ...newPlayList]))
+      dispatch(addPlayingList(item))
     } else {
-      dispatch(playingList([item, ...playList]))
+      dispatch(addPlayingList(item))
     }
   }
 

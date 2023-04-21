@@ -81,15 +81,14 @@ export const getLyricDispatch = createAsyncThunk(
 interface paramsType {
   id?: string | number
   sourceid?: string | number
-  time?: number
   cookie: string
   limit?: number
 }
 export const getScrobbleDispatch = createAsyncThunk(
   'other/getScrobbleDispatch',
   async (params : paramsType) => {
-    const {id, sourceid, time, cookie} = params
-    const data = await getScrobble(id, sourceid, time, cookie);
+    const {id, sourceid, cookie} = params
+    const data = await getScrobble(id, sourceid, cookie);
     console.log(data);
     return data
   }

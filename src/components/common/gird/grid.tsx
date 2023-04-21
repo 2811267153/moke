@@ -1,9 +1,6 @@
 import React from 'react';
 import styles from '@/page/recommendPage/index.module.scss';
 import Color from 'color-thief-react';
-
-
-
 interface PropsTypes {
   handleToAlbum: Function;
   imgUrl: string[];

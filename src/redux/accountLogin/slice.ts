@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, Dispatch } from '@reduxjs/toolkit';
 import {
   getLoginCheckStates,
   getLoginQrImage,
@@ -6,11 +6,17 @@ import {
   getLoginStateData,
   getLoginUnikey
 } from '@/axios/recommend/Login';
+import { ListItem } from '@/components';
+import db from '../../../db';
+import { RootState } from '@/redux/store';
 
 
 interface loginUnikeytate {
   loading: boolean,
-  data: any,
+  unikey: any, //二维码图片
+  QrImage: any, //二维码
+  loginData: any, //登录状态
+  checkStates: any, //检查登陆状态
   error: null | string,
   cookie: string,
   monitorLoginStates: any
@@ -41,16 +47,18 @@ export const loginQrImage = createAsyncThunk(
 export const loginState = createAsyncThunk(
   'loginStateDetail/loginState',
   async () => {
-    const data =  await getLoginState();
-    console.log(data);
+    const loginData =  await getLoginState();
+    console.log(loginData);
+    return loginData
   }
 );
 export const loginCheckStates = createAsyncThunk(
   'loginCheckStateDetail/loginCheckStates',
   async(params: LoginQrImageParams) => {
     const { key, time } = params;
-    const data =  await getLoginCheckStates(key, time);
-    console.log(data);
+    const checkStates =  await getLoginCheckStates(key, time);
+    console.log(checkStates);
+    return checkStates
   }
 );
 export const monitorLoginStates = createAsyncThunk(
@@ -63,7 +71,10 @@ export const monitorLoginStates = createAsyncThunk(
 
 const initialState: loginUnikeytate = {
   loading: true,
-  data: [],
+  unikey: '', //二维码图片
+  QrImage: '', //二维码
+  loginData: '', //登录状态
+  checkStates: '', //检查登陆状态
   error: null,
   cookie: "",
   monitorLoginStates: '',
@@ -88,7 +99,7 @@ export const getLoginUnikeyDetailSlice = createSlice({
     },
     [loginUnikey.fulfilled.type]: (state, action) => {
       state.loading = false;
-      state.data = action.payload;
+      state.unikey = action.payload;
     },
     [loginUnikey.rejected.type]: (state, action) => {
       state.loading = false;
@@ -100,7 +111,7 @@ export const getLoginUnikeyDetailSlice = createSlice({
     },
     [loginQrImage.fulfilled.type]: (state, action) => {
       state.loading = false;
-      state.data = action.payload;
+      state.QrImage = action.payload;
     },
     [loginQrImage.rejected.type]: (state, action) => {
       state.loading = false;
@@ -112,7 +123,7 @@ export const getLoginUnikeyDetailSlice = createSlice({
     },
     [loginState.fulfilled.type]: (state, action) => {
       state.loading = false;
-      state.data = action.payload;
+      state.loginData = action.payload;
     },
     [loginState.rejected.type]: (state, action) => {
       state.loading = false;
@@ -124,7 +135,7 @@ export const getLoginUnikeyDetailSlice = createSlice({
     },
     [loginCheckStates.fulfilled.type]: (state, action) => {
       state.loading = false;
-      state.data = action.payload;
+      state.checkStates = action.payload;
     },
     [loginCheckStates.rejected.type]: (state, action) => {
       state.loading = false;
@@ -145,4 +156,34 @@ export const getLoginUnikeyDetailSlice = createSlice({
   }
 });
 
+export const CaCheCookie = (payload: any) => async (dispatch: Dispatch, getState: () => RootState) => {
+  const cookie = {key: "cookie", value: payload}
+  const dbData:  {key: string, payload: any} = await new Promise((resolve, reject) => {
+    db.find({ key: cookie.key }).limit(1).exec((err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data[0]);
+      }
+    });
+  });
+
+  if (dbData) {
+    db.update({ key: payload.value }, cookie, {}, (err, numReplaced) => {
+      if (!err) {
+        dispatch({ type: 'getLoginUnikeyDetailSlice/CheckCookie', payload: cookie });
+      } else {
+        console.log('数据更新失败', err);
+      }
+    });
+  } else {
+    db.insert(cookie, (err, res) => {
+      if (!err) {
+        dispatch({ type: 'getLoginUnikeyDetailSlice/CheckCookie', payload: cookie });
+      } else {
+        console.log('数据插入失败', err);
+      }
+    });
+  }
+};
 export const {CheckCookie, isShowLoading} = getLoginUnikeyDetailSlice.actions

@@ -12,8 +12,9 @@ import { Image, RecommendTopOne, Skeleton } from '@/components';
 import { RecommendNewSongsNewAlbum } from '@/components/RecommendPageCpn/recommendNewSongsNewAlbum';
 import { getHotArtist } from '@/redux/other/slice';
 import Color from 'color-thief-react';
-import { playingList } from '@/redux/audioDetail/slice';
+import { addPlayingList } from '@/redux/audioDetail/slice';
 import { FlexCol } from '@/components/common/FlexCol/FlexCol';
+import * as assert from 'assert';
 
 
 export const RecommendPage: React.FC = () => {
@@ -102,9 +103,9 @@ export const RecommendPage: React.FC = () => {
     if (index !== -1) {
       const newPlayList = playList.slice();
       newPlayList.splice(index, 1);
-      dispatch(playingList([copyItem, ...newPlayList]))
+      dispatch(addPlayingList(copyItem))
     } else {
-      dispatch(playingList([copyItem, ...playList]))
+      dispatch(addPlayingList(copyItem))
     }
   }
     return (
@@ -113,7 +114,7 @@ export const RecommendPage: React.FC = () => {
           <div className={styles.recommend_flex}>
             <div style={{ flex: 1 }}>
               <h2>推荐歌单</h2>
-              {recommendDiscoverLoading &&  (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+              {recommendDiscoverLoading &&  (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '451px' }}>
                 <Skeleton />;
               </div>)}
               <div className={styles.recommend_warp}>
@@ -164,7 +165,7 @@ export const RecommendPage: React.FC = () => {
             }
           </div>
           <h2>新歌新碟</h2>
-          {recommendDiscoverLoading &&  (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+          {recommendDiscoverLoading &&  (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
             <Skeleton />
           </div>)}
           <div className={styles.recommend_warp} style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>

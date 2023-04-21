@@ -1,4 +1,4 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import counterReducer from "@/redux/TestRedux/slice"
 import audioSliceReducer from "@/redux/audioDetail/slice"
 import { musicDetailSlice } from '@/redux/musicDetailProduct/slice';
@@ -11,6 +11,8 @@ import { accountSlice } from '@/redux/accountLogin/accountSlice';
 import { otherSlice } from '@/redux/other/slice';
 import { feedInfoSlice } from '@/redux/feedInfo/slice';
 import { artistSlice } from '@/redux/artist/slice';
+
+import thunk from 'redux-thunk';
 
 const rootReducer = combineReducers({
   counter: counterReducer,
@@ -30,7 +32,7 @@ const rootReducer = combineReducers({
 // const store = createStore(rootReducer, applyMiddleware(thunk));
 const store = configureStore({
   reducer: rootReducer,
-  middleware: (getDefaultMiddleware) =>getDefaultMiddleware({serializableCheck: false}).concat(),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
   devTools: true
 })
 export type RootState = ReturnType<typeof store.getState>

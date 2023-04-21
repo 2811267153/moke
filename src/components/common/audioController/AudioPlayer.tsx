@@ -9,7 +9,6 @@ import { message } from 'antd';
 import { changeAudioPlay, isLoadingDispatch, isPlayingDispatch } from '@/redux/audioDetail/slice';
 import PubSub from 'pubsub-js';
 import { useNavigate } from 'react-router-dom';
-import { ipcRenderer } from 'electron';
 import { getScrobbleDispatch } from '@/redux/other/slice';
 
 export const AudioPlayer: React.FC = () => {
@@ -21,7 +20,6 @@ export const AudioPlayer: React.FC = () => {
   const isPlaying = useSelector(state => state.audioData.isPlaying);
   const cookie = useSelector(state => state.loginUnikey.cookie) || ''
   const isLoading = useSelector(state => state.audioData.isLoading)
-  const songHistoryList = useSelector(state => state.audioData.songHistoryList)
 
   const dispatch = useAppDispatch();
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -58,10 +56,13 @@ export const AudioPlayer: React.FC = () => {
       const params = {
         id: playList[currentIndex]?.id,
         level: 'level',
+        sourceid: playList[currentIndex]?.al.id,
+        time: currentTime,
         cookie
       };
       dispatch(songsUrlDispatch(params));
       dispatch(songsDurationDispatch(currentsMusic?.id));
+      dispatch(getScrobbleDispatch(params))
     }
   }, [playList]);
 
@@ -71,10 +72,13 @@ export const AudioPlayer: React.FC = () => {
         const params = {
           id: playList[currentIndex]?.id,
           level: 'level',
+          sourceid: playList[currentIndex]?.al.id,
+          time: currentTime,
           cookie
         };
         dispatch(songsUrlDispatch(params));
         dispatch(songsDurationDispatch(currentsMusic?.id));
+        dispatch(getScrobbleDispatch(params))
         setFlag(false)
       }
       PubSub.subscribe("PlayerPageChangeSongs", (_, data) => {
@@ -156,17 +160,21 @@ export const AudioPlayer: React.FC = () => {
   }, [songsUrl]);
 
   useEffect(() => {
-    PubSub.publish('AudioCurrentMusic', playList[currentIndex]);
-    const params = {
-      id: playList[currentIndex]?.id,
-      level: 'level',
-      sourceid: playList[currentIndex]?.al.id,
-      time: currentTime,
-      cookie
-    };
-    dispatch(songsUrlDispatch(params));
-    dispatch(songsDurationDispatch(currentsMusic?.id));
-    dispatch(getScrobbleDispatch(params))
+    if(currentIndex < playList.length){
+      PubSub.publish('AudioCurrentMusic', playList[currentIndex]);
+      const params = {
+        id: playList[currentIndex]?.id,
+        level: 'level',
+        sourceid: playList[currentIndex]?.al.id,
+        time: currentTime,
+        cookie
+      };
+      dispatch(songsUrlDispatch(params));
+      dispatch(songsDurationDispatch(currentsMusic?.id));
+      dispatch(getScrobbleDispatch(params))
+      return
+    }
+    setCurrentIndex(0)
   }, [currentIndex]);
 
   useEffect(() => {
@@ -182,13 +190,13 @@ export const AudioPlayer: React.FC = () => {
       setCurrentTime(0);
     }
   }, [isPlaying]);
-  const handlePlayPauseClick = (e:MouseEvent<HTMLDivElement>) => {
+  const handlePlayPauseClick = (e:any) => {
     e.stopPropagation()
     dispatch(isPlayingDispatch(!isPlaying));
     dispatch(changeAudioPlay(true));
   };
 
-  const handleNextClick = (e: MouseEvent<HTMLDivElement>, type: "next" | "piece") => {
+  const handleNextClick = (e:any, type: "next" | "piece") => {
     if(e !== undefined) {
       e.stopPropagation()
     }
@@ -229,7 +237,6 @@ export const AudioPlayer: React.FC = () => {
   };
 
   const handelClick = () => {
-    console.log('abc');
     navigate('/playerPage')
   }
 

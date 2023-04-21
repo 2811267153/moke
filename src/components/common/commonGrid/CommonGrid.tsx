@@ -5,11 +5,12 @@ import Color from 'color-thief-react';
 interface PropsType {
   data: any[];
   type?: "artist" | ""
-  handleToAlbum: Function
+  handleToAlbum?: Function
 }
 
 export const CommonGrid: React.FC<PropsType> = ({ data, type, handleToAlbum }) => {
   const handleToAlbumSongs = (item: any) => {
+    // @ts-ignore
     handleToAlbum(item);
   }
   return <div className={styles.grid}>

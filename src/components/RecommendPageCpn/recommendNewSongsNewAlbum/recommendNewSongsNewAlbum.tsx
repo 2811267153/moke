@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectCreative, Navigation } from 'swiper';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { playingList } from '@/redux/audioDetail/slice';
+import { useNavigate } from 'react-router-dom';
 
 interface PropsTypes {
   cookie: string,
@@ -15,15 +16,19 @@ interface PropsTypes {
 
 export const RecommendNewSongsNewAlbum: React.FC<PropsTypes> = ({ cookie, imgUrl, data, scrollImgUrl }) => {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const playList = useSelector(state => state.audioData.playingList)
   const handleToAlbum = (_: any, resource: any) => {
+    console.log(resource);
     if(resource.resourceType === 'song') {
       const params = {
         id: ''
       }
       params.id =resource.resourceId
       console.log(params);
-      dispatch(playingList([params, ...playList]))
+      // dispatch(playingList([params, ...playList]))
+    }else if(resource.resourceType === 'album'){
+      navigate(`/album/${resource.resourceId}`);
     }
   };
   return <>

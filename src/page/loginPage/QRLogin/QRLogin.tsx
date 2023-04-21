@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { checkStatus, getLoginStatus, getUnikey, qrImage } from '@/axios/api';
 import { ipcRenderer } from 'electron';
 import styles from "./index.module.scss"
+import { CaCheCookie } from '@/redux/accountLogin/slice';
+import { useAppDispatch } from '@/redux/hooks';
 
 interface propsType  {
   getQrCookie?: (cookie: string) => void
 }
 export const QRLogin: React.FC<propsType> = ({getQrCookie}) => {
-
+  const dispatch = useAppDispatch()
   const [unikey, setUnikey] = useState('');
   const [cookie, setCookie] = useState('');
   const [qrImg, setQrImg] = useState('');
@@ -39,7 +41,8 @@ export const QRLogin: React.FC<propsType> = ({getQrCookie}) => {
         setCookie(statusRes?.cookie);
         setLoginState("登录完成!")
         await getLoginStatus(statusRes?.cookie);
-        ipcRenderer.send('setCookie', statusRes?.cookie);
+        console.log('statusRes?.cookie---',statusRes?.cookie);
+        dispatch(CaCheCookie(statusRes?.cookie))
       }
     }, 3000);
     return () => {

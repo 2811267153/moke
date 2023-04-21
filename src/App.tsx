@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import styles from './App.module.scss';
 import { HomePage, QRLogin, RoutePage } from '@/page';
 import { Layout, Space } from 'antd';
-import { MenuBtn, Header, AudioPlayer } from './components';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { MenuBtn, Header, AudioPlayer, ListItem } from './components';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { SearchePage } from '@/page/searchPage/SearchePage';
 import { PlayerPage } from '@/page/playerPage';
 import { AlbumPage } from '@/page/albumPage';
 import { ipcRenderer } from 'electron';
 import { CheckCookie, monitorLoginStates } from '@/redux/accountLogin/slice';
-import { playingList } from '@/redux/audioDetail/slice';
+import {  playingList } from '@/redux/audioDetail/slice';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { accountInfo, userDataInfo } from '@/redux/accountLogin/accountSlice';
 import { ListPage } from '@/page/listPage';
@@ -18,11 +18,8 @@ import { FeedPage } from '@/page/feedPage';
 import { ArtistPage } from '@/page/artistPage';
 import { ClassifyPage } from '@/page/classifyPage';
 import PubSub from 'pubsub-js';
-
+import db from '../db';
 const { Sider } = Layout;
-
-
-// 渲染进程发送事件===这个可以放到一个点击事件里面去触发
 export const App: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
@@ -40,18 +37,24 @@ export const App: React.FC = () => {
 
   useEffect(() => {
 
-    ipcRenderer.send('getCookie');
-    ipcRenderer.send('getCurrentMusic');
-    ipcRenderer.send('getSongHistoryListData');
-    ipcRenderer.send('getSongplayingList');
-
-    // 在渲染进程中接收来自主进程的响应
-    ipcRenderer.on('getCookie', (event, arg) => {
-      dispatch(CheckCookie(arg.getCookie));
+    db.find({ type: "playinglist" }, (err: Error | null, data: ListItem[]) => {
+      if(err !== null) {
+        console.log(err);
+        return
+      }
+      dispatch(playingList(data))
+    })
+    db.find({ key: "cookie" }).limit(1).exec((err, data) => {
+      if (err) {
+        console.log(err);
+      } else {
+        dispatch(CheckCookie(data[0].value))
+      }
     });
-    ipcRenderer.on('getSongplayingListData', (e, data) => {
-      dispatch(playingList(data));
-    });
+    // db.remove({ key: "cookie" }, { multi: true }, function (err, numRemoved) {
+    //   // 处理结果
+    //   console.log("已完成");
+    // });
 
     PubSub.subscribe('hiddenMenu', (_, data) => {
       setHeader(data)

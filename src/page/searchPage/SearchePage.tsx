@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { Skeleton } from '@/components/common/Skeleton/Skeleton';
 import { List, ListItem } from '@/components';
-import { playingList } from '@/redux/audioDetail/slice';
+import { addPlayingList } from '@/redux/audioDetail/slice';
 import { ipcRenderer } from 'electron';
 import { songsSearch } from '@/redux/musicDetailProduct/slice';
 import { useNavigate } from 'react-router-dom';
@@ -20,14 +20,16 @@ export const SearchePage: React.FC = () => {
   const historyList = useSelector(state => state.audioData.audioInfo);
   const playList = useSelector(state => state.audioData.playingList);
   const handleChangeClick = (index: number) => {
-    const songsItem = searchListItem[index];
+    const songsItem = searchList[index];
     const findIndex = playList.findIndex((el) => el.id === songsItem.id);
     if (findIndex !== -1) {
       const newPlayList = playList.slice();
       newPlayList.splice(index, 1);
-      dispatch(playingList([songsItem, ...newPlayList]));
+      console.log(songsItem);
+      dispatch(addPlayingList(songsItem));
     } else {
-      dispatch(playingList([songsItem, ...playList]));
+      console.log(songsItem);
+      dispatch(addPlayingList(songsItem));
     }
   };
   useEffect(() => {
@@ -48,15 +50,15 @@ export const SearchePage: React.FC = () => {
     dispatch(songsSearch(params));
   }, [queryCount]);
 
-  useEffect(() => {
-    const list = [...searchListItem, ...searchList];
-    setSearchListItem(searchList.length > 0 ? list : []);
-  }, [searchList, searchListItem]);
+  // useEffect(() => {
+  //   const list = [...searchListItem, ...searchList];
+  //   setSearchListItem(searchList.length > 0 ? list : []);
+  // }, [searchList, searchListItem]);
 
   useEffect(() => {
-    PubSub.subscribe('AppChangeQueryCount',(_, data) => {
-      setQueryCount(queryCount + 1)
-    })
+    PubSub.subscribe('AppChangeQueryCount', (_, data) => {
+      setQueryCount(queryCount + 1);
+    });
   }, []);
 
   if (loading && queryCount == 1 && value.length !== 0) {
@@ -71,7 +73,7 @@ export const SearchePage: React.FC = () => {
   return (
     <>
       {
-        searchList && <List handleChangeClick={handleChangeClick} data={searchListItem}></List>
+        searchList && <List handleChangeClick={handleChangeClick} data={searchList}></List>
       }
       {
         loading && queryCount !== 1 && value.length !== 0 &&

@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { getSongsInfoData, musicAlbumData } from '@/redux/albumInfo/slice';
 import { formatStr, formatTimeDate } from '@/utils';
-import { changeAudioPlay, playingList } from '@/redux/audioDetail/slice';
+import { changeAudioPlay, addPlayingList } from '@/redux/audioDetail/slice';
 
 
 export const AlbumPage: React.FC = () => {
@@ -46,14 +46,14 @@ export const AlbumPage: React.FC = () => {
   }, [ablumInfo]);
 
   const handleAddClick = () => {
-    dispatch(playingList(ablumAllSongsList.songs))
+    // dispatch(addPlayingList(ablumAllSongsList.songs))
     dispatch(changeAudioPlay(true));
   }
   const handleAddPlaylistClick = () => {
-    dispatch(playingList([...hisoryllist, ...ablumAllSongsList.songs]))
+    // dispatch(addPlayingList([...hisoryllist, ...ablumAllSongsList.songs]))
   }
   const handleChangeClick = (index: number) => {
-    dispatch(playingList([ablumAllSongsList.songs[index], ...hisoryllist]))
+    dispatch(addPlayingList(ablumAllSongsList.songs[index],))
     dispatch(changeAudioPlay(true));
   }
   if (infoLoading) {
