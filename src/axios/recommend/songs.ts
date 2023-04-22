@@ -32,8 +32,8 @@ export function getSongsSearch(keywords: any, offset: number,   limit = 30) {
   });
 }
 
-export function getSongsSearch_c(keywords: any, offset: number, limit: number = 30) {
+export function getSongsSearch_c(keywords: any, offset: number, limit: number = 30, actionCode = 1056402) {
   return hyRequest.get({
-    url: `${Songs.songsSearch_c}keywords=${keywords}&offset=${offset}&limit=${limit}`
+    url: `${Songs.songsSearch_c}keywords=${keywords}&offset=${offset}&limit=${limit}&actionCode=1056402`
   });
 }

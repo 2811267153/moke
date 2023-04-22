@@ -32,7 +32,7 @@ const rootReducer = combineReducers({
 // const store = createStore(rootReducer, applyMiddleware(thunk));
 const store = configureStore({
   reducer: rootReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({serializableCheck: false}).concat(thunk),
   devTools: true
 })
 export type RootState = ReturnType<typeof store.getState>

@@ -72,11 +72,12 @@ export const getSongsInfoData = createAsyncThunk(
   "musicAblumData/getSongsInfoData",
   async (id: number | string) => {
     const res = await getSongsInfo(id)
+    console.log('asdf', res);
     return res;
   }
 )
 export const getAlbumidData = createAsyncThunk(
-  "musicAblumData/getSongsInfo",
+  "musicAblumData/getAlbumidData",
   async (params: albumParams) => {
   const {key, cookie} = params
     message.loading("加载中....")

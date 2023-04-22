@@ -5,6 +5,7 @@ import { List, ListItem } from '@/components';
 import { addPlayingList } from '@/redux/audioDetail/slice';
 import { songsSearch_c } from '@/redux/musicDetailProduct/slice';
 import { useNavigate } from 'react-router-dom';
+import { getSongsInfoData } from '@/redux/albumInfo/slice';
 
 export const SearchePage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -17,6 +18,8 @@ export const SearchePage: React.FC = () => {
   const value = useSelector(state => state.counter.value);
   const playList = useSelector(state => state.audioData.playingList);
   const search_cData = useSelector(state => state.musicDetailPage.searchSongs)
+  const ablumAllSongsList = useSelector(state => state.musicAlbumDetail.songsInfoData) || []
+  const songsInfoLoading = useSelector(state => state.musicAlbumDetail.songsInfoLoading)
 
   useEffect(() => {
     PubSub.subscribe('AppChangeQueryCount', (_, index) => {
@@ -37,22 +40,18 @@ export const SearchePage: React.FC = () => {
   }, [value]);
 
   useEffect(() => {
-    console.log(search_cData);
+    const idList = search_cData.map(item => item.id).join(',');
+    console.log(idList);
+    if(idList.length !== 0) {
+      dispatch(getSongsInfoData(idList))
+    }
   }, [search_cData]);
-
+  useEffect(() => {
+    console.log(ablumAllSongsList);
+  }, [ablumAllSongsList]);
 
   const handleChangeClick = (index: number) => {
-    const songsItem = searchList[index];
-    const findIndex = playList.findIndex((el) => el.id === songsItem.id);
-    if (findIndex !== -1) {
-      const newPlayList = playList.slice();
-      newPlayList.splice(index, 1);
-      console.log(songsItem);
-      dispatch(addPlayingList(songsItem));
-    } else {
-      console.log(songsItem);
-      dispatch(addPlayingList(songsItem));
-    }
+    dispatch(addPlayingList(ablumAllSongsList.songs[index]))
   };
 
   if (loading ) {
@@ -67,7 +66,7 @@ export const SearchePage: React.FC = () => {
   return (
     <>
       {
-        searchList && <List handleChangeClick={handleChangeClick} data={searchList}></List>
+        !songsInfoLoading && ablumAllSongsList.songs &&<List handleChangeClick={handleChangeClick} data={ablumAllSongsList.songs}></List>
       }
       {
         loading && queryCount !== 1 && value.length !== 0 &&

@@ -26,11 +26,11 @@ export const Header: React.FC<PropsType> = ({height}) => {
       setValue(value);
 
       dispatch(updateKeyword(value));
-      dispatch(songsSearch({ value, offset }));
+      dispatch(songsSearch_c({ value, offset }));
       dispatch(setSearchKey(value));
 
       navigate(`/searchPage/:${value}`);
-    }, 500)
+    }, 1000)
   };
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export const Header: React.FC<PropsType> = ({height}) => {
 
   const handleKeyDown = (e: any) => {
     if (e.key === 'Enter') {
-      dispatch(songsSearch({ value, offset }));
+      dispatch(songsSearch_c({ value, offset }));
       dispatch(setSearchKey(value));
       navigate(`/searchPage/:${value}`);
     }

@@ -56,7 +56,7 @@ export const AudioPlayer: React.FC = () => {
       setCurrentIndex(0);
       const params = {
         id: playList[currentIndex]?.id,
-        level: 'level',
+        level: 'standard',
         sourceid: playList[currentIndex]?.al.id,
         time: currentTime,
         cookie
@@ -175,7 +175,7 @@ export const AudioPlayer: React.FC = () => {
       PubSub.publish('AudioCurrentMusic', playList[currentIndex]);
       const params = {
         id: playList[currentIndex]?.id,
-        level: 'level',
+        level: 'standard',
         sourceid: playList[currentIndex]?.al.id,
         time: currentTime,
         cookie

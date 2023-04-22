@@ -7,7 +7,7 @@ import {Provider} from 'react-redux';
 
 import store from '@/redux/store';
 import axios from 'axios';
-axios.defaults.baseURL =  "https://service-7pl5xj3e-1259570890.gz.apigw.tencentcs.com/release/"
+axios.defaults.baseURL =  "https://service-n69e4aqo-1259570890.gz.apigw.tencentcs.com/release/"
 axios.defaults.timeout = 15000
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
