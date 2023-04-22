@@ -28,13 +28,19 @@ export const AlbumPage: React.FC = () => {
   const updateLoading = useSelector(state => state.musicAlbumDetail.updateLoading);
 
   useEffect(() => {
-    if (cookie.length != 0) {
-      const params = {
-        id: albumid!,
-        cookie
-      };
-      dispatch(musicAlbumData(params));
-    }
+    // if (cookie.length != 0) {
+    //   const params = {
+    //     id: albumid!,
+    //     cookie
+    //   };
+    //   dispatch(musicAlbumData(params));
+    // }
+
+    const params = {
+      id: albumid!,
+      cookie
+    };
+    dispatch(musicAlbumData(params));
   }, [albumid, cookie]);
 
 

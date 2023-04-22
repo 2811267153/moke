@@ -28,7 +28,7 @@ export const HistoryPlay: React.FC = () => {
   }
   return (
     <div className={styles["history-play"]}>
-      <h2>最近在听 <span> <button onClick={clearALL}> <i className="icon iconfont icon-lajitong" /> 清空</button> <button onClick={moreClick}>查询更多</button></span></h2>
+      <h2>最近在听 <span> {/*<button onClick={clearALL}> <i className="icon iconfont icon-lajitong" /> 清空</button>*/} <button onClick={moreClick}>查询更多</button></span></h2>
       <HistoryWarp playlist={playlist} list={historyList} type={"recommend"}></HistoryWarp>
     </div>
   );

@@ -15,9 +15,7 @@ interface PropsTypes {
 }
 
 export const RecommendNewSongsNewAlbum: React.FC<PropsTypes> = ({ cookie, imgUrl, data, scrollImgUrl }) => {
-  const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const playList = useSelector(state => state.audioData.playingList)
   const handleToAlbum = (_: any, resource: any) => {
     console.log(resource);
     if(resource.resourceType === 'song') {
@@ -25,8 +23,6 @@ export const RecommendNewSongsNewAlbum: React.FC<PropsTypes> = ({ cookie, imgUrl
         id: ''
       }
       params.id =resource.resourceId
-      console.log(params);
-      // dispatch(playingList([params, ...playList]))
     }else if(resource.resourceType === 'album'){
       navigate(`/album/${resource.resourceId}`);
     }

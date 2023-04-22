@@ -19,6 +19,8 @@ import { ArtistPage } from '@/page/artistPage';
 import { ClassifyPage } from '@/page/classifyPage';
 import PubSub from 'pubsub-js';
 import db from '../db';
+import { songsSearch, updateKeyword } from '@/redux/musicDetailProduct/slice';
+import { setSearchKey } from '@/redux/TestRedux/slice';
 const { Sider } = Layout;
 export const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -101,13 +103,17 @@ export const App: React.FC = () => {
       dispatch(accountInfo(cookie));
     }
   }, [cookie]);
+  let t: NodeJS.Timeout | null = null
 
   const handleScroll = () => {
     const { scrollTop, clientHeight, scrollHeight } = document.getElementsByClassName(styles.Content)[0];
-
-    PubSub.publish('AppChangeQueryCounts', scrollTop);
-    if (scrollTop + clientHeight >= scrollHeight) {
-      PubSub.publish('AppChangeQueryCount');
+    if (scrollTop + clientHeight >= scrollHeight - 50) {
+        if(t != null) {
+          clearTimeout(t)
+        }
+        t = setTimeout(() => {
+          PubSub.publish('AppChangeQueryCount', );
+        }, 1000)
     }
   };
 

@@ -3,15 +3,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import styles from './Index.module.scss';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppDispatch } from '@/redux/hooks';
+import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { setSearchKey } from '@/redux/TestRedux/slice';
-import { songsSearch, updateKeyword } from '@/redux/musicDetailProduct/slice';
+import { songsSearch, songsSearch_c, updateKeyword } from '@/redux/musicDetailProduct/slice';
 interface PropsType {
   height: number
 }
 export const Header: React.FC<PropsType> = ({height}) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const cookie = useSelector(state => state.loginUnikey.cookie) || ""
   const [value, setValue] = useState('');
   const [offset, setOffset] = useState(1);
 
@@ -31,6 +32,10 @@ export const Header: React.FC<PropsType> = ({height}) => {
       navigate(`/searchPage/:${value}`);
     }, 500)
   };
+
+  useEffect(() => {
+    console.log(cookie);
+  }, [cookie]);
 
   const handleKeyDown = (e: any) => {
     if (e.key === 'Enter') {

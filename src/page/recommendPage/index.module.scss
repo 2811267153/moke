@@ -179,6 +179,9 @@
     overflow: hidden;
     p {
       white-space: nowrap;
+      width: 131px;
+      overflow: hidden; //超出的文本隐藏
+      text-overflow: ellipsis; //溢出用省略号显示
     }
     span {
       margin-top: 10px;

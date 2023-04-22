@@ -23,6 +23,7 @@ const RouterPath = ['/', "/list", '/recommend', '/feed', '/artist', '/classify']
 
 export const RoutePage: React.FC = () => {
   const userInfo = useSelector(state => state.userSlice.accountInfoData) || null;
+  const cookie = useSelector(state => state.loginUnikey.cookie)
   const [currentIndex, setCurrentIndex] = useState(0);
   const dispatch = useAppDispatch()
   const navigate =  useNavigate()
@@ -34,7 +35,7 @@ export const RoutePage: React.FC = () => {
   const handleAccountClick =  (type: string) => {
     if(type === "account") {
       dispatch(isShowLoading(true))
-    }else if(type === "setting") {
+    }else if(type === "setting" || type === "setting" ) {
       message.info({
         content: "内容还在完善中~"
       })
@@ -53,10 +54,10 @@ export const RoutePage: React.FC = () => {
           })
         }
         <div className={styles['account-info']}>
-          <button className={styles["router-item"]} onClick={() => handleAccountClick("setting")}>
-            <i className="icon iconfont icon-xitonggongnengguanli" /> 设置
+          <button className={styles['router-item']} onClick={() => handleAccountClick('setting')}>
+            <i className='icon iconfont icon-xitonggongnengguanli' /> 设置
           </button>
-          {userInfo === null &&<button className={styles['router-item']} onClick={() => handleAccountClick('account')}>
+          {cookie == "" &&<button className={styles['router-item']} onClick={() => handleAccountClick('account')}>
             <i className='icon iconfont icon-yonghu-01' /> 请登录
           </button>}
           {userInfo !== null && <button className={styles['router-item']} onClick={() => handleAccountClick('account')}>

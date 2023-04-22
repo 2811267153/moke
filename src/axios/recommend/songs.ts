@@ -26,13 +26,13 @@ export function getSongsUrl(id: string | number, level?: string | undefined, coo
   });
 }
 
-export function getSongsSearch(keywords: any, offset: number, limit = 30) {
+export function getSongsSearch(keywords: any, offset: number,   limit = 30) {
   return hyRequest.get({
     url: `${Songs.songsSearch}keywords=${keywords}&offset=${offset}&limit=${limit}`
   });
 }
 
-export function getSongsSearch_c(keywords: any, offset: number, limit = 30) {
+export function getSongsSearch_c(keywords: any, offset: number, limit: number = 30) {
   return hyRequest.get({
     url: `${Songs.songsSearch_c}keywords=${keywords}&offset=${offset}&limit=${limit}`
   });

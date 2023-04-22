@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Image, ListItem, Skeleton } from '../common';
+import { Image, ListItem, LoginErr, Skeleton } from '../common';
 import styles from './index.module.scss';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { recommedUserListDataState } from '@/redux/recommendPlayList/slice';
@@ -148,7 +148,8 @@ export const RecommendedStation: React.FC = () => {
     <div style={{ width: '50%', marginLeft: 20 }}>
       <h2 style={{ fontWeight: 200, fontSize: 15, height: 28 }}>找到了几个于这首歌类似的歌单(〃^ω^) </h2>
       <div className={styles['song-album']}>
-        {loading && (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '131px', width: "100%" }}>
+        {cookie.length === 0 && <LoginErr message={"先登陆一下吧~"} height={131} backgroundColor={"#fff"}></LoginErr>}
+        {loading && cookie.length !== 0 && (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '131px', width: "100%" }}>
           <Skeleton />
         </div>)}
         {!loading &&

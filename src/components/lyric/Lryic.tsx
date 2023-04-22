@@ -6,7 +6,6 @@ interface LyricsProps {
   currentTime: number;
 }
 type LyricItem = [number, string];
-
 export function Lyrics({ lyrics, currentTime }: LyricsProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [marginTop, setMarginTop] = useState(20);
@@ -36,7 +35,6 @@ export function Lyrics({ lyrics, currentTime }: LyricsProps) {
   const handleItemClick = (time: string | number) => {
     PubSub.publish("UpDataTime", time)
   }
-
   return (
     <div className={styles["lyrics"]}>
       {

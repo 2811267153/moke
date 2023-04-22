@@ -9,6 +9,7 @@ import { message } from 'antd';
 import { changeAudioPlay, isLoadingDispatch, isPlayingDispatch } from '@/redux/audioDetail/slice';
 import PubSub from 'pubsub-js';
 import { useNavigate } from 'react-router-dom';
+import {Image} from '@/components';
 import { getScrobbleDispatch } from '@/redux/other/slice';
 
 export const AudioPlayer: React.FC = () => {
@@ -149,15 +150,25 @@ export const AudioPlayer: React.FC = () => {
     PubSub.publish('AudioCurretTime', [currentTime, duration , isLoading, isPlaying, playList[currentIndex], currentIndex]);
   }, [currentTime]);
 
+  let timer: NodeJS.Timeout | null = null;
   useEffect(() => {
+    if (timer) {
+      clearInterval(timer);
+    }
     if (songsUrl === '无版权歌曲') {
-      message.error('当前歌曲暂无版权信息，售后将自动切换至下一首播放').then();
-      const timer = setInterval(() => {
+      message.error('当前歌曲暂无版权信息，即将自动切换至下一首播放').then();
+      timer = setInterval(() => {
         setCurrentIndex(currentIndex + 1);
-        clearInterval(timer);
       }, 3000);
     }
+    return () => {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
   }, [songsUrl]);
+
 
   useEffect(() => {
     if(currentIndex < playList.length){
@@ -171,7 +182,6 @@ export const AudioPlayer: React.FC = () => {
       };
       dispatch(songsUrlDispatch(params));
       dispatch(songsDurationDispatch(currentsMusic?.id));
-      dispatch(getScrobbleDispatch(params))
       return
     }
     setCurrentIndex(0)
@@ -248,7 +258,7 @@ export const AudioPlayer: React.FC = () => {
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       {currentsMusic && currentsMusic.name && <div className={styles['audio']}>
         <div className={styles.audioArt}>
-          <img src={ currentsMusic?.al.picUrl} alt='' />
+          <Image key={currentsMusic?.id} src={currentsMusic?.al.picUrl}></Image>
           <div className={styles.footerSongs}>
             <span>{currentsMusic.name}</span>
             <p

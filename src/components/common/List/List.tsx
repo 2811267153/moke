@@ -51,15 +51,15 @@ export const List: React.FC<PropsType> = ({ data, privileges, onClick, handleCha
             return <div onClick={() => handleClick(index)} className={styles['item-info']} key={index}>
               <div className={styles['item-name']}>
                 {index + 1}
-                <Image width={50} height={50} src={item.al.picUrl} style={{ borderRadius: 5, marginLeft: 10 }} />
+                {/*<Image width={50} height={50} src={item.al.picUrl} style={{ borderRadius: 5, marginLeft: 10 }} />*/}
                 <span style={{ marginLeft: 20 }}>{item.name}</span>
               </div>
               <div className={styles['item-list']}>
-                <p>{item.ar[0].name}
-                </p>
+                {/*<p>{item.ar[0].name}*/}
+                {/*</p>*/}
               </div>
               <div className={styles['item-al']}>
-                专辑: {item.al.name}
+                {/*专辑: {item.al.name}*/}
               </div>
               <div className={styles['item-duration']}>
                 <i className='icon iconfont icon-bofang' />

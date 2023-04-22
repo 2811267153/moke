@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { getSongsCheckState, getSongsSearch_c, getSongsUrl } from '@/axios/recommend/songs';
+import { getSongsCheckState, getSongsSearch, getSongsSearch_c, getSongsUrl } from '@/axios/recommend/songs';
 
 
 interface MusiceDeatilState {
@@ -19,6 +19,9 @@ interface MusiceDeatilState {
   search_cSongsErr: string | null
   search_cSongs: any
   historySearchList: any[]
+  searchLoading: boolean,
+  searchErr: null | string,
+  searchSongs: any[]
 }
 
 export const musicDetailPage = createAsyncThunk(
@@ -50,6 +53,18 @@ export const songsSearch = createAsyncThunk(
   }, thunkAPI) => {
     // const data = await  getSearchSuggest(key)
     const { result } = await getSongsSearch_c(params.value, params.offset);
+    return result.songs;
+  }
+);
+export const songsSearch_c= createAsyncThunk(
+  'musicDetail/songsSearch_c',
+  async (params: {
+    value: any,
+    offset: number,
+  }, thunkAPI) => {
+    // const data = await  getSearchSuggest(key)\
+    const {value, offset} = params
+    const { result } = await getSongsSearch(value, offset);
     return result.songs;
   }
 );
@@ -116,7 +131,10 @@ const initialState: MusiceDeatilState = {
   search_cLoading: true,
   search_cSongs: [],
   search_cSongsErr: null,
-  historySearchList: []
+  historySearchList: [],
+  searchLoading: true,
+  searchErr: null,
+  searchSongs: []
 };
 
 export const musicDetailSlice = createSlice({
@@ -197,6 +215,19 @@ export const musicDetailSlice = createSlice({
     [songsSearch.rejected.type]: (state, action: PayloadAction<string | null>) => {
       state.search_cLoading = false;
       state.search_cSongsErr = action.payload;
+    },
+    [songsSearch_c.pending.type]: (state) => {
+      // return {...state, loading: true}
+      state.searchLoading = true;
+      state.searchSongs = []
+    },
+    [songsSearch_c.fulfilled.type]: (state, action) => {
+      state.searchLoading = false;
+      state.searchSongs = action.payload;
+    },
+    [songsSearch_c.rejected.type]: (state, action: PayloadAction<string | null>) => {
+      state.searchLoading = false;
+      state.searchErr = action.payload;
     }
   }
 });

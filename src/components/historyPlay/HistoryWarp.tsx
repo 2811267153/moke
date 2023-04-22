@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './index.module.scss';
 import { HistoryItem } from '@/components/historyPlay/HistoryItem';
-import { ListItem } from '@/components';
+import { ListItem, LoginErr } from '@/components';
 import { useAppDispatch } from '@/redux/hooks';
 import { addPlayingList } from '@/redux/audioDetail/slice';
 import { useHorizontalScroll } from '@/hooks/scrollHook';
@@ -41,10 +41,7 @@ export const HistoryWarp: React.FC<List> = ({ list, playlist, type }) => {
             />
           ))
         ) : (
-          <div className={styles["history-result"]} >
-            <span>当前还没有播放记录, 先去听歌吧~</span>
-            <img src='src/assets/image/benhua.png' alt='' />
-          </div>
+          <LoginErr  message={"登陆以后会获取手机上播放过的音乐展示在这里哦~"} height={200}></LoginErr>
         )}
       </div>
     </div>
