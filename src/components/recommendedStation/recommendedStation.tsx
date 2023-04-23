@@ -68,22 +68,25 @@ export const RecommendedStation: React.FC = () => {
   }, [currentMusic, cookie]);
 
 
-  const handlePlayPauseClick = () => {
+  const handlePlayPauseClick = (e: any) => {
+    e.stopPropagation()
     dispatch(changeAudioPlay(true))
     dispatch(isPlayingDispatch(!isPlaying))
   };
-
+  const handleToPlayerPage = () => {
+    navigate('/playerPage')
+  }
   return <div className={styles['recommend-station']} style={{ display: 'flex', width: '100%' }}>
     <div style={{ width: '50%' }}>
       <h2 style={{ fontWeight: 200, fontSize: 15, height: 28 }}>要继续听歌么?我把播放器给你搬过来了(〃´-ω･) </h2>
-      <div className={styles['recommend-station-warp']}>
+      <div className={styles['recommend-station-warp']} onClick={handleToPlayerPage}>
         <div className={styles['listening']}>
           <Image width='110px'
-                 src={currentMusic && currentMusic.al && currentMusic.al.picUrl}
+                 src={currentMusic && currentMusic.al && currentMusic.al.picUrl || ''}
                  height={110} />
           <div className={styles['song-info']}>
             <div style={{ height: 100 + '%', flex: '1', padding: '0 20px' }}>
-              <h3>{currentMusic?.name}</h3>
+              <h3>{currentMusic?.name || "简音乐"}</h3>
               <div className={styles['music-info']}>
                 <div className={styles['scrolling-text-container']} ref={containerRef}>
                   <div className={styles['scrolling-text']} style={{
@@ -93,8 +96,8 @@ export const RecommendedStation: React.FC = () => {
                     <p
                       className={styles['music-other']}>{currentMusic && currentMusic.ar && currentMusic.ar.map((item: any) => {
                       return <span key={item.id}>{item.name} -</span>;
-                    })} <span
-                      className={styles['music-ablum']}>专辑: {currentMusic && currentMusic.al && currentMusic.al.name}</span>
+                    }) || "简音乐"} <span
+                      className={styles['music-ablum']}>专辑: {currentMusic && currentMusic.al && currentMusic.al.name || "简音乐, 让音乐多一点简单"}</span>
                     </p>
                   </div>
                 </div>
@@ -110,9 +113,9 @@ export const RecommendedStation: React.FC = () => {
             </div>
             <div className={styles['song-info-icon']}>
               {!isPlaying && !isLoading &&
-                <i className='icon iconfont icon-zanting2' onClick={handlePlayPauseClick} style={{ fontSize: 35 }} />}
+                <i className='icon iconfont icon-zanting2' onClick={(e) => handlePlayPauseClick(e)} style={{ fontSize: 35 }} />}
               {!isLoading && isPlaying &&
-                <i className='icon iconfont icon-bofang' onClick={handlePlayPauseClick} style={{ fontSize: 35 }} />}
+                <i className='icon iconfont icon-bofang' onClick={(e) => handlePlayPauseClick(e)} style={{ fontSize: 35 }} />}
             </div>
             {isLoading && <div style={{ position: 'relative', height: 30 }}>
               <svg className={styles['icon-solid']} version='1.0' xmlns='http://www.w3.org/2000/svg'

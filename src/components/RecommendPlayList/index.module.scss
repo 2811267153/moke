@@ -5,7 +5,21 @@
   h2 {
     font-weight: 200;
     font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     height: 35px;
+
+    button{
+      padding: 5px 10px;
+      font-size: 10px;
+      background-color: transparent;
+      border: 1px solid #2b253b;
+      border-radius: 5px;
+      i {
+        font-size: 10px;
+      }
+    }
   }
   .list-warp-l {
     padding-right: 20px;

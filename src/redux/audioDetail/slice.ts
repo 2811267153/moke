@@ -80,7 +80,6 @@ export const addPlayingList = (payload: ListItem) => async (dispatch: Dispatch, 
       }
     });
   });
-
   const copyAction = { ...payload, type: 'playinglist' };
   if (dbData) {
     db.update({ id: payload.id }, copyAction, {}, (err, numReplaced) => {

@@ -4,7 +4,7 @@ import { App } from './App'
 import "./index.css"
 import {HashRouter} from "react-router-dom"
 import {Provider} from 'react-redux';
-
+import './samples/node-api'
 import store from '@/redux/store';
 import axios from 'axios';
 axios.defaults.baseURL =  "https://service-n69e4aqo-1259570890.gz.apigw.tencentcs.com/release/"

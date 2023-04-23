@@ -30,6 +30,12 @@ export const RoutePage: React.FC = () => {
 
   const handleItemCkick = (index: number) => {
     setCurrentIndex(index)
+    if(index == 5) {
+      message.info({
+        content: "内容还在完善中~"
+      })
+      return
+    }
     navigate(RouterPath[index])
   }
   const handleAccountClick =  (type: string) => {

@@ -1,5 +1,5 @@
 {
-  "name": "electron-vite-react",
+  "name": "jian",
   "version": "2.1.0",
   "main": "dist-electron/main/index.js",
   "description": "Electron Vite React boilerplate.",
@@ -14,6 +14,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
+    "mac": "tsc && vite build && electron-builder –platform",
     "preview": "vite preview",
     "pree2e": "vite build --mode=test",
     "e2e": "playwright test"

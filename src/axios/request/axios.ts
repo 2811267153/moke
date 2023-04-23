@@ -57,7 +57,7 @@ class Axios {
 }
 
 export default new Axios({
-  baseURL: 'https://netease-cloud-music-api-ecru-nu.vercel.app/',
+  baseURL: 'https://service-n69e4aqo-1259570890.gz.apigw.tencentcs.com/release/',
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' },
 });

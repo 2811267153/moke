@@ -4,8 +4,16 @@
 {
   "appId": "YourAppID",
   "asar": true,
+  "productName":"简音乐",
   "directories": {
     "output": "release/${version}"
+  },
+  "extraResources":   {
+    "from": "src/assets/image",
+    "to": "assets/image",
+    "filter": [
+      "**/*"
+    ]
   },
   "files": [
     "dist-electron",

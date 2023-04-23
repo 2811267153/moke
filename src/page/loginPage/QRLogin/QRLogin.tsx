@@ -2,18 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { checkStatus, getLoginStatus, getUnikey, qrImage } from '@/axios/api';
 import { ipcRenderer } from 'electron';
 import styles from "./index.module.scss"
-import { CaCheCookie } from '@/redux/accountLogin/slice';
-import { useAppDispatch } from '@/redux/hooks';
+import { CaCheCookie, isShowLoading, monitorLoginStates } from '@/redux/accountLogin/slice';
+import { useAppDispatch, useSelector } from '@/redux/hooks';
+import db from '../../../../db';
+import { userDataInfo } from '@/redux/accountLogin/accountSlice';
 
-interface propsType  {
-  getQrCookie?: (cookie: string) => void
-}
-export const QRLogin: React.FC<propsType> = ({getQrCookie}) => {
+
+export const QRLogin: React.FC = () => {
   const dispatch = useAppDispatch()
   const [unikey, setUnikey] = useState('');
   const [cookie, setCookie] = useState('');
   const [qrImg, setQrImg] = useState('');
   const [loginState, setLoginState] = useState<any>("获取中");
+  const accountData = useSelector(state => state.userSlice.accountInfoData);
 
   useEffect(() => {
     // 在组件中调用请求方法
@@ -36,12 +37,17 @@ export const QRLogin: React.FC<propsType> = ({getQrCookie}) => {
         clearInterval(timer);
       }
       if (statusRes?.code === 803) {
+        //清楚校友用户信息,
+        db.remove({ key: "cookie" }, { multi: true }, function (err, numRemoved) {
+          // 处理结果
+          console.log("已完成");
+        });
         // 这一步会返回cookie
         clearInterval(timer);
         setCookie(statusRes?.cookie);
         setLoginState("登录完成!")
         await getLoginStatus(statusRes?.cookie);
-        console.log('statusRes?.cookie---',statusRes?.cookie);
+        dispatch(isShowLoading(false))
         dispatch(CaCheCookie(statusRes?.cookie))
       }
     }, 3000);
@@ -51,12 +57,11 @@ export const QRLogin: React.FC<propsType> = ({getQrCookie}) => {
   }, [unikey]);
 
   useEffect(() => {
-    if(cookie) {
-      if (getQrCookie) {
-        getQrCookie(cookie);
-      }
+    if (cookie && accountData) {
+      dispatch(monitorLoginStates(cookie));
+      dispatch(userDataInfo(accountData));
     }
-  }, [cookie]);
+  }, [cookie, accountData]);
 
   return (
     <div className={styles["login-warp"]}>

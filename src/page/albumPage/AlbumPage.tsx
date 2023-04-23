@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { getSongsInfoData, musicAlbumData } from '@/redux/albumInfo/slice';
 import { formatStr, formatTimeDate } from '@/utils';
-import { changeAudioPlay, addPlayingList } from '@/redux/audioDetail/slice';
+import { changeAudioPlay, addPlayingList, playingList } from '@/redux/audioDetail/slice';
 
 
 export const AlbumPage: React.FC = () => {
@@ -19,7 +19,7 @@ export const AlbumPage: React.FC = () => {
   const ablumAllSongsList = useSelector(state => state.musicAlbumDetail.songsInfoData) || []
   const songsInfoLoading = useSelector(state => state.musicAlbumDetail.songsInfoLoading)
 
-  const hisoryllist = useSelector(state => state.audioData.playingList)
+  const historyList = useSelector(state => state.audioData.playingList)
   const ablumAllSongsInfo = useSelector(state => state.musicAlbumDetail.ablumAllSongsList);
   // const songsInfoLoading = useSelector(state => state.musicAlbumDetail.songsInfoLoading);
   const dynamicAblumData = useSelector(state => state.musicAlbumDetail.dynamicAblumData);
@@ -52,11 +52,11 @@ export const AlbumPage: React.FC = () => {
   }, [ablumInfo]);
 
   const handleAddClick = () => {
-    // dispatch(addPlayingList(ablumAllSongsList.songs))
+    dispatch(playingList(ablumAllSongsList.songs))
     dispatch(changeAudioPlay(true));
   }
   const handleAddPlaylistClick = () => {
-    // dispatch(addPlayingList([...hisoryllist, ...ablumAllSongsList.songs]))
+    dispatch(playingList([...historyList, ...ablumAllSongsList.songs]))
   }
   const handleChangeClick = (index: number) => {
     dispatch(addPlayingList(ablumAllSongsList.songs[index],))

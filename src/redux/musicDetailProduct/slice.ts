@@ -21,7 +21,7 @@ interface MusiceDeatilState {
   historySearchList: any[]
   searchLoading: boolean,
   searchErr: null | string,
-  searchSongs: any[]
+  searchSongs: any
 }
 
 export const musicDetailPage = createAsyncThunk(
@@ -65,7 +65,7 @@ export const songsSearch_c= createAsyncThunk(
     // const data = await  getSearchSuggest(key)\
     const {value, offset} = params
     const { result } = await getSongsSearch(value, offset);
-    return result.songs;
+    return result;
   }
 );
 export const musicUrl = createAsyncThunk(
@@ -129,7 +129,7 @@ const initialState: MusiceDeatilState = {
   urlErr: null,
   keyword: "",
   search_cLoading: true,
-  search_cSongs: [],
+  search_cSongs: {},
   search_cSongsErr: null,
   historySearchList: [],
   searchLoading: true,

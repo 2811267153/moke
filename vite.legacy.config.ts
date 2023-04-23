@@ -7,15 +7,11 @@ import { customStart, loadViteEnv } from 'vite-electron-plugin/plugin'
 import preload from 'vite-plugin-electron'
 import renderer from 'vite-plugin-electron-renderer'
 import pkg from './package.json'
-
 let preloadHasReady = false
-
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
   rmSync('dist-electron', { recursive: true, force: true })
-
   const sourcemap = command === 'serve' || !!process.env.VSCODE_DEBUG
-
   return {
     resolve: {
       alias: {

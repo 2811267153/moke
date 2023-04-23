@@ -53,7 +53,7 @@ export const RecommendSongs: React.FC = () => {
   }
   return (
     <div>
-      <h2>拥有你相同爱好的同学也喜欢听这些呢(｀・ω・´) </h2>
+      <h2 style={{marginBottom: 20}}>拥有你相同爱好的同学也喜欢听这些呢(｀・ω・´) </h2>
       <div className={styles['recommend-list-warp']}>
         <div className={styles['recommend-list']}>
           {

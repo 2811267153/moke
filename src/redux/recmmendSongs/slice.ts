@@ -13,7 +13,8 @@ export const recommendSongs = createAsyncThunk(
   'recommendSongsDetail/recommendSongs',
   async (cookie: string) => {
     const { data }= await getRecommendSongsList(cookie);
-    return data.data.dailySongs
+    console.log(data);
+    return data.dailySongs
   }
 );
 

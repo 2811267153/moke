@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import styles from './App.module.scss';
 import { HomePage, QRLogin, RoutePage } from '@/page';
-import { Layout, Space } from 'antd';
+import { Layout, Modal, Space } from 'antd';
 import { MenuBtn, Header, AudioPlayer, ListItem } from './components';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { SearchePage } from '@/page/searchPage/SearchePage';
 import { PlayerPage } from '@/page/playerPage';
 import { AlbumPage } from '@/page/albumPage';
 import { ipcRenderer } from 'electron';
-import { CheckCookie, monitorLoginStates } from '@/redux/accountLogin/slice';
+import { CheckCookie, isShowLoading, monitorLoginStates } from '@/redux/accountLogin/slice';
 import {  playingList } from '@/redux/audioDetail/slice';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { accountInfo, userDataInfo } from '@/redux/accountLogin/accountSlice';
@@ -19,8 +19,6 @@ import { ArtistPage } from '@/page/artistPage';
 import { ClassifyPage } from '@/page/classifyPage';
 import PubSub from 'pubsub-js';
 import db from '../db';
-import { songsSearch, updateKeyword } from '@/redux/musicDetailProduct/slice';
-import { setSearchKey } from '@/redux/TestRedux/slice';
 const { Sider } = Layout;
 export const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -36,6 +34,8 @@ export const App: React.FC = () => {
   const [header, setHeader] = useState(50);
   const paddingBottom = hidden ? 0 : "80px"
   const height = header ! == 0 ? "100vh" : "calc(100vh - 50px)"
+  const showLoading = useSelector(state => state.loginUnikey.showLoading) || false;
+
 
   useEffect(() => {
 
@@ -50,9 +50,12 @@ export const App: React.FC = () => {
       if (err) {
         console.log(err);
       } else {
-        dispatch(CheckCookie(data[0].value))
+        if(data) {
+          dispatch(CheckCookie(data[0].value))
+        }
       }
     });
+    // //清楚校友用户信息,
     // db.remove({ key: "cookie" }, { multi: true }, function (err, numRemoved) {
     //   // 处理结果
     //   console.log("已完成");
@@ -116,7 +119,9 @@ export const App: React.FC = () => {
         }, 1000)
     }
   };
-
+  const handleClosure = () => {
+    dispatch(isShowLoading(false))
+  }
   return (
     <div className={styles.App}>
       <Space direction='vertical' style={{ width: '100%' }} size={[0, 48]}>
@@ -145,6 +150,16 @@ export const App: React.FC = () => {
             <div className={hidden ? `${styles.hidden}` : styles.active}>
               <AudioPlayer />
             </div>
+
+            <Modal
+              title="请打开网易云音乐扫码登录"
+              centered
+              open={showLoading}
+              footer={null}
+              onCancel={handleClosure}
+            >
+              <QRLogin />
+            </Modal>
           </Layout>
         </Layout>
       </Space>

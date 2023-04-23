@@ -1,5 +1,5 @@
 // @ts-ignore
-import { screen ,app, BrowserWindow, shell, ipcMain, Notification } from 'electron'
+import electron, { screen ,app, BrowserWindow, shell, ipcMain, Notification} from 'electron'
 
 import { release } from 'node:os'
 import { join } from 'node:path'
@@ -32,6 +32,7 @@ if (!app.requestSingleInstanceLock()) {
   process.exit(0)
 }
 
+app.setName('简音乐')
 // Remove electron security warnings
 // This warning only shows in development mode
 // Read more on https://www.electronjs.org/docs/latest/tutorial/security
@@ -64,7 +65,6 @@ async function createWindow() {
   })
   // 启动 Service Worker
   // ServiceWorker.register(path.join(__dirname, 'service-worker.js'));
-  console.log(path.join(__dirname));
 
   if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
     win.loadURL(url)
@@ -132,14 +132,14 @@ ipcMain.handle('open-win', (_, arg) => {
 ipcMain.on("btn0", (e) => {
   win.close();
 })
-ipcMain.on("btn1", (e) => {
+ipcMain.on("btn2", (e) => {
   if (win.isMaximized()) {
     win.unmaximize();
   } else {
     win.maximize();
   }
 })
-ipcMain.on("btn2", (e) => {
+ipcMain.on("btn1", (e) => {
   win.minimize();
 })
 //创建新窗口
