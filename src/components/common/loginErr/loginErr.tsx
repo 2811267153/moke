@@ -8,18 +8,20 @@ interface PropsType {
 }
 
 const imgPath = [
-  'https://files.catbox.moe/chan2p.png',
-  'https://files.catbox.moe/cq3ylh.png',
-  'https://files.catbox.moe/dpb4k3.png',
-  'https://files.catbox.moe/goalu7.png',
-  'https://files.catbox.moe/yr2twh.png',
-  'https://files.catbox.moe/vvgwqs.png',
-  'https://files.catbox.moe/tit9h6.png',
-  'https://files.catbox.moe/0rwofs.png',
-  'https://files.catbox.moe/w8l5so.png',
-  'https://files.catbox.moe/izeetd.png',
-  'https://files.catbox.moe/b6pm8u.png',
-  'https://files.catbox.moe/b6pm8u.png',
+  'https://i.imgtg.com/2023/04/23/Ik4rM.webp',
+  'https://i.imgtg.com/2023/04/23/IkPsc.webp',
+  'https://i.imgtg.com/2023/04/23/Iktor.webp',
+  'https://i.imgtg.com/2023/04/23/IkDGG.webp',
+  'https://i.imgtg.com/2023/04/23/IkJgq.webp',
+  'https://i.imgtg.com/2023/04/23/IkH31.webp',
+  'https://i.imgtg.com/2023/04/23/IkEhI.webp',
+  'https://i.imgtg.com/2023/04/23/IkGtD.webp',
+  'https://i.imgtg.com/2023/04/23/IkQ2F.webp',
+  'https://i.imgtg.com/2023/04/23/Ik0W6.webp',
+  'https://i.imgtg.com/2023/04/23/IkcgP.webp',
+  'https://i.imgtg.com/2023/04/23/IkdVb.webp',
+  'https://i.imgtg.com/2023/04/23/IkVol.webp',
+  'https://i.imgtg.com/2023/04/23/IkYrg.webp',
 ]
 
 export const LoginErr: React.FC<PropsType> = ({message, height,backgroundColor}) => {

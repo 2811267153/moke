@@ -7,7 +7,6 @@ import Color from 'color-thief-react';
 import { changeAudioPlay, isPlayingDispatch } from '@/redux/audioDetail/slice';
 import { getLyricDispatch } from '@/redux/other/slice';
 
-
 export const PlayerPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const [countTime, setCountTime] = useState(0);
@@ -58,10 +57,10 @@ export const PlayerPage: React.FC = () => {
 
   return (
     <div className={styles.player_page}>
-      <img src={currentMusic?.al.picUrl}  alt='' key={currentMusic?.id}/>
+      <img src={currentMusic?.al.picUrl || "https://i.imgtg.com/2023/04/23/IkfQB.png"}  alt='' key={currentMusic?.id}/>
       <div className={styles.player_filter}>
         <div className={styles.player_info}>
-          <Image src={currentMusic?.al.picUrl} key={currentMusic?.id}/>
+          <Image src={currentMusic?.al.picUrl || 'https://i.imgtg.com/2023/04/23/IkfQB.png'} key={currentMusic?.id}/>
           <h3>{currentMusic?.name}</h3>
           <div className={styles.player_artist}>
             <span>{currentMusic?.al.name}</span>
@@ -131,7 +130,8 @@ export const PlayerPage: React.FC = () => {
           </div>
         </div>
         <div className={styles.player_lyric}>
-          {!lyricLoading && <Lyrics lyrics={lyricData} currentTime={countTime}></Lyrics>}
+          {!lyricLoading && lyricData && <Lyrics lyrics={lyricData} currentTime={countTime}></Lyrics>}
+          {lyricLoading && <p>歌词加载中</p>}
         </div>
       </div>
       <i onClick={handleHiddenMeun} className={`${styles.iconfonts} icon iconfont icon-touying`}></i>
