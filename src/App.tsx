@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './App.module.scss';
 import { HomePage, QRLogin, RoutePage } from '@/page';
-import { Layout, Modal, Space } from 'antd';
+import { Layout, message, Modal, Space } from 'antd';
 import { MenuBtn, Header, AudioPlayer, ListItem } from './components';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { SearchePage } from '@/page/searchPage/SearchePage';
@@ -48,9 +48,9 @@ export const App: React.FC = () => {
     })
     db.find({ key: "cookie" }).limit(1).exec((err, data) => {
       if (err) {
-        console.log(err);
+        message.info(`cookie is error: ${err.message}`, )
       } else {
-        if(data) {
+        if(data.length !== 0) {
           dispatch(CheckCookie(data[0].value))
         }
       }

@@ -19,9 +19,9 @@ const initialCounterState: initialAudioDetailState = {
   currentMusic: {},
   songHistoryList: [],
   playingList: [],
-  isPlaying: false,
+  isPlaying: true,
   isAudioPlay: false,
-  isLoading: true
+  isLoading: false
 };
 
 const audioSlice = createSlice({

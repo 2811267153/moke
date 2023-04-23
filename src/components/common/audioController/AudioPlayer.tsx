@@ -32,7 +32,6 @@ export const AudioPlayer: React.FC = () => {
   const [flag, setFlag] = useState(true); //控制页面是否初次打开
 
   useEffect(() => {
-
     PubSub.subscribe('currentIndex', (_, index) => {
       setCurrentIndex(index);
     });
@@ -68,11 +67,13 @@ export const AudioPlayer: React.FC = () => {
   }, [playList]);
 
   useEffect(() => {
+    dispatch(isPlayingDispatch(true))
+    dispatch(isLoadingDispatch(false))
     if (playList.length !== 0 && currentsMusic?.id != undefined) {
       if(flag) {
         const params = {
           id: playList[currentIndex]?.id,
-          level: 'level',
+          level: 'standard',
           sourceid: playList[currentIndex]?.al.id,
           time: currentTime,
           cookie
@@ -93,6 +94,8 @@ export const AudioPlayer: React.FC = () => {
       const onLoadedData = () => {
         dispatch(isLoadingDispatch(false))
         dispatch(isPlayingDispatch(true));
+        console.log('开始播放', isLoading);
+
         setDuration(audio.duration > 31 ? audio.duration : (songsDuration / 1000));
         if (audio.duration <= 32) {
           message.info('当前歌曲为30秒试听版本');
@@ -100,26 +103,29 @@ export const AudioPlayer: React.FC = () => {
         PubSub.publish('AudioCurrentLoadingMusicData', false);
       };
       const onprogress = () => {
+        dispatch(isLoadingDispatch(true))
         const bufferedTimeRanges = audio.buffered;
         if (bufferedTimeRanges.length > 0) {
           const bufferedTime = bufferedTimeRanges.end(bufferedTimeRanges.length - 1);
-          // console.log(`已缓冲: ${bufferedTime.toFixed(2)}秒`);
+          console.log(`已缓冲: ${bufferedTime.toFixed(2)}秒`);
         }
       }
       const onTimeUpdate = () => {
         setCurrentTime(audio.currentTime);
+        dispatch(isLoadingDispatch(false))
       };
 
       const onEnded = () => {
         handleNextClick(undefined,'next');
         setCurrentTime(0);
-        dispatch(isPlayingDispatch(true));
+        dispatch(isPlayingDispatch(false));
       };
       const onPlaying = () => {
         dispatch(isLoadingDispatch(false))
         dispatch(isPlayingDispatch(false));
       };
       const onwaiting = () => {
+        console.log('abc');
         dispatch(isLoadingDispatch(true))
         dispatch(isPlayingDispatch(false))
       }
@@ -127,6 +133,7 @@ export const AudioPlayer: React.FC = () => {
         if(autoPlay) {
           audio.play()
           dispatch(isPlayingDispatch(true))
+          dispatch(isLoadingDispatch(false))
         }
       }
 
@@ -194,10 +201,10 @@ export const AudioPlayer: React.FC = () => {
     }
     if (isPlaying) {
       audio.pause();
-      setCurrentTime(0);
+      // setCurrentTime(0);
     } else {
       audio.play();
-      setCurrentTime(0);
+      // setCurrentTime(0);
     }
   }, [isPlaying]);
   const handlePlayPauseClick = (e:any) => {
@@ -210,7 +217,6 @@ export const AudioPlayer: React.FC = () => {
     if(e !== undefined) {
       e.stopPropagation()
     }
-    console.log(currentIndex);
     switch (type) {
       case 'next': {
         if (currentIndex < playList.length - 1) {
@@ -273,9 +279,8 @@ export const AudioPlayer: React.FC = () => {
       <div className={styles['iconfont']}>
         <i className='icon iconfont icon-shangyiqu' onClick={(event) => handleNextClick(event, 'piece')} />
         {/*如果isPlaying是true显示播放按钮,否则显示暂停*/}
-        {!isPlaying && !isLoading &&
-          <i className='icon iconfont icon-bofangzhong' onClick={(e) => handlePlayPauseClick(e)} style={{ fontSize: 35 }} />}
-        {isPlaying && !isLoading &&
+        {!isPlaying && !isLoading ?
+          <i className='icon iconfont icon-bofangzhong' onClick={(e) => handlePlayPauseClick(e)} style={{ fontSize: 35 }} /> :
           <i className='icon iconfont icon-zanting' onClick={e => handlePlayPauseClick(e)} style={{ fontSize: 35 }} />}
         {isLoading && <div style={{ position: 'relative', height: 30 }}>
           <svg className={styles['icon-solid']} version='1.0' xmlns='http://www.w3.org/2000/svg'
