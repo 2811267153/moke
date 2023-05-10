@@ -11,6 +11,7 @@ import PubSub from 'pubsub-js';
 import { useNavigate } from 'react-router-dom';
 import {Image} from '@/components';
 import { getScrobbleDispatch } from '@/redux/other/slice';
+import { readdirSync } from 'fs';
 
 export const AudioPlayer: React.FC = () => {
   const navigate = useNavigate()
@@ -30,6 +31,8 @@ export const AudioPlayer: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const currentsMusic = playList?.[currentIndex] || {};
   const [flag, setFlag] = useState(true); //控制页面是否初次打开
+  //读取本地歌曲
+  const [musicList, setMusicList] = useState<any>([]);
 
   useEffect(() => {
     PubSub.subscribe('currentIndex', (_, index) => {
@@ -42,12 +45,15 @@ export const AudioPlayer: React.FC = () => {
         audioRef.current.play()
       }
     })
+    //读取本地歌曲
+    loadMusic()
 
     return () => {
       PubSub.unsubscribe('currentIndex');
       // PubSub.unsubscribe('RecommendedStation');
       PubSub.unsubscribe('AudioCurrentMusic');
     };
+
   }, []);
 
   useEffect(() => {
@@ -107,7 +113,7 @@ export const AudioPlayer: React.FC = () => {
         const bufferedTimeRanges = audio.buffered;
         if (bufferedTimeRanges.length > 0) {
           const bufferedTime = bufferedTimeRanges.end(bufferedTimeRanges.length - 1);
-          console.log(`已缓冲: ${bufferedTime.toFixed(2)}秒`);
+          // console.log(`已缓冲: ${bufferedTime.toFixed(2)}秒`);
         }
       }
       const onTimeUpdate = () => {
@@ -125,7 +131,6 @@ export const AudioPlayer: React.FC = () => {
         dispatch(isPlayingDispatch(false));
       };
       const onwaiting = () => {
-        console.log('abc');
         dispatch(isLoadingDispatch(true))
         dispatch(isPlayingDispatch(false))
       }
@@ -255,6 +260,27 @@ export const AudioPlayer: React.FC = () => {
   const handelClick = () => {
     navigate('/playerPage')
   }
+  const loadMusic = () => {
+    const musicDir = 'C:/Users/breeze/Music';
+    const files = readdirSync(musicDir);
+    const musicFiles = files.filter((file: any) => /\.(mp3|wav|ogg|flac)$/i.test(file));
+
+    const musicList = musicFiles.map((file: string) => {
+      const musicUrl = `${musicDir}/${file}`;
+      const fileExtension = file.split('.').pop();
+      const filenameWithoutExtension = file.substring(0, file.lastIndexOf('.')); // 去掉文件格式后缀名
+      const [artistName, songTitle] = filenameWithoutExtension.split(' - '); // 分解为艺术家和歌曲名称
+
+      // return { musicUrl, musicName: file.split('.').pop() };
+      const music = {
+
+      }
+
+      console.log("fileExtension",fileExtension, "filenameWithoutExtension",filenameWithoutExtension, "songTitle", songTitle, "artistName", artistName);
+    });
+    setMusicList(musicList);
+    console.log(musicList);
+  };
 
   return <div className={`${styles['footer']}`} onClick={handelClick}>
     <div className={styles['audio-controller-warp']}>

@@ -15,11 +15,13 @@ export const HistoryPlay: React.FC = () => {
     dispatch(clearPlayingList([]));
   }
   useEffect(() => {
-    const params = {
-      limit: 20,
-      cookie
+    if(cookie) {
+      const params = {
+        limit: 20,
+        cookie
+      }
+      dispatch(getRecentSongsDispatch(params))
     }
-    dispatch(getRecentSongsDispatch(params))
   }, [cookie]);
 
 

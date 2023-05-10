@@ -8,16 +8,12 @@
   "directories": {
     "output": "release/${version}"
   },
-  "extraResources":   {
-    "from": "src/assets/image",
-    "to": "assets/image",
-    "filter": [
-      "**/*"
-    ]
-  },
   "files": [
     "dist-electron",
     "dist"
+  ],
+  "extraFiles": [
+    "build/icon.ico"
   ],
   "mac": {
     "artifactName": "${productName}_${version}.${ext}",

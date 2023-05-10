@@ -8,7 +8,6 @@ import { changeAudioPlay, isPlayingDispatch } from '@/redux/audioDetail/slice';
 import { useNavigate } from 'react-router-dom';
 import PubSub from 'pubsub-js';
 
-
 interface recommendListItem {
   coverImgUrl?: string
   name?: string,
@@ -30,6 +29,8 @@ export const RecommendedStation: React.FC = () => {
   const containerRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(5);
 
+
+
   const handleToAlbum = (index: number) => {
     navigate(`/album/${recommendUserListData[index].id}`);
   };
@@ -38,6 +39,7 @@ export const RecommendedStation: React.FC = () => {
     PubSub.subscribe('AudioCurrentMusic', (_, data) => {
       setCurrentMusic(data);
     });
+
 
     PubSub.subscribe('AudioCurretTime', (_, data) => {
       setWidth(data[0] / data[1] * 100);
@@ -67,7 +69,6 @@ export const RecommendedStation: React.FC = () => {
     }
   }, [currentMusic, cookie]);
 
-
   const handlePlayPauseClick = (e: any) => {
     e.stopPropagation()
     dispatch(changeAudioPlay(true))
@@ -75,6 +76,11 @@ export const RecommendedStation: React.FC = () => {
   };
   const handleToPlayerPage = () => {
     navigate('/playerPage')
+  }
+  // 读取本地音乐文件
+
+  const handelGetSongs = () => {
+
   }
   return <div className={styles['recommend-station']} style={{ display: 'flex', width: '100%' }}>
     <div style={{ width: '50%' }}>
@@ -107,7 +113,6 @@ export const RecommendedStation: React.FC = () => {
                 <div className={styles['player-controller']}>
                   <div className={styles['player-controller-solid']} style={{ width: width + '%' }}></div>
                 </div>
-                {/*{searchData.duration }*/}
                 <span>{format(duration)}</span>
               </div>
             </div>
@@ -151,20 +156,20 @@ export const RecommendedStation: React.FC = () => {
     <div style={{ width: '50%', marginLeft: 20 }}>
       <h2 style={{ fontWeight: 200, fontSize: 15, height: 28 }}>找到了几个于这首歌类似的歌单(〃^ω^) </h2>
       <div className={styles['song-album']}>
-        {cookie.length === 0 && <LoginErr message={"先登陆一下吧~"} height={131} backgroundColor={"#fff"}></LoginErr>}
         {loading && cookie.length !== 0 && (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '131px', width: "100%" }}>
           <Skeleton />
         </div>)}
-        {!loading &&
-          recommendUserListData.map((item, index) => {
-            return <div className={styles['album-item']} key={item.id} onClick={() => handleToAlbum(index)}>
-              <Image src={item.coverImgUrl}></Image>
-              <p><span>{item.name}</span></p>
-            </div>;
-          })
-        }
+        <div className={styles['album-item']} onClick={() => handelGetSongs}>
+          <a><i className='icon iconfont icon-yinle'></i>
+          <p>
+            本地歌曲
+          </p>
+          </a>
+        </div>
+        {cookie.length === 0 &&<div style={{ flex: 1, paddingLeft: 20 }}>
+            <LoginErr message={'登陆后获取收藏歌单~'} height={131} backgroundColor={'#fff'}></LoginErr>
+        </div>}
       </div>
     </div>
-
   </div>;
 };

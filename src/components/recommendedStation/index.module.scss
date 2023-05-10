@@ -156,3 +156,23 @@
         transform: translateX(-100%);
     }
 }
+.album-item {
+    height: 131px;
+    width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    a {
+        border-radius: 5px;
+        text-align: center;
+
+        color: #2b253b;
+        i{
+            font-size: 30px;
+        }
+    }
+
+    p {
+        padding-top: 10px;
+    }
+}
