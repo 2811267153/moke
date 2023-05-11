@@ -79,8 +79,8 @@ export const RecommendedStation: React.FC = () => {
   }
   // 读取本地音乐文件
 
-  const handelGetSongs = () => {
-
+  const handelGetSongs = (type: 'file' | "live" | "playlist") => {
+    navigate(`/list/${type}`)
   }
   return <div className={styles['recommend-station']} style={{ display: 'flex', width: '100%' }}>
     <div style={{ width: '50%' }}>
@@ -159,16 +159,27 @@ export const RecommendedStation: React.FC = () => {
         {loading && cookie.length !== 0 && (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '131px', width: "100%" }}>
           <Skeleton />
         </div>)}
-        <div className={styles['album-item']} onClick={() => handelGetSongs}>
+        <div className={styles['album-item']} onClick={() => handelGetSongs('file')}>
           <a><i className='icon iconfont icon-yinle'></i>
           <p>
             本地歌曲
           </p>
           </a>
         </div>
-        {cookie.length === 0 &&<div style={{ flex: 1, paddingLeft: 20 }}>
-            <LoginErr message={'登陆后获取收藏歌单~'} height={131} backgroundColor={'#fff'}></LoginErr>
-        </div>}
+        <div className={styles['album-item']} onClick={() => handelGetSongs("live")}>
+          <a><i className='icon iconfont icon-aixin'></i>
+          <p>
+            我喜欢
+          </p>
+          </a>
+        </div>
+        <div className={styles['album-item']} onClick={() => handelGetSongs('playlist')}>
+          <a><i className='icon iconfont icon-bofangduilie'></i>
+          <p>
+            我的歌单
+          </p>
+          </a>
+        </div>
       </div>
     </div>
   </div>;

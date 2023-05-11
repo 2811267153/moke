@@ -139,7 +139,7 @@ export const App: React.FC = () => {
                 <Route path='/searchPage/:searchKey' element={<SearchePage />}></Route>
                 <Route path='/playerPage' element={<PlayerPage />}></Route>
                 <Route path='/album/:albumid' element={<AlbumPage />}></Route>
-                <Route path='/list' element={<ListPage />}></Route>
+                <Route path='/list/:type' element={<ListPage />}></Route>
                 <Route path='/recommend' element={<RecommendPage />}></Route>
                 <Route path='/feed' element={<FeedPage />}></Route>
                 <Route path='/artist' element={<ArtistPage />}></Route>

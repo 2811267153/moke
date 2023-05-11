@@ -24,7 +24,6 @@ export const Header: React.FC<PropsType> = ({height}) => {
     t = setTimeout(() => {
       const { value } = e.target;
       setValue(value);
-
       dispatch(updateKeyword(value));
       dispatch(songsSearch_c({ value, offset }));
       dispatch(setSearchKey(value));
@@ -47,8 +46,8 @@ export const Header: React.FC<PropsType> = ({height}) => {
   return (
     <div className={styles['header-warp']} style={{height: height + "px", overflow: 'hidden'}}>
       <div className={styles['header-router']}>
-        <button onClick={() => history.go(-1)} className='iconfont icon-zuo-01'></button>
-        <button onClick={() => history.go(+1)} className='iconfont icon-you-01'></button>
+        <button onClick={() => history.go(-1)} className='iconfont icon-zuojiantou'></button>
+        <button onClick={() => history.go(+1)} className='iconfont icon-zuojiantou-copy'></button>
       </div>
       <div className={styles['_id-search-warp']}>
         <div className={styles['_id-search']}>

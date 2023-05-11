@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from '@/App.module.scss';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import {
@@ -11,11 +11,11 @@ import PubSub from 'pubsub-js';
 import { useNavigate } from 'react-router-dom';
 import {Image} from '@/components';
 import { getScrobbleDispatch } from '@/redux/other/slice';
-import { readdirSync } from 'fs';
 
 export const AudioPlayer: React.FC = () => {
   const navigate = useNavigate()
-  const songsUrl = useSelector(state => state.musicDetailPage.songsUrl) || ''; //获取歌曲url
+  const songsUrl = useSelector(state => state.musicDetailPage.songsUrl) || ''; //获取线上歌曲url
+  const [benDiUrl, setBenDiUrl] = useState();//获取本地url
   const playList = useSelector(state => state.audioData.playingList || []);//保存正在播放的音乐
   const songsDuration = useSelector(state => state.musicDetailPage.songsDuration);
   const autoPlay = useSelector(state => state.audioData.isAudioPlay);
@@ -31,8 +31,6 @@ export const AudioPlayer: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const currentsMusic = playList?.[currentIndex] || {};
   const [flag, setFlag] = useState(true); //控制页面是否初次打开
-  //读取本地歌曲
-  const [musicList, setMusicList] = useState<any>([]);
 
   useEffect(() => {
     PubSub.subscribe('currentIndex', (_, index) => {
@@ -66,9 +64,14 @@ export const AudioPlayer: React.FC = () => {
         time: currentTime,
         cookie
       };
-      dispatch(songsUrlDispatch(params));
-      dispatch(songsDurationDispatch(currentsMusic?.id));
-      dispatch(getScrobbleDispatch(params))
+      //如果当前播放歌曲不包含url属性 则发送请求
+      if(!playList[currentIndex].hasOwnProperty('url')){
+        dispatch(songsUrlDispatch(params));
+        dispatch(songsDurationDispatch(currentsMusic?.id));
+        dispatch(getScrobbleDispatch(params))
+      }else {
+        setBenDiUrl(playList[currentIndex].url)
+      }
     }
   }, [playList]);
 
@@ -84,9 +87,14 @@ export const AudioPlayer: React.FC = () => {
           time: currentTime,
           cookie
         };
-        dispatch(songsUrlDispatch(params));
-        dispatch(songsDurationDispatch(currentsMusic?.id));
-        dispatch(getScrobbleDispatch(params))
+        //如果当前播放歌曲不包含url属性 则发送请求
+        if(!playList[currentIndex].hasOwnProperty('url')){
+          dispatch(songsUrlDispatch(params));
+          dispatch(songsDurationDispatch(currentsMusic?.id));
+          dispatch(getScrobbleDispatch(params))
+        }else {
+          setBenDiUrl(playList[currentIndex].url)
+        }
         setFlag(false)
       }
       PubSub.subscribe("PlayerPageChangeSongs", (_, data) => {
@@ -100,8 +108,6 @@ export const AudioPlayer: React.FC = () => {
       const onLoadedData = () => {
         dispatch(isLoadingDispatch(false))
         dispatch(isPlayingDispatch(true));
-        console.log('开始播放', isLoading);
-
         setDuration(audio.duration > 31 ? audio.duration : (songsDuration / 1000));
         if (audio.duration <= 32) {
           message.info('当前歌曲为30秒试听版本');
@@ -192,11 +198,19 @@ export const AudioPlayer: React.FC = () => {
         time: currentTime,
         cookie
       };
-      dispatch(songsUrlDispatch(params));
-      dispatch(songsDurationDispatch(currentsMusic?.id));
-      return
+      console.log(playList[currentIndex]);
+      //如果当前播放歌曲不包含url属性 则发送请求
+      if(!playList[currentIndex].hasOwnProperty('url')){
+        console.log("abc");
+        dispatch(songsUrlDispatch(params));
+        dispatch(songsDurationDispatch(currentsMusic?.id));
+        dispatch(getScrobbleDispatch(params))
+      }else {
+        setBenDiUrl(playList[currentIndex].url)
+      }
+    }else {
+      setCurrentIndex(0)
     }
-    setCurrentIndex(0)
   }, [currentIndex]);
 
   useEffect(() => {
@@ -217,7 +231,9 @@ export const AudioPlayer: React.FC = () => {
     dispatch(isPlayingDispatch(!isPlaying));
     dispatch(changeAudioPlay(true));
   };
+  const getSongsUrl = () => {
 
+  }
   const handleNextClick = (e:any, type: "next" | "piece") => {
     if(e !== undefined) {
       e.stopPropagation()
@@ -261,26 +277,9 @@ export const AudioPlayer: React.FC = () => {
     navigate('/playerPage')
   }
   const loadMusic = () => {
-    const musicDir = 'C:/Users/breeze/Music';
-    const files = readdirSync(musicDir);
-    const musicFiles = files.filter((file: any) => /\.(mp3|wav|ogg|flac)$/i.test(file));
-
-    const musicList = musicFiles.map((file: string) => {
-      const musicUrl = `${musicDir}/${file}`;
-      const fileExtension = file.split('.').pop();
-      const filenameWithoutExtension = file.substring(0, file.lastIndexOf('.')); // 去掉文件格式后缀名
-      const [artistName, songTitle] = filenameWithoutExtension.split(' - '); // 分解为艺术家和歌曲名称
-
-      // return { musicUrl, musicName: file.split('.').pop() };
-      const music = {
-
-      }
-
-      console.log("fileExtension",fileExtension, "filenameWithoutExtension",filenameWithoutExtension, "songTitle", songTitle, "artistName", artistName);
-    });
-    setMusicList(musicList);
-    console.log(musicList);
   };
+
+
 
   return <div className={`${styles['footer']}`} onClick={handelClick}>
     <div className={styles['audio-controller-warp']}>
@@ -341,7 +340,9 @@ export const AudioPlayer: React.FC = () => {
         <i className='icon iconfont icon-yinliang1' style={{ fontSize: 20, marginRight: 20 }}></i>
         <i className='icon iconfont icon-bofangduilie' style={{ fontSize: 20, marginRight: 20 }}></i>
       </div>
-      <audio src={songsUrl} autoPlay={autoPlay} ref={audioRef} />
+      {playList[currentIndex] && playList[currentIndex].url && <audio src={benDiUrl} autoPlay={autoPlay} ref={audioRef} />}
+      {playList[currentIndex] && playList[currentIndex].url === undefined && <audio src={songsUrl} autoPlay={autoPlay} ref={audioRef} />}
+
     </div>
   </div>;
 };

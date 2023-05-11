@@ -104,21 +104,20 @@ export function copyWritableProperties(source: any, target: any) {
   });
 }
 
-export function deepClone(obj: any) {
-  if (obj === null || typeof obj !== "object") {
-    return obj;
+export const updateMusicList = (uniqueList:any[], musicList: any[]) => {
+  for (const uniqueObj of uniqueList) {
+    for (const musicObj of musicList) {
+      if (uniqueObj.name === musicObj.name) {
+        for (const [key, value] of Object.entries(uniqueObj)) {
+          if (!musicObj.hasOwnProperty(key)) {
+            musicObj[key] = value;
+          }
+        }
+      }
+    }
   }
-
-  let clone = Array.isArray(obj) ? [] : {};
-
-  for (let key in obj) {
-    // @ts-ignore
-    clone[key] = deepClone(obj[key]);
-  }
-
-  return clone;
-}
-
+  return musicList;
+};
 interface Replacements {
   [key: string]: string;
 }

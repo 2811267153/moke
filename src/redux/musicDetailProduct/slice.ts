@@ -61,10 +61,11 @@ export const songsSearch_c= createAsyncThunk(
   async (params: {
     value: any,
     offset: number,
+    limit?: number
   }, thunkAPI) => {
     // const data = await  getSearchSuggest(key)\
-    const {value, offset} = params
-    const { result } = await getSongsSearch(value, offset);
+    const {value, offset, limit} = params
+    const { result } = await getSongsSearch(value, offset, limit);
     return result;
   }
 );

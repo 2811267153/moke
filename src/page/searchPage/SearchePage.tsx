@@ -45,7 +45,6 @@ export const SearchePage: React.FC = () => {
     dispatch(songsSearch_c({ value, offset: page }));
   };
 
-
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 50px)' }}>

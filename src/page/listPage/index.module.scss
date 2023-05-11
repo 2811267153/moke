@@ -1,26 +1,50 @@
 @import "src/assets/css/root.scss";
 
-.banner-warp {
-  margin: 20px;
-  border-radius: 10px;
-  overflow: hidden;
-  height: 300px;
-  display: flex;
-  img {
-    height: 300px;
-    width: 100%;
+.list_top {
+  h2 {
+    font-size: 20px;
   }
-  .banner-item {
-    position: relative;
-    button {
-      position: absolute;
-      right: 40px;
-      bottom: 20px;
-      border-radius: 10px;
-      padding: 10px 20px;
-      background: rgba( 255, 255, 255, 0.25 );
-      box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-      backdrop-filter: blur( 4px );
+
+  .deputy_name {
+    align-items: center;
+    display: flex;
+    padding: 15px 20px 0;
+  }
+  .deputy_item {
+    width: 150px;
+    text-align: left;
+    background-color: transparent;
+    p {
+      text-align: center;
+      width: 100px;
+      position: relative;
+      height: 30px;
     }
+    &:hover {
+      .deputy_solid {
+        width: 100%;
+      }
+    }
+  }
+  .deputy_solid {
+    position: absolute;
+    bottom: 0;
+    display: block;
+    height: 2px;
+    background-color: $theme-active-color;
+    transition: width 0.2s ease-out, left 0.2s ease-out, transform 0.2s ease-out;
+    width: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.active {
+  color: $theme-active-color;
+
+  .deputy_solid {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12%;
   }
 }
