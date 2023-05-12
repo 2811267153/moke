@@ -101,9 +101,9 @@ export const PlayerPage: React.FC = () => {
             {isLoading && <div style={{ position: 'relative', height: 30 }}>
               <svg className={styles['icon-solid']} version='1.0' xmlns='http://www.w3.org/2000/svg'
                    width='25.000000pt' height='25.000000pt' viewBox='0 0 200.000000 200.000000'
-                   preserveAspectRatio='xMidYMid meet'>
+                   preserveAspectRatio='xMidYMid meet' fill='#f2f2f2'>
                 <g transform='translate(0.000000,200.000000) scale(0.100000,-0.100000)'
-                   fill='#ff59a9' stroke='none'>
+                  stroke='none'>
                   <path d='M874 1910 c-85 -12 -136 -26 -233 -66 -211 -87 -397 -274 -485 -487
                     -56 -134 -69 -203 -69 -357 0 -154 13 -223 69 -357 45 -111 115 -211 207 -300
                     93 -89 173 -143 280 -188 132 -54 204 -68 357 -69 152 -1 242 18 378 80 148
@@ -116,9 +116,9 @@ export const PlayerPage: React.FC = () => {
               </svg>
               <svg style={{ position: 'absolute', left: 0 }} version='1.0' xmlns='http://www.w3.org/2000/svg'
                    width='25.000000pt' height='25.000000pt' viewBox='0 0 200.000000 200.000000'
-                   preserveAspectRatio='xMidYMid meet'>
+                   preserveAspectRatio='xMidYMid meet' fill='#f2f2f2'>
                 <g transform='translate(0.000000,200.000000) scale(0.100000,-0.100000)'
-                   fill='#ff59a9' stroke='none'>
+                   stroke='none'>
                   <path d='M861 1347 c-19 -7 -44 -25 -55 -40 -20 -27 -21 -43 -24 -292 -3 -290
                         1 -317 54 -352 16 -10 46 -18 69 -18 36 0 65 16 234 130 201 135 231 165 231
                         230 0 55 -28 82 -214 208 -213 145 -235 155 -295 134z' />

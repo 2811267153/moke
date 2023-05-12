@@ -279,8 +279,6 @@ export const AudioPlayer: React.FC = () => {
   const loadMusic = () => {
   };
 
-
-
   return <div className={`${styles['footer']}`} onClick={handelClick}>
     <div className={styles['audio-controller-warp']}>
       <div className={styles['audio-controller']}
@@ -304,9 +302,8 @@ export const AudioPlayer: React.FC = () => {
       <div className={styles['iconfont']}>
         <i className='icon iconfont icon-shangyiqu' onClick={(event) => handleNextClick(event, 'piece')} />
         {/*如果isPlaying是true显示播放按钮,否则显示暂停*/}
-        {!isPlaying && !isLoading ?
-          <i className='icon iconfont icon-bofangzhong' onClick={(e) => handlePlayPauseClick(e)} style={{ fontSize: 35 }} /> :
-          <i className='icon iconfont icon-zanting' onClick={e => handlePlayPauseClick(e)} style={{ fontSize: 35 }} />}
+        {!isPlaying && !isLoading &&  <i className='icon iconfont icon-bofangzhong' onClick={(e) => handlePlayPauseClick(e)} style={{ fontSize: 35 }} />}
+        {!isLoading && isPlaying && <i className='icon iconfont icon-zanting' onClick={e => handlePlayPauseClick(e)} style={{ fontSize: 35 }} />}
         {isLoading && <div style={{ position: 'relative', height: 30 }}>
           <svg className={styles['icon-solid']} version='1.0' xmlns='http://www.w3.org/2000/svg'
                width='25.000000pt' height='25.000000pt' viewBox='0 0 200.000000 200.000000'
@@ -342,7 +339,6 @@ export const AudioPlayer: React.FC = () => {
       </div>
       {playList[currentIndex] && playList[currentIndex].url && <audio src={benDiUrl} autoPlay={autoPlay} ref={audioRef} />}
       {playList[currentIndex] && playList[currentIndex].url === undefined && <audio src={songsUrl} autoPlay={autoPlay} ref={audioRef} />}
-
     </div>
   </div>;
 };
