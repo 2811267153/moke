@@ -1,8 +1,6 @@
 .player_page {
   width: 100%;
   height: 100%;
-  //overflow: hidden;
-  //height: calc(100vh - 50px);
   position: relative;
 
   .icon-solid {
@@ -100,6 +98,11 @@
   height: 100%;
   text-align: center;
   overflow: auto;
+  line-height: 100vh;
+  color: #f2f2f2;
+  & > p {
+    opacity: .6;
+  }
 }
 
 .iconfonts {

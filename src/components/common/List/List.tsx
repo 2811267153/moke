@@ -46,27 +46,24 @@ export const List: React.FC<PropsType> = ({ data, privileges, onClick, handleCha
   return (
     <div className={styles['item-warp']}>
       {
-        data.map((item, index) => {
-          if (item.hasOwnProperty('id')) {
-            return <div onClick={() => handleClick(index)} className={styles['item-info']} key={index}>
-              <div className={styles['item-name']}>
-                {index + 1}
-                <Image width={50} height={50} src={item.al.picUrl} style={{ borderRadius: 5, marginLeft: 10 }} />
-                <span style={{ marginLeft: 20 }}>{item.name}</span>
-              </div>
-              <div className={styles['item-list']}>
-                <p>{item.ar[0].name}
-                </p>
-              </div>
-              <div className={styles['item-al']}>
-                专辑: {item.al.name}
-              </div>
-              <div className={styles['item-duration']}>
-                <i className='icon iconfont icon-bofang' />
-                <i className='icon iconfont icon-xihuan2' />
-              </div>
-            </div>;
-          }
+        data && data?.map((item, index) => {
+          return <div onClick={() => handleClick(index)} className={styles['item-info']} key={index}>
+            <div className={styles['item-name']}>
+              <Image width={50} height={50} src={item?.al?.picUrl || ""} style={{ borderRadius: 5, marginLeft: 10 }} />
+              <span style={{ marginLeft: 20 }}>{item.name}</span>
+            </div>
+            <div className={styles['item-list']}>
+              <p>{item && item.ar && item.ar[0].name || "未知艺术家"}
+              </p>
+            </div>
+            <div className={styles['item-al']}>
+              专辑: {item?.al?.name|| "未知专辑"}
+            </div>
+            <div className={styles['item-duration']}>
+              <i className='icon iconfont icon-bofang' />
+              <i className='icon iconfont icon-xihuan2' />
+            </div>
+          </div>;
         })
       }
     </div>

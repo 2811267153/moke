@@ -57,15 +57,15 @@ export const AudioPlayer: React.FC = () => {
   useEffect(() => {
     if (playList.length != 0) {
       setCurrentIndex(0);
-      const params = {
-        id: playList[currentIndex]?.id,
-        level: 'standard',
-        sourceid: playList[currentIndex]?.al.id,
-        time: currentTime,
-        cookie
-      };
       //如果当前播放歌曲不包含url属性 则发送请求
       if(!playList[currentIndex].hasOwnProperty('url')){
+        const params = {
+          id: playList[currentIndex]?.id,
+          level: 'standard',
+          sourceid: playList[currentIndex]?.al.id,
+          time: currentTime,
+          cookie
+        };
         dispatch(songsUrlDispatch(params));
         dispatch(songsDurationDispatch(currentsMusic?.id));
         dispatch(getScrobbleDispatch(params))
@@ -76,19 +76,23 @@ export const AudioPlayer: React.FC = () => {
   }, [playList]);
 
   useEffect(() => {
-    dispatch(isPlayingDispatch(true))
-    dispatch(isLoadingDispatch(false))
+    //监听通过播放页面传递过来的切换歌曲请求
+    PubSub.subscribe("PlayerPageChangeSongs", (_, data) => {
+      handleNextClick(data[0], data[1])
+    })
+    //如果当前歌曲不存在id属性 那么就是本地歌曲 将loading状态设置为false
+    console.log( currentsMusic.id === undefined );
     if (playList.length !== 0 && currentsMusic?.id != undefined) {
       if(flag) {
-        const params = {
-          id: playList[currentIndex]?.id,
-          level: 'standard',
-          sourceid: playList[currentIndex]?.al.id,
-          time: currentTime,
-          cookie
-        };
         //如果当前播放歌曲不包含url属性 则发送请求
         if(!playList[currentIndex].hasOwnProperty('url')){
+          const params = {
+            id: playList[currentIndex]?.id,
+            level: 'standard',
+            sourceid: playList[currentIndex]?.al.id,
+            time: currentTime,
+            cookie
+          };
           dispatch(songsUrlDispatch(params));
           dispatch(songsDurationDispatch(currentsMusic?.id));
           dispatch(getScrobbleDispatch(params))
@@ -97,9 +101,8 @@ export const AudioPlayer: React.FC = () => {
         }
         setFlag(false)
       }
-      PubSub.subscribe("PlayerPageChangeSongs", (_, data) => {
-        handleNextClick(data[0], data[1])
-      })
+      dispatch(isPlayingDispatch(true))
+      dispatch(isLoadingDispatch(false))
       const audio = audioRef.current;
       if (!audio) {
         return;
@@ -125,6 +128,7 @@ export const AudioPlayer: React.FC = () => {
       const onTimeUpdate = () => {
         setCurrentTime(audio.currentTime);
         dispatch(isLoadingDispatch(false))
+        // dispatch(isPlayingDispatch(true));
       };
 
       const onEnded = () => {
@@ -191,17 +195,15 @@ export const AudioPlayer: React.FC = () => {
   useEffect(() => {
     if(currentIndex < playList.length){
       PubSub.publish('AudioCurrentMusic', playList[currentIndex]);
-      const params = {
-        id: playList[currentIndex]?.id,
-        level: 'standard',
-        sourceid: playList[currentIndex]?.al.id,
-        time: currentTime,
-        cookie
-      };
-      console.log(playList[currentIndex]);
       //如果当前播放歌曲不包含url属性 则发送请求
       if(!playList[currentIndex].hasOwnProperty('url')){
-        console.log("abc");
+        const params = {
+          id: playList[currentIndex]?.id,
+          level: 'standard',
+          sourceid: playList[currentIndex]?.al.id,
+          time: currentTime,
+          cookie
+        };
         dispatch(songsUrlDispatch(params));
         dispatch(songsDurationDispatch(currentsMusic?.id));
         dispatch(getScrobbleDispatch(params))
@@ -231,10 +233,8 @@ export const AudioPlayer: React.FC = () => {
     dispatch(isPlayingDispatch(!isPlaying));
     dispatch(changeAudioPlay(true));
   };
-  const getSongsUrl = () => {
-
-  }
   const handleNextClick = (e:any, type: "next" | "piece") => {
+    dispatch(changeAudioPlay(true));
     if(e !== undefined) {
       e.stopPropagation()
     }
@@ -287,14 +287,14 @@ export const AudioPlayer: React.FC = () => {
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       {currentsMusic && currentsMusic.name && <div className={styles['audio']}>
         <div className={styles.audioArt}>
-          <Image key={currentsMusic?.id} src={currentsMusic?.al.picUrl}></Image>
+          <Image key={currentsMusic?.id} src={currentsMusic?.al?.picUrl || ""}></Image>
           <div className={styles.footerSongs}>
             <span>{currentsMusic.name}</span>
             <p
               className={styles['music-other']}>{currentsMusic && currentsMusic.ar && currentsMusic.ar.map((item: any) => {
               return <span key={item.id}>{item.name} -</span>;
-            })} <span
-              className={styles['music-ablum']}>专辑: {currentsMusic && currentsMusic.al && currentsMusic.al.name}</span>
+            }) || "未知艺术家"} <span
+              className={styles['music-ablum']}>专辑: {currentsMusic && currentsMusic.al && currentsMusic.al.name || "未知专辑"}</span>
             </p>
           </div>
         </div>

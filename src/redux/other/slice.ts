@@ -88,9 +88,7 @@ export const getScrobbleDispatch = createAsyncThunk(
   'other/getScrobbleDispatch',
   async (params : paramsType) => {
     const {id, sourceid, cookie} = params
-    const data = await getScrobble(id, sourceid, cookie);
-    console.log(data);
-    return data
+    return await getScrobble(id, sourceid, cookie);
   }
 );
 

@@ -23,7 +23,6 @@ export const ListPage: React.FC = () => {
   const ablumAllSongsList = useSelector(state => state.musicAlbumDetail.songsInfoData.songs) || [];
 
   useEffect(() => {
-    console.log(type);
     if (type === 'file') {
       const musicList: { url: string; artist: string; name: string; }[] = [];
       const musicDir = 'C:/Users/breeze/Music';
@@ -42,8 +41,11 @@ export const ListPage: React.FC = () => {
           const value = songTitle + ' ' + artistName;
           return value;
         });
+
       searchValues.forEach((item, index) => {
-        dispatch(songsSearch_c({ value: item, offset: 1, limit: 1 }));
+        const regex = /\s*\([^)]+\)/g; // 匹配括号及其内容，包括前面的空格
+        const cleanedString = item.replace(regex, '');
+        dispatch(songsSearch_c({ value: cleanedString, offset: 1, limit: 1 }));
       });
       // 将歌曲添加到musicList中
       musicFiles.forEach((file: string) => {
@@ -86,10 +88,11 @@ export const ListPage: React.FC = () => {
     dispatch(getSongsInfoData(uniqueIdList));
   }, [list]);
 
+
   useEffect(() => {
     // 更新musicList
-    const updatedMusicList = musicList.map((music: ListItem) => {
-      const foundItem = ablumAllSongsList.find((item: ListItem) => item.name.includes(music.name?.slice(0,3)));
+    musicList.map((music: ListItem) => {
+      const foundItem = ablumAllSongsList.find((item: ListItem) => item.name.includes(music.name?.slice(0, 3)));
       if (foundItem) {
         Object.keys(foundItem).forEach((key) => {
           if (!music.hasOwnProperty(key)) {
@@ -101,11 +104,10 @@ export const ListPage: React.FC = () => {
       return music;
     });
 
-    console.log(updatedMusicList);
   }, [ablumAllSongsList]);
 
   const handleChangeClick = (index: number) => {
-    dispatch(playingList(musicList))
+    dispatch(playingList(musicList));
     PubSub.publish('currentIndex', index);
     dispatch(changeAudioPlay(true));
   };

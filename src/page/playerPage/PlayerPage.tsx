@@ -6,7 +6,6 @@ import { format } from '@/utils';
 import Color from 'color-thief-react';
 import { changeAudioPlay, isPlayingDispatch } from '@/redux/audioDetail/slice';
 import { getLyricDispatch } from '@/redux/other/slice';
-
 export const PlayerPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const [countTime, setCountTime] = useState(0);
@@ -57,28 +56,27 @@ export const PlayerPage: React.FC = () => {
 
   return (
     <div className={styles.player_page}>
-      <img src={currentMusic?.al.picUrl || "https://i.imgtg.com/2023/04/23/IkfQB.png"}  alt='' key={currentMusic?.id}/>
+      <img src={currentMusic?.al?.picUrl || "https://i.imgtg.com/2023/04/23/IkfQB.png"}  alt='' key={currentMusic?.id}/>
       <div className={styles.player_filter}>
         <div className={styles.player_info}>
-          <Image src={currentMusic?.al.picUrl || 'https://i.imgtg.com/2023/04/23/IkfQB.png'} key={currentMusic?.id}/>
+          <Image src={currentMusic?.al?.picUrl || 'https://i.imgtg.com/2023/04/23/IkfQB.png'} key={currentMusic?.id}/>
           <h3>{currentMusic?.name}</h3>
           <div className={styles.player_artist}>
-            <span>{currentMusic?.al.name}</span>
+            <span>{currentMusic?.al?.name || "未知专辑"}</span>
             <p style={{ marginTop: 20 }}>
-              {currentMusic?.ar.map((artist, index) => {
+              {currentMusic && currentMusic.ar && currentMusic.ar.map((artist, index) => {
                 return (
                   <React.Fragment key={artist.id}>
                     <span>{artist.name}</span>
                     {index !== currentMusic?.ar.length - 1 && ' & '}
                   </React.Fragment>
                 );
-              })}
+              }) || "未知艺术家"}
             </p>
           </div>
           <div className={styles.player_controller_warp}>
             <span>{format(countTime)}</span>
-
-            <Color src={currentMusic?.al.picUrl} format='hex'>
+            <Color src={currentMusic?.al?.picUrl} format='hex'>
               {
                 ({ data }) => (
                   <div className={styles.player_controller}>
@@ -130,7 +128,8 @@ export const PlayerPage: React.FC = () => {
           </div>
         </div>
         <div className={styles.player_lyric}>
-          {!lyricLoading && lyricData && <Lyrics lyrics={lyricData} currentTime={countTime}></Lyrics>}
+          {!lyricLoading && currentMusic && currentMusic.id === undefined && <p>暂无歌词</p>}
+          {!lyricLoading && lyricData && currentMusic && currentMusic.id && <Lyrics lyrics={lyricData} currentTime={countTime}></Lyrics>}
           {lyricLoading && <p>歌词加载中</p>}
         </div>
       </div>

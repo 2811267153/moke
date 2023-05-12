@@ -37,10 +37,6 @@ export const RecommendSongs: React.FC = () => {
     handleToPlayer(uiElement);
   };
 
-  useEffect(() => {
-    console.log(dailySongs);
-  }, [dailySongs]);
-
   if (cookie == '') {
     return <></>;
   }

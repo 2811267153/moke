@@ -18,7 +18,6 @@ export const RecommendedStation: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const cookie = useSelector(state => state.loginUnikey.cookie);
-  const recommendUserListData = useSelector(state => state.recommendPlayList.recommedUserListData) as recommendListItem[] || []; //推荐用户歌单
   const [currentMusic, setCurrentMusic] = useState<ListItem>(); //获取正在播放的歌曲
   const loading = useSelector(state => state.recommendPlayList.recommedUserLoading); //推荐勇哥歌单loading
   const [currentTime, setCurrentTime] = useState(0); //当前播放的秒数
@@ -29,17 +28,10 @@ export const RecommendedStation: React.FC = () => {
   const containerRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(5);
 
-
-
-  const handleToAlbum = (index: number) => {
-    navigate(`/album/${recommendUserListData[index].id}`);
-  };
-
   useEffect(() => {
     PubSub.subscribe('AudioCurrentMusic', (_, data) => {
       setCurrentMusic(data);
     });
-
 
     PubSub.subscribe('AudioCurretTime', (_, data) => {
       setWidth(data[0] / data[1] * 100);
@@ -54,7 +46,6 @@ export const RecommendedStation: React.FC = () => {
     });
     return () => {
       PubSub.unsubscribe('AudioCurretTime');
-
       PubSub.unsubscribe('AudioCurrentMusic')
       PubSub.unsubscribe('RecommendedStation')
     };
@@ -77,7 +68,6 @@ export const RecommendedStation: React.FC = () => {
   const handleToPlayerPage = () => {
     navigate('/playerPage')
   }
-  // 读取本地音乐文件
 
   const handelGetSongs = (type: 'file' | "live" | "playlist") => {
     navigate(`/list/${type}`)

@@ -72,7 +72,6 @@ export const getSongsInfoData = createAsyncThunk(
   "musicAblumData/getSongsInfoData",
   async (id: number | string) => {
     const res = await getSongsInfo(id)
-    console.log('asdf', res);
     return res;
   }
 )
