@@ -128,8 +128,6 @@ export const AudioPlayer: React.FC = () => {
       const onTimeUpdate = () => {
         setCurrentTime(audio.currentTime);
         dispatch(isLoadingDispatch(false))
-        console.log(isLoading);
-        // dispatch(isPlayingDispatch(true));
       };
 
       const onEnded = () => {

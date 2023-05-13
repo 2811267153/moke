@@ -35,7 +35,12 @@
     align-items: center;
     .player_info {
       text-align: center;
+      display: flex;
+      flex-direction: column;
       height: 100%;
+      .player_artist_info {
+        padding-bottom: 10%;
+      }
       h3 {
         font-size: 20px;
         margin: 20px 0;
@@ -43,11 +48,17 @@
         opacity: .8;
       }
 
-      img {
-        margin: 10vh 0;
+      .player_img {
+        flex: 1 ;
         width: 200px;
         height: 200px;
-        border-radius: 10px;
+        overflow: hidden;
+        padding-top: 20%;
+        img {
+          border-radius: 10px;
+          width: 200px;
+          height: 200px;
+        }
       }
 
       .player_artist {
