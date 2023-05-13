@@ -16,6 +16,7 @@ export interface ListItem {
   ftype: number
   id: number
   mark: number
+  url: string
   mvid: number
   name: string | number
   rUrl: string | number | null

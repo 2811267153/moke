@@ -15,7 +15,7 @@ import { getScrobbleDispatch } from '@/redux/other/slice';
 export const AudioPlayer: React.FC = () => {
   const navigate = useNavigate()
   const songsUrl = useSelector(state => state.musicDetailPage.songsUrl) || ''; //获取线上歌曲url
-  const [benDiUrl, setBenDiUrl] = useState();//获取本地url
+  const [benDiUrl, setBenDiUrl] = useState("");//获取本地url
   const playList = useSelector(state => state.audioData.playingList || []);//保存正在播放的音乐
   const songsDuration = useSelector(state => state.musicDetailPage.songsDuration);
   const autoPlay = useSelector(state => state.audioData.isAudioPlay);
@@ -128,6 +128,7 @@ export const AudioPlayer: React.FC = () => {
       const onTimeUpdate = () => {
         setCurrentTime(audio.currentTime);
         dispatch(isLoadingDispatch(false))
+        console.log(isLoading);
         // dispatch(isPlayingDispatch(true));
       };
 
@@ -161,10 +162,13 @@ export const AudioPlayer: React.FC = () => {
       audio.addEventListener('loadedmetadata', onloadedmetadata);
 
       return () => {
-        audio.removeEventListener('loadeddata', onLoadedData);
-        audio.removeEventListener('timeupdate', onTimeUpdate);
-        audio.removeEventListener('ended', onEnded);
-        audio.removeEventListener('playing', onPlaying);
+        audio.addEventListener('loadeddata', onLoadedData);
+        audio.addEventListener('timeupdate', onTimeUpdate);
+        audio.addEventListener('ended', onEnded);
+        audio.addEventListener('playing', onPlaying);
+        audio.addEventListener('progress', onprogress);
+        audio.addEventListener('waiting', onwaiting);
+        audio.addEventListener('loadedmetadata', onloadedmetadata);
       };
     }
   }, [currentsMusic]);

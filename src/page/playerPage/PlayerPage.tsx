@@ -6,6 +6,7 @@ import { format } from '@/utils';
 import Color from 'color-thief-react';
 import { changeAudioPlay, isPlayingDispatch } from '@/redux/audioDetail/slice';
 import { getLyricDispatch } from '@/redux/other/slice';
+
 export const PlayerPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const [countTime, setCountTime] = useState(0);
@@ -56,13 +57,14 @@ export const PlayerPage: React.FC = () => {
 
   return (
     <div className={styles.player_page}>
-      <img src={currentMusic?.al?.picUrl || "https://i.imgtg.com/2023/04/23/IkfQB.png"}  alt='' key={currentMusic?.id}/>
+      <img src={currentMusic?.al?.picUrl || 'https://i.imgtg.com/2023/04/23/IkfQB.png'} alt='' key={currentMusic?.id}
+           style={{ transform:" scale(2)"}} />
       <div className={styles.player_filter}>
         <div className={styles.player_info}>
-          <Image src={currentMusic?.al?.picUrl || 'https://i.imgtg.com/2023/04/23/IkfQB.png'} key={currentMusic?.id}/>
+          <Image src={currentMusic?.al?.picUrl || 'https://i.imgtg.com/2023/04/23/IkfQB.png'} key={currentMusic?.id} />
           <h3>{currentMusic?.name}</h3>
           <div className={styles.player_artist}>
-            <span>{currentMusic?.al?.name || "未知专辑"}</span>
+            <span>{currentMusic?.al?.name || '未知专辑'}</span>
             <p style={{ marginTop: 20 }}>
               {currentMusic && currentMusic.ar && currentMusic.ar.map((artist, index) => {
                 return (
@@ -71,7 +73,7 @@ export const PlayerPage: React.FC = () => {
                     {index !== currentMusic?.ar.length - 1 && ' & '}
                   </React.Fragment>
                 );
-              }) || "未知艺术家"}
+              }) || '未知艺术家'}
             </p>
           </div>
           <div className={styles.player_controller_warp}>
@@ -101,7 +103,7 @@ export const PlayerPage: React.FC = () => {
                    width='25.000000pt' height='25.000000pt' viewBox='0 0 200.000000 200.000000'
                    preserveAspectRatio='xMidYMid meet' fill='#f2f2f2'>
                 <g transform='translate(0.000000,200.000000) scale(0.100000,-0.100000)'
-                  stroke='none'>
+                   stroke='none'>
                   <path d='M874 1910 c-85 -12 -136 -26 -233 -66 -211 -87 -397 -274 -485 -487
                     -56 -134 -69 -203 -69 -357 0 -154 13 -223 69 -357 45 -111 115 -211 207 -300
                     93 -89 173 -143 280 -188 132 -54 204 -68 357 -69 152 -1 242 18 378 80 148
@@ -129,7 +131,8 @@ export const PlayerPage: React.FC = () => {
         </div>
         <div className={styles.player_lyric}>
           {!lyricLoading && currentMusic && currentMusic.id === undefined && <p>暂无歌词</p>}
-          {!lyricLoading && lyricData && currentMusic && currentMusic.id && <Lyrics lyrics={lyricData} currentTime={countTime}></Lyrics>}
+          {!lyricLoading && lyricData && currentMusic && currentMusic.id &&
+            <Lyrics lyrics={lyricData} currentTime={countTime}></Lyrics>}
           {lyricLoading && <p>歌词加载中</p>}
         </div>
       </div>
