@@ -9,6 +9,7 @@ interface initialAudioDetailState {
   currentMusic: {},
   songHistoryList: ListItem[]
   playingList: ListItem[]
+  musicList: ListItem[]
   isPlaying: boolean
   isLoading: boolean
   isAudioPlay: boolean
@@ -19,6 +20,7 @@ const initialCounterState: initialAudioDetailState = {
   currentMusic: {},
   songHistoryList: [],
   playingList: [],
+  musicList: [],
   isPlaying: true,
   isAudioPlay: false,
   isLoading: false
@@ -31,8 +33,14 @@ const audioSlice = createSlice({
     isPlayingDispatch(state, action) {
       state.isPlaying = action.payload;
     },
-    addPlayingList: (state, action: PayloadAction<ListItem>) => {
-      state.playingList.unshift(action.payload);
+    addPlayingList: (state, action: PayloadAction<any>) => {
+      state.playingList = action.payload.value;
+    },
+    deleteAllFromPlayingList: (state, action: PayloadAction<ListItem>) => {
+      state.playingList = []
+    },
+    musicListDispatch: (state, action) => {
+      state.musicList = action.payload
     },
     playingList(state, action) {
       state.playingList = action.payload
@@ -66,13 +74,16 @@ export const {
   changeAudioPlay,
   clearPlayingList,
   isLoadingDispatch,
+  musicListDispatch,
   removeAudioData,
   playingList
 } = audioSlice.actions;
 
-export const addPlayingList = (payload: ListItem) => async (dispatch: Dispatch, getState: () => RootState) => {
-  const dbData: ListItem = await new Promise((resolve, reject) => {
-    db.findOne({ id: payload.id }, (err, data) => {
+export const addPlayingList = (payload: ListItem[]) => async (dispatch: Dispatch, getState: () => RootState) => {
+  console.log('addplaylist');
+  const playlist = { key: "playlist", value: payload }
+  const dbData: {key: string, value: ListItem[]}= await new Promise((resolve, reject) => {
+    db.findOne({ key: playlist.key }, (err, data) => {
       if (err) {
         reject(err);
       } else {
@@ -80,25 +91,38 @@ export const addPlayingList = (payload: ListItem) => async (dispatch: Dispatch, 
       }
     });
   });
-  const copyAction = { ...payload, type: 'playinglist' };
   if (dbData) {
-    db.update({ id: payload.id }, copyAction, {}, (err, numReplaced) => {
+    db.update({ key: playlist.key }, playlist, {}, (err, numReplaced) => {
       if (!err) {
-        dispatch({ type: 'audioDetail/addPlayingList', payload: copyAction });
+        dispatch({ type: 'audioDetail/addPlayingList', payload: playlist });
       } else {
         console.log('数据更新失败', err);
       }
     });
   } else {
-    db.insert(copyAction, (err, res) => {
+    db.insert(playlist, (err, res) => {
       if (!err) {
-        dispatch({ type: 'audioDetail/addPlayingList', payload: copyAction });
+        dispatch({ type: 'audioDetail/addPlayingList', payload: playlist });
       } else {
         console.log('数据插入失败', err);
       }
     });
   }
 };
+
+//删除所有类型为playlist的对象
+export const deleteAllFromPlayingList = () => async (dispatch: Dispatch, getState: () => RootState) => {
+  console.log("deleteAllFromPlayingList");
+  db.remove({ key: 'playlist' }, { multi: true }, (err, numRemoved) => {
+    if (!err) {
+      console.log('成功删除了', numRemoved, '个项');
+      dispatch({ type: 'audioDetail/deleteAllFromPlayingList' });
+    } else {
+      console.log('数据删除失败', err);
+    }
+  });
+};
+
 
 
 export default audioSlice.reducer;

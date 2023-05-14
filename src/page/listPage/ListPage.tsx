@@ -2,20 +2,20 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import styles from './index.module.scss';
 import { List, ListItem } from '@/components';
-import { changeAudioPlay, playingList } from '@/redux/audioDetail/slice';
+import { addPlayingList, changeAudioPlay, deleteAllFromPlayingList, playingList } from '@/redux/audioDetail/slice';
 import { useParams } from 'react-router-dom';
 import { readdirSync } from 'fs';
 import { songsSearch_c } from '@/redux/musicDetailProduct/slice';
 import { getSongsInfoData } from '@/redux/albumInfo/slice';
-import { updateMusicList } from '@/utils';
+
 
 export const ListPage: React.FC = () => {
-  // const playList = useSelector(state => state.audioData.playingList) || [];
+  const playList = useSelector(state => state.audioData.playingList) || [];
   //读取本地歌曲
   const [musicList, setMusicList] = useState<ListItem[]>([]);
   const menuList = ['本地歌曲', '下载歌曲', '下载视频', '正在下载'];
   const [currentIndex, setIndex] = useState(0);
-  const search_cData = useSelector(state => state.musicDetailPage.searchSongs.songs);
+  const search_cData = useSelector(state => state.musicDetailPage.searchSongs);
   const { type } = useParams();
   const dispatch = useAppDispatch();
   const [list, setList] = useState<ListItem[]>([]); //保存的未被初始化的音乐
@@ -69,9 +69,9 @@ export const ListPage: React.FC = () => {
   }, [type]);
 
   useEffect(() => {
-    if (search_cData) {
+    if (Array.isArray(search_cData.songs)) {
       //把添加的歌曲信息保存到本地
-      const newList = [...listRef.current, ...search_cData];
+      const newList = [...listRef.current, ...search_cData.songs];
       listRef.current = newList;
       setList(newList);
     }
@@ -107,9 +107,7 @@ export const ListPage: React.FC = () => {
   }, [ablumAllSongsList]);
 
   const handleChangeClick = (index: number) => {
-    dispatch(playingList(musicList));
-    PubSub.publish('currentIndex', index);
-    dispatch(changeAudioPlay(true));
+    dispatch(addPlayingList(musicList))
   };
   const handleChangeType = (index: number) => {
     setIndex(index);

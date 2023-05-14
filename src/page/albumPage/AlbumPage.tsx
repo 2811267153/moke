@@ -7,11 +7,9 @@ import { getSongsInfoData, musicAlbumData } from '@/redux/albumInfo/slice';
 import { formatStr, formatTimeDate } from '@/utils';
 import { changeAudioPlay, addPlayingList, playingList } from '@/redux/audioDetail/slice';
 
-
 export const AlbumPage: React.FC = () => {
   const { albumid } = useParams();
   const dispatch = useAppDispatch();
-
 
   const cookie = useSelector(state => state.loginUnikey.cookie);
   const ablumInfo = useSelector(state => state.musicAlbumDetail.albumData)[0];
@@ -28,22 +26,12 @@ export const AlbumPage: React.FC = () => {
   const updateLoading = useSelector(state => state.musicAlbumDetail.updateLoading);
 
   useEffect(() => {
-    // if (cookie.length != 0) {
-    //   const params = {
-    //     id: albumid!,
-    //     cookie
-    //   };
-    //   dispatch(musicAlbumData(params));
-    // }
-
     const params = {
       id: albumid!,
       cookie
     };
     dispatch(musicAlbumData(params));
   }, [albumid, cookie]);
-
-
 
   useEffect(() => {
     const idArr = ablumInfo?.trackIds.map((obj: any) => obj.id)
@@ -59,8 +47,9 @@ export const AlbumPage: React.FC = () => {
     dispatch(playingList([...historyList, ...ablumAllSongsList.songs]))
   }
   const handleChangeClick = (index: number) => {
-    dispatch(addPlayingList(ablumAllSongsList.songs[index],))
     dispatch(changeAudioPlay(true));
+    PubSub.publish('currentIndex', index);
+    dispatch(addPlayingList(ablumAllSongsList.songs))
   }
   if (infoLoading) {
     return (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 50px)' }}>

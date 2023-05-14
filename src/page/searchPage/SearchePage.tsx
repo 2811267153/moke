@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { Skeleton } from '@/components/common/Skeleton/Skeleton';
 import { List, ListItem } from '@/components';
-import { addPlayingList } from '@/redux/audioDetail/slice';
+import { addPlayingList, changeAudioPlay } from '@/redux/audioDetail/slice';
 import { songsSearch_c } from '@/redux/musicDetailProduct/slice';
 import { useNavigate } from 'react-router-dom';
 import { getSongsInfoData } from '@/redux/albumInfo/slice';
@@ -19,6 +19,7 @@ export const SearchePage: React.FC = () => {
   const value = useSelector(state => state.counter.value);
   const search_cData = useSelector(state => state.musicDetailPage.searchSongs)
   const ablumAllSongsList = useSelector(state => state.musicAlbumDetail.songsInfoData.songs) || []
+  const playlist = useSelector(state => state.audioData.playingList || [])
   const songsInfoLoading = useSelector(state => state.musicAlbumDetail.songsInfoLoading)
 
   useEffect(() => {
@@ -37,8 +38,10 @@ export const SearchePage: React.FC = () => {
   }, [search_cData]);
 
   const handleChangeClick = (index: number) => {
-    console.log(ablumAllSongsList);
-    dispatch(addPlayingList(ablumAllSongsList[index]))
+    PubSub.publish('currentIndex', index);
+    dispatch(changeAudioPlay(true));
+    // console.log("ablumAllSongsList", [ablumAllSongsList[index], ...playlist]);
+    dispatch(addPlayingList([ablumAllSongsList[index], ...playlist]))
   };
   const onChange: PaginationProps['onChange'] = (page) => {
     setQueryCount(page);

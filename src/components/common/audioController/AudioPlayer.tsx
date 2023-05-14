@@ -16,7 +16,7 @@ export const AudioPlayer: React.FC = () => {
   const navigate = useNavigate()
   const songsUrl = useSelector(state => state.musicDetailPage.songsUrl) || ''; //获取线上歌曲url
   const [benDiUrl, setBenDiUrl] = useState("");//获取本地url
-  const playList = useSelector(state => state.audioData.playingList || []);//保存正在播放的音乐
+  const playList = useSelector(state => state.audioData.playingList );
   const songsDuration = useSelector(state => state.musicDetailPage.songsDuration);
   const autoPlay = useSelector(state => state.audioData.isAudioPlay);
   const isPlaying = useSelector(state => state.audioData.isPlaying);
@@ -31,6 +31,7 @@ export const AudioPlayer: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const currentsMusic = playList?.[currentIndex] || {};
   const [flag, setFlag] = useState(true); //控制页面是否初次打开
+  const [durationFlag, setDurationFlag] = useState(false);
 
   useEffect(() => {
     PubSub.subscribe('currentIndex', (_, index) => {
@@ -43,22 +44,21 @@ export const AudioPlayer: React.FC = () => {
         audioRef.current.play()
       }
     })
-    //读取本地歌曲
-    loadMusic()
 
     return () => {
       PubSub.unsubscribe('currentIndex');
-      // PubSub.unsubscribe('RecommendedStation');
+      PubSub.unsubscribe('RecommendedStation');
       PubSub.unsubscribe('AudioCurrentMusic');
     };
 
   }, []);
 
   useEffect(() => {
-    if (playList.length != 0) {
+    if (playList?.length != 0) {
       setCurrentIndex(0);
       //如果当前播放歌曲不包含url属性 则发送请求
       if(!playList[currentIndex].hasOwnProperty('url')){
+        console.log("url", playList[currentIndex]);
         const params = {
           id: playList[currentIndex]?.id,
           level: 'standard',
@@ -81,7 +81,6 @@ export const AudioPlayer: React.FC = () => {
       handleNextClick(data[0], data[1])
     })
     //如果当前歌曲不存在id属性 那么就是本地歌曲 将loading状态设置为false
-    console.log( currentsMusic.id === undefined );
     if (playList.length !== 0 && currentsMusic?.id != undefined) {
       if(flag) {
         //如果当前播放歌曲不包含url属性 则发送请求
@@ -112,8 +111,8 @@ export const AudioPlayer: React.FC = () => {
         dispatch(isLoadingDispatch(false))
         dispatch(isPlayingDispatch(true));
         setDuration(audio.duration > 31 ? audio.duration : (songsDuration / 1000));
-        if (audio.duration <= 32) {
-          message.info('当前歌曲为30秒试听版本');
+        if (audio.duration <= 32 && durationFlag) {
+          return  message.info('当前歌曲为30秒试听版本');
         }
         PubSub.publish('AudioCurrentLoadingMusicData', false);
       };
@@ -172,6 +171,12 @@ export const AudioPlayer: React.FC = () => {
   }, [currentsMusic]);
   useEffect(() => {
     PubSub.publish('AudioCurretTime', [currentTime, duration , isLoading, isPlaying, playList[currentIndex], currentIndex]);
+    if (currentTime === 0){
+      setDurationFlag(true)
+    }else {
+      setDurationFlag(false)
+
+    }
   }, [currentTime]);
 
   let timer: NodeJS.Timeout | null = null;
@@ -278,8 +283,6 @@ export const AudioPlayer: React.FC = () => {
   const handelClick = () => {
     navigate('/playerPage')
   }
-  const loadMusic = () => {
-  };
 
   return <div className={`${styles['footer']}`} onClick={handelClick}>
     <div className={styles['audio-controller-warp']}>
@@ -339,8 +342,8 @@ export const AudioPlayer: React.FC = () => {
         <i className='icon iconfont icon-yinliang1' style={{ fontSize: 20, marginRight: 20 }}></i>
         <i className='icon iconfont icon-bofangduilie' style={{ fontSize: 20, marginRight: 20 }}></i>
       </div>
-      {playList[currentIndex] && playList[currentIndex].url && <audio src={benDiUrl} autoPlay={autoPlay} ref={audioRef} />}
-      {playList[currentIndex] && playList[currentIndex].url === undefined && <audio src={songsUrl} autoPlay={autoPlay} ref={audioRef} />}
+      {playList && playList[currentIndex] && playList[currentIndex].url && <audio src={benDiUrl} autoPlay={autoPlay} ref={audioRef} />}
+      {playList && playList[currentIndex] && playList[currentIndex].url === undefined && <audio src={songsUrl} autoPlay={autoPlay} ref={audioRef} />}
     </div>
   </div>;
 };
