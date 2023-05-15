@@ -3,7 +3,7 @@ import styles from './index.module.scss';
 import { HistoryItem } from '@/components/historyPlay/HistoryItem';
 import { ListItem, LoginErr } from '@/components';
 import { useAppDispatch } from '@/redux/hooks';
-import { addPlayingList } from '@/redux/audioDetail/slice';
+import { addPlayingList, changeAudioPlay } from '@/redux/audioDetail/slice';
 import { useHorizontalScroll } from '@/hooks/scrollHook';
 
 
@@ -18,8 +18,13 @@ export const HistoryWarp: React.FC<List> = ({ list, playlist, type }) => {
   const scrollRef = useHorizontalScroll();
 
   const handleItemClick = (index: number) => {
-    const copyPlaylist = list?.[index].data as ListItem
-    dispatch(addPlayingList(copyPlaylist));
+    const data = list.map((item: any) => {
+      console.log(item);
+      return  item.data;
+    })
+    dispatch(changeAudioPlay(true));
+    PubSub.publish('currentIndex', index);
+    dispatch(addPlayingList(data));
   }
 
   return (

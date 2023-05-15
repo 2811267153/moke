@@ -40,6 +40,7 @@ const audioSlice = createSlice({
       state.playingList = []
     },
     musicListDispatch: (state, action) => {
+      console.log("action", action.payload);
       state.musicList = action.payload
     },
     playingList(state, action) {

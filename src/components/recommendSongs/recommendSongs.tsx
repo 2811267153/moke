@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styles from './index.module.scss';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 
-import { addPlayingList } from '@/redux/audioDetail/slice';
+import { addPlayingList, changeAudioPlay } from '@/redux/audioDetail/slice';
 import { recommendSongs } from '@/redux/recmmendSongs/slice';
 import { FlexCol } from '@/components/common/FlexCol/FlexCol';
 import { Skeleton } from '@/components';
@@ -21,20 +21,22 @@ export const RecommendSongs: React.FC = () => {
     }
   }, [cookie]);
 
-  const handleToPlayer = (item: any) => {
-    const index = playList.findIndex((el) => el.id === item.id);
+  const handelFlexColClick = (uiElement: any, i: any) => {
+    dispatch(changeAudioPlay(true));
+    PubSub.publish('currentIndex', 0);
+    const index = playList.findIndex((el) => el.id === uiElement.id);
+    console.log(index);
     if (index !== -1) {
-      const newPlayList = playList.slice();
-      newPlayList.splice(index, 1);
-      dispatch(addPlayingList(item));
+      const newPlayList = [...playList]; // 创建新的播放列表副本
+      newPlayList.splice(index, 1); // 删除重复项
+      console.log([uiElement, ...newPlayList]);
+      dispatch(addPlayingList([uiElement, ...newPlayList])); // 更新播放列表
     } else {
-      dispatch(addPlayingList(item));
+      console.log([uiElement, ...playList]);
+      const newPlayList = [uiElement, ...playList]; // 添加到播放列表开头
+      dispatch(addPlayingList(newPlayList)); // 更新播放列表
     }
-  };
-
-  const handelFlexColClick = (_: any, uiElement: any) => {
-    console.log(uiElement);
-    handleToPlayer(uiElement);
+    // console.log("playlist", newPlayList); // 打印更新后的播放列表
   };
 
   if (cookie == '') {
@@ -70,7 +72,7 @@ export const RecommendSongs: React.FC = () => {
               uiElement.mainTitle.title = item.name;
               uiElement.subTitle.title = item.reason;
               if (index <= 11) {
-                return <FlexCol handelChangeSongs={handelFlexColClick} resources={resources}
+                return <FlexCol handelChangeSongs={() =>handelFlexColClick(uiElement, index)} resources={resources}
                                 resourceExtInfo={resourceExtInfo} uiElement={uiElement}></FlexCol>;
               }
             })

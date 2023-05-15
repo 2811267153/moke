@@ -28,6 +28,11 @@ export const RoutePage: React.FC = () => {
   const dispatch = useAppDispatch()
   const navigate =  useNavigate()
 
+  useEffect(() => {
+    console.log(userInfo);
+  }, [userInfo]);
+
+
   const handleItemCkick = (index: number) => {
     setCurrentIndex(index)
     if(index == 5) {

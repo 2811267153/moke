@@ -22,6 +22,7 @@ import db from '../db';
 import { readdirSync } from 'fs';
 import { songsSearch_c } from '@/redux/musicDetailProduct/slice';
 import { getSongsInfoData } from '@/redux/albumInfo/slice';
+import { FindFiles, getMusicListByIds } from '@/utils/findFiles';
 
 const { Sider } = Layout;
 export const App: React.FC = () => {
@@ -40,17 +41,24 @@ export const App: React.FC = () => {
   const height = header ! == 0 ? '100vh' : 'calc(100vh - 50px)';
   const showLoading = useSelector(state => state.loginUnikey.showLoading) || false;
 
-
   const [list, setList] = useState<ListItem[]>([]); //保存的未被初始化的音乐
   const listRef = useRef<ListItem[]>([]); // 保存不好喊img图片的歌曲信息
   const ablumAllSongsList = useSelector(state => state.musicAlbumDetail.songsInfoData.songs) || [];
   const search_cData = useSelector(state => state.musicDetailPage.searchSongs);
   const [musicList, setMusicList] = useState<ListItem[]>([]);
+  const [aaaa, setAaaa] = useState();
 
 
   useEffect(() => {
+    const { musicList, searchValues } = FindFiles('C:/Users/breeze/Music',)
+    setMusicList(musicList)
+    searchValues.map((item: string) => {
+      const regex = /\s*\([^)]+\)/g; // 匹配括号及其内容，包括前面的空格
+      const cleanedString = item.replace(regex, '');
+      dispatch(songsSearch_c({ value: cleanedString, offset: 1, limit: 1 }));
+    });
 
-    // dispatch(deleteAllFromPlayingList())
+    dispatch(deleteAllFromPlayingList())
     db.find({ key: 'playlist' }, (err: Error | null, data: any) => {
       if (err !== null) {
         console.log(err);
@@ -63,7 +71,8 @@ export const App: React.FC = () => {
         message.info(`cookie is error: ${err.message}`);
       } else {
         if (data.length !== 0) {
-          dispatch(CheckCookie(data));
+          dispatch(CheckCookie(data[0].value));
+          console.log("userInfo----------------",data);
         }
       }
     });
@@ -87,6 +96,7 @@ export const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    console.log("cookie", accountData);
     if (cookie && accountData) {
       dispatch(monitorLoginStates(cookie));
       dispatch(userDataInfo(accountData));
@@ -102,6 +112,9 @@ export const App: React.FC = () => {
       setHidden(false);
       setHeader(50);
     }
+    if(location.pathname === "/list/file"){
+      PubSub.publish("ListPageData", aaaa);
+    }
   }, [location]);
   useEffect(() => {
     PubSub.publish('AudioCurrentMusic', playList[0]);
@@ -115,6 +128,47 @@ export const App: React.FC = () => {
     }
   }, [cookie]);
 
+  useEffect(() => {
+    if (Array.isArray(search_cData.songs)) {
+      //把添加的歌曲信息保存到本地
+      const newList = [...listRef.current, ...search_cData.songs];
+      listRef.current = newList;
+      setList(newList);
+    }
+  }, [search_cData]);
+
+  useEffect(() => {
+    //过滤掉重复的数据保存所有的id
+    const uniqueList = list.filter((item, index, arr) => {
+      return arr.findIndex((t) => t.id === item.id) === index;
+    });
+
+    //讲所有保存的id保存为字符串 使用 ","分割
+    const uniqueIdList = uniqueList.map(item => item.id).join(',');
+    dispatch(getSongsInfoData(uniqueIdList));
+  }, [list]);
+
+  useEffect(() => {
+    // 更新musicList
+    const music = musicList.map((music: ListItem) => {
+      const foundItem = ablumAllSongsList.find((item: ListItem) => item.name.includes(music.name?.slice(0, 2)));
+      if (foundItem) {
+        Object.keys(foundItem).forEach((key) => {
+          if (!music.hasOwnProperty(key)) {
+            // @ts-ignore
+            music[key] = foundItem[key];
+          }
+        });
+      }
+      return music
+    });
+    // @ts-ignore
+    setAaaa(music)
+
+    if(location.pathname === "/list/file"){
+      PubSub.publish("ListPageData", music);
+    }
+  }, [ablumAllSongsList]);
 
   let t: NodeJS.Timeout | null = null;
 
@@ -133,10 +187,6 @@ export const App: React.FC = () => {
     dispatch(isShowLoading(false));
   };
 
-  useEffect(() => {
-    console.log('musicList', musicList);
-    dispatch(musicListDispatch(musicList));
-  }, [musicList]);
   return (
     <div className={styles.App}>
       <Space direction='vertical' style={{ width: '100%' }} size={[0, 48]}>

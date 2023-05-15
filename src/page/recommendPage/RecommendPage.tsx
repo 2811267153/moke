@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { recommendDiscoverDispatch } from '@/redux/recommendPlayList/slice';
 import styles from './index.module.scss';
-
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -12,10 +11,9 @@ import { Image, RecommendTopOne, Skeleton } from '@/components';
 import { RecommendNewSongsNewAlbum } from '@/components/RecommendPageCpn/recommendNewSongsNewAlbum';
 import { getHotArtist } from '@/redux/other/slice';
 import Color from 'color-thief-react';
-import { addPlayingList } from '@/redux/audioDetail/slice';
+import { addPlayingList, changeAudioPlay } from '@/redux/audioDetail/slice';
 import { FlexCol } from '@/components/common/FlexCol/FlexCol';
 import * as assert from 'assert';
-
 
 export const RecommendPage: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -50,7 +48,6 @@ export const RecommendPage: React.FC = () => {
         }else {
           setRecommendDiscoverPlaylist(recommendDiscoverData?.data?.blocks[1].creatives);
           setSlideSongListAlign(recommendDiscoverData?.data?.blocks[2].creatives)
-          console.log(recommendDiscoverData?.data?.blocks[2]);
           setSlideSongListAlignTitle(recommendDiscoverData?.data?.blocks[2].uiElement.subTitle.title)
           setRecommendNewSongsNewAlbum(recommendDiscoverData?.data?.blocks[3].creatives);
         }
@@ -94,6 +91,10 @@ export const RecommendPage: React.FC = () => {
     }, [recommendDiscoverData]);
 
   const handelChangeSongs = (item: any) => {
+
+    dispatch(changeAudioPlay(true));
+    PubSub.publish('currentIndex', 0);
+
     const copyItem = {...item}
     copyItem.al = {};
     copyItem.ar = [...item.artists]
@@ -101,11 +102,14 @@ export const RecommendPage: React.FC = () => {
     copyItem.al.name = item.album.name
     const index = playList.findIndex((el) => el.id === copyItem.id);
     if (index !== -1) {
-      const newPlayList = playList.slice();
-      newPlayList.splice(index, 1);
-      dispatch(addPlayingList(copyItem))
+      const newPlayList = [...playList]; // 创建新的播放列表副本
+      newPlayList.splice(index, 1); // 删除重复项
+      console.log([copyItem, ...newPlayList]);
+      dispatch(addPlayingList([copyItem, ...newPlayList])); // 更新播放列表
     } else {
-      dispatch(addPlayingList(copyItem))
+      console.log([copyItem, ...playList]);
+      const newPlayList = [copyItem, ...playList]; // 添加到播放列表开头
+      dispatch(addPlayingList(newPlayList)); // 更新播放列表
     }
   }
     return (

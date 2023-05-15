@@ -6,10 +6,7 @@ import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { getRecommendMvDispatch, getTopListDispatch } from '@/redux/feedInfo/slice';
 import { CommonGrid, CommonFlex } from '@/components';
 import { Segmented } from 'antd';
-import { SegmentedLabeledOption } from 'antd/es/segmented';
 import { useNavigate } from 'react-router-dom';
-
-
 
 interface ParamsType{
   area: string,
@@ -21,7 +18,6 @@ export const FeedPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const topList = useSelector(state => state.feedInfo.topListData) || [];
   const recommendMv = useSelector(state => state.feedInfo.personalizedMv)
-  const recommendMvLoading = useSelector(state => state.feedInfo.personalizedMvLoading)
   const [area, setArea] = useState<string>('');
   const navigate = useNavigate()
 

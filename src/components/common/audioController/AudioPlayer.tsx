@@ -36,9 +36,11 @@ export const AudioPlayer: React.FC = () => {
   useEffect(() => {
     PubSub.subscribe('currentIndex', (_, index) => {
       setCurrentIndex(index);
+      if(audioRef.current){
+        audioRef.current.play()
+      }
     });
     PubSub.subscribe('UpDataTime', (_, Time) => {
-
       if(audioRef.current){
         audioRef.current.currentTime = Time / 1000 -1
         audioRef.current.play()
@@ -55,7 +57,6 @@ export const AudioPlayer: React.FC = () => {
 
   useEffect(() => {
     if (playList?.length != 0) {
-      setCurrentIndex(0);
       //如果当前播放歌曲不包含url属性 则发送请求
       if(!playList[currentIndex].hasOwnProperty('url')){
         console.log("url", playList[currentIndex]);
@@ -290,16 +291,16 @@ export const AudioPlayer: React.FC = () => {
            style={{ width: (currentTime / duration ) * 100 + '%' }}></div>
     </div>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      {currentsMusic && currentsMusic.name && <div className={styles['audio']}>
+      {<div className={styles['audio']}>
         <div className={styles.audioArt}>
           <Image key={currentsMusic?.id} src={currentsMusic?.al?.picUrl || ""}></Image>
           <div className={styles.footerSongs}>
-            <span>{currentsMusic.name}</span>
+            <span>{currentsMusic.name || "简音乐"}</span>
             <p
               className={styles['music-other']}>{currentsMusic && currentsMusic.ar && currentsMusic.ar.map((item: any) => {
               return <span key={item.id}>{item.name} -</span>;
-            }) || "未知艺术家"} <span
-              className={styles['music-ablum']}>专辑: {currentsMusic && currentsMusic.al && currentsMusic.al.name || "未知专辑"}</span>
+            }) || "简音乐"} <span
+              className={styles['music-ablum']}>专辑: {currentsMusic && currentsMusic.al && currentsMusic.al.name || "让音乐更简单"}</span>
             </p>
           </div>
         </div>

@@ -50,16 +50,6 @@ export const RecommendedStation: React.FC = () => {
       PubSub.unsubscribe('RecommendedStation')
     };
   }, []);
-  useEffect(() => {
-    if (currentMusic != undefined && Object.keys(currentMusic as Object).length != 0 && cookie) {
-      const params = {
-        id: currentMusic.id!,
-        cookie
-      };
-      dispatch(recommedUserListDataState(params));
-    }
-  }, [currentMusic, cookie]);
-
   const handlePlayPauseClick = (e: any) => {
     e.stopPropagation()
     dispatch(changeAudioPlay(true))
@@ -146,9 +136,6 @@ export const RecommendedStation: React.FC = () => {
     <div style={{ width: '50%', marginLeft: 20 }}>
       <h2 style={{ fontWeight: 200, fontSize: 15, height: 28 }}>找到了几个于这首歌类似的歌单(〃^ω^) </h2>
       <div className={styles['song-album']}>
-        {loading && cookie.length !== 0 && (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '131px', width: "100%" }}>
-          <Skeleton />
-        </div>)}
         <div className={styles['album-item']} onClick={() => handelGetSongs('file')}>
           <a><i className='icon iconfont icon-yinle'></i>
           <p>
