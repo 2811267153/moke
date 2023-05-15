@@ -18,7 +18,7 @@ export interface ListItem {
   mark: number
   url: string
   mvid: number
-  name: string | number
+  name: string
   rUrl: string | number | null
   rtype: string | number;
   status: number | string

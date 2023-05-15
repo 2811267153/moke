@@ -57,7 +57,6 @@ export const App: React.FC = () => {
         return;
       }
       dispatch(playingList(data[0].value));
-      console.log(data[0].value);
     });
     db.find({ key: 'cookie' }).limit(1).exec((err, data) => {
       if (err) {

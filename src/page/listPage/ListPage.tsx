@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import { readdirSync } from 'fs';
 import { songsSearch_c } from '@/redux/musicDetailProduct/slice';
 import { getSongsInfoData } from '@/redux/albumInfo/slice';
+import { FindFiles, getMusicListByIds } from '@/utils/findFiles';
 
 
 export const ListPage: React.FC = () => {
@@ -24,43 +25,14 @@ export const ListPage: React.FC = () => {
 
   useEffect(() => {
     if (type === 'file') {
-      const musicList: { url: string; artist: string; name: string; }[] = [];
-      const musicDir = 'C:/Users/breeze/Music';
-      const files = readdirSync(musicDir);
-      const musicFiles = files.filter((file: any) => /\.(mp3|wav|ogg|flac)$/i.test(file));
-// 发送搜索请求
-      const searchValues = musicFiles
-        .filter((file: string) => {
-          const filenameWithoutExtension = file.substring(0, file.lastIndexOf('.'));
-          const [artistName, songTitle] = filenameWithoutExtension.split(' - ');
-          return songTitle && songTitle.length !== 0;
-        })
-        .map((file: string) => {
-          const filenameWithoutExtension = file.substring(0, file.lastIndexOf('.'));
-          const [artistName, songTitle] = filenameWithoutExtension.split(' - ');
-          const value = songTitle + ' ' + artistName;
-          return value;
-        });
+      const { musicList, searchValues } = FindFiles('C:/Users/breeze/Music',)
+      setMusicList(musicList)
 
-      searchValues.forEach((item, index) => {
+      searchValues.map((item: string) => {
         const regex = /\s*\([^)]+\)/g; // 匹配括号及其内容，包括前面的空格
         const cleanedString = item.replace(regex, '');
         dispatch(songsSearch_c({ value: cleanedString, offset: 1, limit: 1 }));
       });
-      // 将歌曲添加到musicList中
-      musicFiles.forEach((file: string) => {
-        const musicUrl = `${musicDir}/${file}`;
-        const fileExtension = file.split('.').pop();
-        const filenameWithoutExtension = file.substring(0, file.lastIndexOf('.')); // 去掉文件格式后缀名
-        const [artistName, songTitle] = filenameWithoutExtension.split(' - '); // 分解为艺术家和歌曲名称
-        const music = {
-          url: musicUrl,
-          artist: artistName,
-          name: songTitle
-        };
-        musicList.push(music);
-      });
-      setMusicList(musicList);
     } else if (type === 'live') {
 
     } else {
@@ -74,7 +46,9 @@ export const ListPage: React.FC = () => {
       const newList = [...listRef.current, ...search_cData.songs];
       listRef.current = newList;
       setList(newList);
+      getMusicListByIds(search_cData.songs[0])
     }
+
   }, [search_cData]);
 
   useEffect(() => {
@@ -88,11 +62,10 @@ export const ListPage: React.FC = () => {
     dispatch(getSongsInfoData(uniqueIdList));
   }, [list]);
 
-
   useEffect(() => {
     // 更新musicList
     musicList.map((music: ListItem) => {
-      const foundItem = ablumAllSongsList.find((item: ListItem) => item.name.includes(music.name?.slice(0, 3)));
+      const foundItem = ablumAllSongsList.find((item: ListItem) => item.name.includes(music.name?.slice(0, 2)));
       if (foundItem) {
         Object.keys(foundItem).forEach((key) => {
           if (!music.hasOwnProperty(key)) {
@@ -103,7 +76,7 @@ export const ListPage: React.FC = () => {
       }
       return music;
     });
-
+    console.log("musicList", musicList);
   }, [ablumAllSongsList]);
 
   const handleChangeClick = (index: number) => {
