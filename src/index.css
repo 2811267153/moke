@@ -15,12 +15,6 @@
 .ant-modal-mask {
     backdrop-filter: blur(10px);
 }
-.ant-modal-content{
-    background-color: rgba(255, 255, 255 ,.5) !important;
-}
-.ant-modal-header {
-    background-color: transparent !important;
-}
 @keyframes spin {
     0% {
         transform: rotate(0deg);

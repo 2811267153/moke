@@ -25,6 +25,8 @@ interface initialState {
   recentSongsData: any[]
   recentSongsLoading: boolean
   recentSongsErr: string | null
+  closePop: false
+  staticResourcePath: string
 }
 
 const initialState: initialState = {
@@ -37,12 +39,15 @@ const initialState: initialState = {
   lyricLoading: true,
   lyricData: {},
   lyrErr: null,
-  scrobbleData: "",
+  scrobbleData: '',
   scrobbleLoading: true,
   scrobbleErr: null,
   recentSongsData: [],
   recentSongsLoading: true,
   recentSongsErr: null,
+
+  closePop: false,
+  staticResourcePath: ''
 };
 export const getBanner = createAsyncThunk(
   'other/getBanner',
@@ -54,8 +59,8 @@ export const getBanner = createAsyncThunk(
 export const getRecentSongsDispatch = createAsyncThunk(
   'other/getRecentSongsDispatch',
   async (params: paramsType) => {
-    const {limit, cookie} = params
-    const {data} = await getRecentSongs(limit, cookie);
+    const { limit, cookie } = params;
+    const { data } = await getRecentSongs(limit, cookie);
     return data.list;
   }
 );
@@ -78,16 +83,18 @@ export const getLyricDispatch = createAsyncThunk(
     // }
   }
 );
+
 interface paramsType {
-  id?: string | number
-  sourceid?: string | number
-  cookie: string
-  limit?: number
+  id?: string | number;
+  sourceid?: string | number;
+  cookie: string;
+  limit?: number;
 }
+
 export const getScrobbleDispatch = createAsyncThunk(
   'other/getScrobbleDispatch',
-  async (params : paramsType) => {
-    const {id, sourceid, cookie} = params
+  async (params: paramsType) => {
+    const { id, sourceid, cookie } = params;
     return await getScrobble(id, sourceid, cookie);
   }
 );
@@ -95,7 +102,14 @@ export const getScrobbleDispatch = createAsyncThunk(
 export const otherSlice = createSlice({
   name: 'other',
   initialState,
-  reducers: {},
+  reducers: {
+    closePopDispatch(state, action) {
+      state.closePop = action.payload;
+    },
+    staticResourcePathDispatch(state, action){
+      state.staticResourcePath = action.payload
+    }
+  },
   extraReducers: {
     [getBanner.pending.type]: state => {
       state.bannerLoading = true;
@@ -154,3 +168,8 @@ export const otherSlice = createSlice({
     }
   }
 });
+
+export const {
+  closePopDispatch,
+  staticResourcePathDispatch
+} = otherSlice.actions;

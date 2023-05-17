@@ -13,7 +13,6 @@ interface RouterItem {
 }
 const RouterData: RouterItem[] = [
   {name: "首页", icon: "icon-shouye", id: 1},
-  {name: "列表", icon: "icon-bofang-tongyong", id: 2},
   {name: "推荐", icon: "icon-calendar", id: 6},
   {name: "发现", icon: "icon-faxian2", id: 3},
   {name: "艺术家", icon: "icon-geren", id: 4},
@@ -27,11 +26,6 @@ export const RoutePage: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const dispatch = useAppDispatch()
   const navigate =  useNavigate()
-
-  useEffect(() => {
-    console.log(userInfo);
-  }, [userInfo]);
-
 
   const handleItemCkick = (index: number) => {
     setCurrentIndex(index)

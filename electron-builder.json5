@@ -13,7 +13,8 @@
     "dist"
   ],
   "extraFiles": [
-    "build/icon.ico"
+    "build/",
+    'assets/image/'
   ],
   "mac": {
     "artifactName": "${productName}_${version}.${ext}",

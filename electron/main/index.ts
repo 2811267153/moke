@@ -65,6 +65,7 @@ async function createWindow() {
     win.webContents.openDevTools();
   } else {
     win.loadFile(indexHtml);
+    win.webContents.openDevTools();
   }
   // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {
@@ -171,6 +172,14 @@ ipcMain.on('btn2', (e) => {
 ipcMain.on('btn1', (e) => {
   win.minimize();
 });
+
+ipcMain.on("getStaticResourcePath", () => {
+  if (app.isPackaged){
+    win?.webContents.send('message-channel', `${process.resourcesPath}/`);
+  }else {
+    win?.webContents.send('message-channel', '../../build');
+  }
+})
 //创建新窗口
 let songsWindow = null;
 

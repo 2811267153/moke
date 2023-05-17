@@ -19,10 +19,11 @@ import { ArtistPage } from '@/page/artistPage';
 import { ClassifyPage } from '@/page/classifyPage';
 import PubSub from 'pubsub-js';
 import db from '../db';
-import { readdirSync } from 'fs';
 import { songsSearch_c } from '@/redux/musicDetailProduct/slice';
 import { getSongsInfoData } from '@/redux/albumInfo/slice';
-import { FindFiles, getMusicListByIds } from '@/utils/findFiles';
+import { FindFiles } from '@/utils/findFiles';
+import { closePopDispatch, staticResourcePathDispatch } from '@/redux/other/slice';
+import * as path from 'path';
 
 const { Sider } = Layout;
 export const App: React.FC = () => {
@@ -35,6 +36,8 @@ export const App: React.FC = () => {
   const playList = useSelector(state => state.audioData.playingList);
   const isPlaying = useSelector(state => state.audioData.isPlaying);
   const isLoading = useSelector(state => state.audioData.isLoading);
+  const closePop = useSelector(state => state.otherSlice.closePop)
+  const staticResourcePath = useSelector(state => state.otherSlice.staticResourcePath)
   const [hidden, setHidden] = useState(false);
   const [header, setHeader] = useState(50);
   const paddingBottom = hidden ? 0 : '80px';
@@ -47,9 +50,14 @@ export const App: React.FC = () => {
   const search_cData = useSelector(state => state.musicDetailPage.searchSongs);
   const [musicList, setMusicList] = useState<ListItem[]>([]);
   const [aaaa, setAaaa] = useState();
-
-
+  // const trayIconPath = path.join(isPackaged ? `${process.resourcesPath}build/icon.ico` : __dirname, '../../build/icon.ico');
+  // console.log( trayIconPath, "trayIconPath");
   useEffect(() => {
+    ipcRenderer.send("getStaticResourcePath")
+    ipcRenderer.on("message-channel", (_, data) => {
+      console.log(data);
+      dispatch(staticResourcePathDispatch(data))
+    })
     const { musicList, searchValues } = FindFiles('C:/Users/breeze/Music',)
     setMusicList(musicList)
     searchValues.map((item: string) => {
@@ -61,7 +69,6 @@ export const App: React.FC = () => {
     dispatch(deleteAllFromPlayingList())
     db.find({ key: 'playlist' }, (err: Error | null, data: any) => {
       if (err !== null) {
-        console.log(err);
         return;
       }
       dispatch(playingList(data[0].value));
@@ -72,13 +79,20 @@ export const App: React.FC = () => {
       } else {
         if (data.length !== 0) {
           dispatch(CheckCookie(data[0].value));
-          console.log("userInfo----------------",data);
         }
       }
     });
 
     PubSub.subscribe('hiddenMenu', (_, data) => {
       setHeader(data);
+    });
+    PubSub.subscribe('menuBtnMessage', (_, data) => {
+      dispatch(closePopDispatch(true))
+      if(data === 0) {
+
+      }else {
+        ipcRenderer.send(`btn${data}`)
+      }
     });
 
     const contentElement = document.getElementsByClassName(styles.Content)[0] as HTMLDivElement;
@@ -96,7 +110,6 @@ export const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    console.log("cookie", accountData);
     if (cookie && accountData) {
       dispatch(monitorLoginStates(cookie));
       dispatch(userDataInfo(accountData));
@@ -106,7 +119,6 @@ export const App: React.FC = () => {
   useEffect(() => {
     if (location.pathname === '/' || location.pathname === '/playerPage') {
       PubSub.publish('AudioCurretTime', [0, 0.000 / 1000, isLoading, isPlaying, playList[0]]);
-      console.log('playlist', playList);
       setHidden(true);
     } else {
       setHidden(false);
@@ -186,6 +198,9 @@ export const App: React.FC = () => {
   const handleClosure = () => {
     dispatch(isShowLoading(false));
   };
+  const handleClosurePop = () => {
+    dispatch(closePopDispatch(false));
+  };
 
   return (
     <div className={styles.App}>
@@ -224,6 +239,15 @@ export const App: React.FC = () => {
               onCancel={handleClosure}
             >
               <QRLogin />
+            </Modal>
+            <Modal
+              title=''
+              centered
+              open={closePop}
+              footer={null}
+              onCancel={handleClosurePop}
+            >
+              <img src={path.join(staticResourcePath, "../build/image/icon.ico")} alt='' />
             </Modal>
           </Layout>
         </Layout>
