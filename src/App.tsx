@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './App.module.scss';
 import { HomePage, QRLogin, RoutePage } from '@/page';
-import { Layout, message, Modal, Space } from 'antd';
+import { Checkbox, Layout, message, Modal, Space } from 'antd';
 import { MenuBtn, Header, AudioPlayer, ListItem } from './components';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { SearchePage } from '@/page/searchPage/SearchePage';
@@ -22,10 +22,14 @@ import db from '../db';
 import { songsSearch_c } from '@/redux/musicDetailProduct/slice';
 import { getSongsInfoData } from '@/redux/albumInfo/slice';
 import { FindFiles } from '@/utils/findFiles';
-import { closePopDispatch, staticResourcePathDispatch } from '@/redux/other/slice';
+import { closePopDispatch, rememberSelect, staticResourcePathDispatch } from '@/redux/other/slice';
 import * as path from 'path';
+import { CheckboxValueType } from 'antd/es/checkbox/Group';
 
 const { Sider } = Layout;
+
+
+const plainOptions = ['隐藏到托盘', '记住此选项'];
 export const App: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
@@ -36,8 +40,8 @@ export const App: React.FC = () => {
   const playList = useSelector(state => state.audioData.playingList);
   const isPlaying = useSelector(state => state.audioData.isPlaying);
   const isLoading = useSelector(state => state.audioData.isLoading);
-  const closePop = useSelector(state => state.otherSlice.closePop)
-  const staticResourcePath = useSelector(state => state.otherSlice.staticResourcePath)
+  const closePop = useSelector(state => state.otherSlice.closePop);
+  const staticResourcePath = useSelector(state => state.otherSlice.staticResourcePath);
   const [hidden, setHidden] = useState(false);
   const [header, setHeader] = useState(50);
   const paddingBottom = hidden ? 0 : '80px';
@@ -50,28 +54,31 @@ export const App: React.FC = () => {
   const search_cData = useSelector(state => state.musicDetailPage.searchSongs);
   const [musicList, setMusicList] = useState<ListItem[]>([]);
   const [aaaa, setAaaa] = useState();
-  // const trayIconPath = path.join(isPackaged ? `${process.resourcesPath}build/icon.ico` : __dirname, '../../build/icon.ico');
-  // console.log( trayIconPath, "trayIconPath");
+  const [selectValue, setSelectValue] = useState<CheckboxValueType[]>([]);
+
   useEffect(() => {
-    ipcRenderer.send("getStaticResourcePath")
-    ipcRenderer.on("message-channel", (_, data) => {
+    ipcRenderer.send('getStaticResourcePath');
+    ipcRenderer.on('message-channel', (_, data) => {
       console.log(data);
-      dispatch(staticResourcePathDispatch(data))
-    })
-    const { musicList, searchValues } = FindFiles('C:/Users/breeze/Music',)
-    setMusicList(musicList)
+      dispatch(staticResourcePathDispatch(data));
+    });
+    const { musicList, searchValues } = FindFiles('C:/Users/breeze/Music');
+    setMusicList(musicList);
     searchValues.map((item: string) => {
       const regex = /\s*\([^)]+\)/g; // 匹配括号及其内容，包括前面的空格
       const cleanedString = item.replace(regex, '');
       dispatch(songsSearch_c({ value: cleanedString, offset: 1, limit: 1 }));
     });
 
-    dispatch(deleteAllFromPlayingList())
+    dispatch(deleteAllFromPlayingList());
     db.find({ key: 'playlist' }, (err: Error | null, data: any) => {
       if (err !== null) {
         return;
       }
-      dispatch(playingList(data[0].value));
+      console.log(data);
+      if(data.length !== 0) {
+        dispatch(playingList(data[0].value));
+      }
     });
     db.find({ key: 'cookie' }).limit(1).exec((err, data) => {
       if (err) {
@@ -82,16 +89,23 @@ export const App: React.FC = () => {
         }
       }
     });
+    db.find({ key: 'rememberSelect' }).limit(1).exec((err, data) => {
+      if (err) {
+        message.info(`cookie is error: ${err.message}`);
+      } else {
+        if (data.length !== 0) {
+          setSelectValue(data[0].value)
+        }
+      }
+    });
 
     PubSub.subscribe('hiddenMenu', (_, data) => {
       setHeader(data);
     });
     PubSub.subscribe('menuBtnMessage', (_, data) => {
-      dispatch(closePopDispatch(true))
-      if(data === 0) {
-
-      }else {
-        ipcRenderer.send(`btn${data}`)
+      dispatch(closePopDispatch(true));
+      if (data !== 0) {
+        ipcRenderer.send(`btn${data}`);
       }
     });
 
@@ -124,8 +138,8 @@ export const App: React.FC = () => {
       setHidden(false);
       setHeader(50);
     }
-    if(location.pathname === "/list/file"){
-      PubSub.publish("ListPageData", aaaa);
+    if (location.pathname === '/list/file') {
+      PubSub.publish('ListPageData', aaaa);
     }
   }, [location]);
   useEffect(() => {
@@ -172,13 +186,13 @@ export const App: React.FC = () => {
           }
         });
       }
-      return music
+      return music;
     });
     // @ts-ignore
-    setAaaa(music)
+    setAaaa(music);
 
-    if(location.pathname === "/list/file"){
-      PubSub.publish("ListPageData", music);
+    if (location.pathname === '/list/file') {
+      PubSub.publish('ListPageData', music);
     }
   }, [ablumAllSongsList]);
 
@@ -202,6 +216,28 @@ export const App: React.FC = () => {
     dispatch(closePopDispatch(false));
   };
 
+  const handelClosureClick = () => {
+    if(selectValue.length === 0) return  ipcRenderer.send('btn0', "")
+    selectValue.forEach(item => {
+      if(item === "隐藏到托盘") {
+        ipcRenderer.send('btn0', "隐藏到托盘")
+      }else {
+        ipcRenderer.send('btn0', "")
+      }
+
+      if(item === "记住此选项"){
+        dispatch(rememberSelect(selectValue))
+      }else {
+        dispatch(rememberSelect([]))
+      }
+      dispatch(closePopDispatch(false))
+    })
+  }
+
+  const onChange = (checkedValues: CheckboxValueType[]) => {
+    setSelectValue(checkedValues)
+  };
+
   return (
     <div className={styles.App}>
       <Space direction='vertical' style={{ width: '100%' }} size={[0, 48]}>
@@ -210,7 +246,6 @@ export const App: React.FC = () => {
             <MenuBtn></MenuBtn>
             <RoutePage></RoutePage>
           </Sider>
-          {/*<Layout>*/}
           <Layout style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
             <Header height={header}></Header>
             <div className={styles.Content} style={{ paddingBottom, height: height }}>
@@ -247,7 +282,15 @@ export const App: React.FC = () => {
               footer={null}
               onCancel={handleClosurePop}
             >
-              <img src={path.join(staticResourcePath, "../build/image/icon.ico")} alt='' />
+              <div style={{textAlign: 'right'}}>
+                <p className={styles['model-mask-title']}>
+                  <img src={path.join(staticResourcePath, '../build/image/icon.ico')} alt='' />
+                  <span>简音乐</span>
+                </p>
+                <p className={styles['model-mask-tips']}>确定退出程序?</p>
+                <p className={styles['model-mask-tips-button']}><Checkbox.Group options={plainOptions} defaultValue={selectValue} onChange={onChange} /></p>
+                <button className={styles["model-mask-button"]} onClick={handelClosureClick}>关闭</button>
+              </div>
             </Modal>
           </Layout>
         </Layout>

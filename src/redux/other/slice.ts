@@ -1,13 +1,15 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, Dispatch } from '@reduxjs/toolkit';
 import {
   getBannerUrl,
-  getDjBanner,
   getHotArtistUrl,
   getNewLyric,
   getRecentSongs,
-  getScrobble
 } from '@/axios/recommend/other';
 import { parseLyric } from '@/utils';
+import { ListItem } from '@/components';
+import { RootState } from '@/redux/store';
+import db from '../../../db';
+import { CheckboxValueType } from 'antd/es/checkbox/Group';
 
 interface initialState {
   bannerLoading: boolean,
@@ -27,6 +29,7 @@ interface initialState {
   recentSongsErr: string | null
   closePop: false
   staticResourcePath: string
+  rememberSelect: string
 }
 
 const initialState: initialState = {
@@ -47,7 +50,8 @@ const initialState: initialState = {
   recentSongsErr: null,
 
   closePop: false,
-  staticResourcePath: ''
+  staticResourcePath: '',
+  rememberSelect: ""
 };
 export const getBanner = createAsyncThunk(
   'other/getBanner',
@@ -91,13 +95,6 @@ interface paramsType {
   limit?: number;
 }
 
-export const getScrobbleDispatch = createAsyncThunk(
-  'other/getScrobbleDispatch',
-  async (params: paramsType) => {
-    const { id, sourceid, cookie } = params;
-    return await getScrobble(id, sourceid, cookie);
-  }
-);
 
 export const otherSlice = createSlice({
   name: 'other',
@@ -108,6 +105,9 @@ export const otherSlice = createSlice({
     },
     staticResourcePathDispatch(state, action){
       state.staticResourcePath = action.payload
+    },
+    rememberSelectDispatch(state, action) {
+      state.rememberSelect = action.payload
     }
   },
   extraReducers: {
@@ -144,17 +144,6 @@ export const otherSlice = createSlice({
       state.lyricLoading = false;
       state.lyrErr = action.payload;
     },
-    [getScrobbleDispatch.pending.type]: state => {
-      state.scrobbleLoading = true;
-    },
-    [getScrobbleDispatch.fulfilled.type]: (state, action) => {
-      state.scrobbleLoading = false;
-      state.scrobbleData = action.payload;
-    },
-    [getScrobbleDispatch.rejected.type]: (state, action) => {
-      state.scrobbleLoading = false;
-      state.scrobbleErr = action.payload;
-    },
     [getRecentSongsDispatch.pending.type]: state => {
       state.recentSongsLoading = true;
     },
@@ -173,3 +162,33 @@ export const {
   closePopDispatch,
   staticResourcePathDispatch
 } = otherSlice.actions;
+
+export const rememberSelect = (payload: CheckboxValueType[]) => async (dispatch: Dispatch, getState: () => RootState) => {
+  const rememberSelect = { key: "rememberSelect", value: payload }
+  const dbData: {key: string, value: []}= await new Promise((resolve, reject) => {
+    db.findOne({ key: rememberSelect.key }, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+  if (dbData) {
+    db.update({ key: rememberSelect.key }, rememberSelect, {}, (err, numReplaced) => {
+      if (!err) {
+        dispatch({ type: 'audioDetail/addPlayingList', payload: rememberSelect });
+      } else {
+        console.log('数据更新失败', err);
+      }
+    });
+  } else {
+    db.insert(rememberSelect, (err, res) => {
+      if (!err) {
+        dispatch({ type: 'audioDetail/addPlayingList', payload: rememberSelect });
+      } else {
+        console.log('数据插入失败', err);
+      }
+    });
+  }
+};

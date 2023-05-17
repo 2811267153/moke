@@ -116,6 +116,35 @@
   font-size: 30px;
 }
 
+.model-mask-title {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  img {
+    width: 32px;
+    margin-right: 10px;
+    height: 32px;
+  }
+}
+.model-mask-tips {
+  padding: 40px 0;
+  text-align: center;
+}
+.model-mask-tips-button {
+  text-align: center;
+}
+
+.model-mask-button {
+  border-radius: $theme-main-raduus-big;
+  border: 1px solid $theme-active-color;
+  background-color: #fff;
+  padding: 10px 25px;
+  &:hover {
+    background-color: $theme-active-color;
+    color: #fff;
+  }
+}
+
 @keyframes scroll-text {
   0% {
     transform: translateX(0);

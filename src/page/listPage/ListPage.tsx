@@ -1,67 +1,40 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { MutableRefObject, RefObject, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
-import styles from './index.module.scss';
-import { List, ListItem } from '@/components';
-import { addPlayingList, changeAudioPlay, deleteAllFromPlayingList, playingList } from '@/redux/audioDetail/slice';
+// import styles from './index.module.scss';
+import { CommonEmpty, List, ListItem, ListPageCpn } from '@/components';
+import { addPlayingList, changeAudioPlay} from '@/redux/audioDetail/slice';
 import { useParams } from 'react-router-dom';
-import { readdirSync } from 'fs';
-import { songsSearch_c } from '@/redux/musicDetailProduct/slice';
-import { getSongsInfoData } from '@/redux/albumInfo/slice';
-import { FindFiles, getMusicListByIds } from '@/utils/findFiles';
+import { Carousel } from 'antd';
+import { CarouselRef } from 'antd/es/carousel';
 
 
 export const ListPage: React.FC = () => {
-  const playList = useSelector(state => state.audioData.playingList) || [];
-
-  const menuList = ['本地歌曲', '下载歌曲', '下载视频', '正在下载'];
-  const [currentIndex, setIndex] = useState(0);
   const { type } = useParams();
-  const dispatch = useAppDispatch();
-  const [list, setList] = useState<ListItem[]>([]); //保存的未被初始化的音乐
-
-  useEffect(() => {
-    PubSub.subscribe("ListPageData", (_, data) => {
-      setList(data)
-    })
-  }, []);
-
+  const [title, setTitle] = useState('');
+  const [menuList, setMenuList] = useState<string[]>([]);
 
   useEffect(() => {
     if (type === 'file') {
-
+      setTitle("本地与下载")
+      setMenuList(['本地歌曲', '下载歌曲', '下载视频', '正在下载'])
     } else if (type === 'live') {
-
+      setTitle("我喜欢")
+      setMenuList([])
     } else {
-
+      setTitle("本地与播放列表")
+      setMenuList(['当前播放列表', '下载歌曲', '下载视频', '正在下载'])
     }
   }, [type]);
 
+  const contentStyle: React.CSSProperties = {
+    margin: 0,
+    color: '#fff',
+    lineHeight: '160px',
+    textAlign: 'center',
+    background: '#364d79'
+  };
 
-  const handleChangeClick = (index: number) => {
-    dispatch(changeAudioPlay(true));
-    PubSub.publish('currentIndex', index);
-    dispatch(addPlayingList(list))
-  };
-  const handleChangeType = (index: number) => {
-    setIndex(index);
-  };
   return <div>
-    <div className={styles.list_top}>
-      <h2>本地与下载</h2>
-      <div className={styles.deputy_name}>
-        {
-          menuList.map((item: string, index) => {
-            return <button onClick={() => handleChangeType(index)}
-                           className={`${styles.deputy_item} ${index === currentIndex ? styles.active : ''}`}
-                           key={item}>
-              <p>{item}
-                <i className={styles.deputy_solid} />
-              </p>
-            </button>;
-          })
-        }
-      </div>
-    </div>
-    <List handleChangeClick={handleChangeClick} data={list} />
+    <ListPageCpn menuList={menuList} title={title}></ListPageCpn>
   </div>;
 };

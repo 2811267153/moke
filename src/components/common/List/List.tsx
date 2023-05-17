@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styles from './index.module.scss';
 import { Image } from '@/components';
-import { v4 as uuidv4 } from 'uuid';
 
 export interface ListItem {
   singer: string | undefined;
@@ -50,7 +49,7 @@ export const List: React.FC<PropsType> = ({ data, privileges, onClick, handleCha
         data && data?.map((item, index) => {
           return <div onClick={() => handleClick(index)} className={styles['item-info']} key={index}>
             <div className={styles['item-name']}>
-              <Image width={50} height={50} src={item?.al?.picUrl || ""} style={{ borderRadius: 5, marginLeft: 10 }} />
+              <Image width={50} height={50} src={item?.al?.picUrl || ""} style={{ borderRadius: 5, marginLeft: 10}} />
               <span style={{ marginLeft: 20 }}>{item.name}</span>
             </div>
             <div className={styles['item-list']}>

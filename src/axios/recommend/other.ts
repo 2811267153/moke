@@ -6,7 +6,6 @@ enum Other {
   djBanner= "/dj/banner",
   lyric= "/lyric?", //普通歌词
   lyricNew= "/lyric/new?", //逐字歌词
-  scrobble= "/scrobble?", //听歌打卡
   recentSongs='/record/recent/song?' //最近播放的歌曲
 }
 export function getBannerUrl() {
@@ -37,10 +36,5 @@ export function getNewLyric(id: string | number) {
 export function getRecentSongs(limit = 20, cookie: string) {
   return hyRequest.get({
     url: `${Other.recentSongs}limit=${limit}&cookie=${cookie}`
-  })
-}
-export function getScrobble(id: string | number | undefined, sourceid: string | number | undefined, cookie: string) {
-  return hyRequest.get({
-    url: `${Other.scrobble}id=${id}&sourceid=${sourceid}&time=${Date.now()}&cookie=${cookie}`
   })
 }

@@ -10,7 +10,6 @@ import { changeAudioPlay, isLoadingDispatch, isPlayingDispatch } from '@/redux/a
 import PubSub from 'pubsub-js';
 import { useNavigate } from 'react-router-dom';
 import {Image} from '@/components';
-import { getScrobbleDispatch } from '@/redux/other/slice';
 
 export const AudioPlayer: React.FC = () => {
   const navigate = useNavigate()
@@ -63,13 +62,11 @@ export const AudioPlayer: React.FC = () => {
         const params = {
           id: playList[currentIndex]?.id,
           level: 'standard',
-          sourceid: playList[currentIndex]?.al.id,
           time: currentTime,
           cookie
         };
         dispatch(songsUrlDispatch(params));
         dispatch(songsDurationDispatch(currentsMusic?.id));
-        dispatch(getScrobbleDispatch(params))
       }else {
         setBenDiUrl(playList[currentIndex].url)
       }
@@ -89,13 +86,11 @@ export const AudioPlayer: React.FC = () => {
           const params = {
             id: playList[currentIndex]?.id,
             level: 'standard',
-            sourceid: playList[currentIndex]?.al.id,
             time: currentTime,
             cookie
           };
           dispatch(songsUrlDispatch(params));
           dispatch(songsDurationDispatch(currentsMusic?.id));
-          dispatch(getScrobbleDispatch(params))
         }else {
           setBenDiUrl(playList[currentIndex].url)
         }
@@ -208,18 +203,14 @@ export const AudioPlayer: React.FC = () => {
         const params = {
           id: playList[currentIndex]?.id,
           level: 'standard',
-          sourceid: playList[currentIndex]?.al.id,
           time: currentTime,
           cookie
         };
         dispatch(songsUrlDispatch(params));
         dispatch(songsDurationDispatch(currentsMusic?.id));
-        dispatch(getScrobbleDispatch(params))
       }else {
         setBenDiUrl(playList[currentIndex].url)
       }
-    }else {
-      setCurrentIndex(0)
     }
   }, [currentIndex]);
 

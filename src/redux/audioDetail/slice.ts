@@ -113,7 +113,6 @@ export const addPlayingList = (payload: ListItem[]) => async (dispatch: Dispatch
 
 //删除所有类型为playlist的对象
 export const deleteAllFromPlayingList = () => async (dispatch: Dispatch, getState: () => RootState) => {
-  console.log("deleteAllFromPlayingList");
   db.remove({ key: 'playlist' }, { multi: true }, (err, numRemoved) => {
     if (!err) {
       console.log('成功删除了', numRemoved, '个项');

@@ -154,9 +154,9 @@ ipcMain.handle('open-win', (_, arg) => {
   }
 });
 
-ipcMain.on('btn0', (e) => {
-  const value: number = 1;
-  if (value === 0) {
+ipcMain.on('btn0', (e, type: string) => {
+
+  if (type === '') {
     win.close();
   } else {
     win.hide();
