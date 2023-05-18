@@ -81,7 +81,6 @@ export const {
 } = audioSlice.actions;
 
 export const addPlayingList = (payload: ListItem[]) => async (dispatch: Dispatch, getState: () => RootState) => {
-  console.log('addplaylist');
   const playlist = { key: "playlist", value: payload }
   const dbData: {key: string, value: ListItem[]}= await new Promise((resolve, reject) => {
     db.findOne({ key: playlist.key }, (err, data) => {

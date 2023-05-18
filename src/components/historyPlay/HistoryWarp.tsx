@@ -19,7 +19,6 @@ export const HistoryWarp: React.FC<List> = ({ list, playlist, type }) => {
 
   const handleItemClick = (index: number) => {
     const data = list.map((item: any) => {
-      console.log(item);
       return  item.data;
     })
     dispatch(changeAudioPlay(true));

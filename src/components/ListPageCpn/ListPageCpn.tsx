@@ -10,30 +10,21 @@ import { useParams } from 'react-router-dom';
 interface PropsType {
   title: string,
   menuList: string[],
-
+  dataList: any
 }
-export const ListPageCpn:React.FC<PropsType> = ({title, menuList}) => {
+export const ListPageCpn:React.FC<PropsType> = ({title, menuList, dataList}) => {
   const swiperRef = useRef<RefObject<CarouselRef | null>>();
   const [currentIndex, setIndex] = useState(0);
   const dispatch = useAppDispatch();
-  const [list, setList] = useState<ListItem[]>([]); //保存的未被初始化的音乐
-
-  useEffect(() => {
-    PubSub.subscribe('ListPageData', (_, data) => {
-      setList(data);
-    });
-  }, []);
-
   const handleChangeClick = (index: number) => {
     dispatch(changeAudioPlay(true));
-    dispatch(addPlayingList(list));
+    dispatch(addPlayingList(dataList));
     PubSub.publish('currentIndex', index);
   };
   const handleChangeType = (index: number) => {
     setIndex(index);
     swiperRef.current.goTo(index);
   };
-
   return (
     <>
       <div className={styles.list_top}>
@@ -54,7 +45,7 @@ export const ListPageCpn:React.FC<PropsType> = ({title, menuList}) => {
       </div>
 
       <Carousel ref={swiperRef}>
-        <List handleChangeClick={handleChangeClick} data={list} />
+        <List handleChangeClick={handleChangeClick} data={dataList} />
         <div className={styles['list-empty']}>
           <CommonEmpty description={"未找到相关内容"}></CommonEmpty>
         </div>

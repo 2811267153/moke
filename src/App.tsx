@@ -20,7 +20,7 @@ import { ClassifyPage } from '@/page/classifyPage';
 import PubSub from 'pubsub-js';
 import db from '../db';
 import { songsSearch_c } from '@/redux/musicDetailProduct/slice';
-import { getSongsInfoData } from '@/redux/albumInfo/slice';
+import { getSongsData, getSongsInfoData } from '@/redux/albumInfo/slice';
 import { FindFiles } from '@/utils/findFiles';
 import { closePopDispatch, rememberSelect, staticResourcePathDispatch } from '@/redux/other/slice';
 import * as path from 'path';
@@ -59,7 +59,6 @@ export const App: React.FC = () => {
   useEffect(() => {
     ipcRenderer.send('getStaticResourcePath');
     ipcRenderer.on('message-channel', (_, data) => {
-      console.log(data);
       dispatch(staticResourcePathDispatch(data));
     });
     const { musicList, searchValues } = FindFiles('C:/Users/breeze/Music');
@@ -75,7 +74,6 @@ export const App: React.FC = () => {
       if (err !== null) {
         return;
       }
-      console.log(data);
       if(data.length !== 0) {
         dispatch(playingList(data[0].value));
       }

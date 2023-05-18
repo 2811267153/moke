@@ -10,6 +10,7 @@ import { ListItem } from '@/components';
 import { RootState } from '@/redux/store';
 import db from '../../../db';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
+import { getLikelist } from '@/axios/recommend/songs';
 
 interface initialState {
   bannerLoading: boolean,
@@ -30,6 +31,9 @@ interface initialState {
   closePop: false
   staticResourcePath: string
   rememberSelect: string
+  likelistData: any
+  likelistLoading: boolean
+  likelistErr: string | null
 }
 
 const initialState: initialState = {
@@ -48,6 +52,10 @@ const initialState: initialState = {
   recentSongsData: [],
   recentSongsLoading: true,
   recentSongsErr: null,
+  likelistData: [],
+  likelistLoading: true,
+  likelistErr: null,
+
 
   closePop: false,
   staticResourcePath: '',
@@ -87,9 +95,17 @@ export const getLyricDispatch = createAsyncThunk(
     // }
   }
 );
+export const getLikeListDispatch = createAsyncThunk(
+  'other/getLikeListDispatch',
+  async (params: paramsType) => {
+    const {id, cookie} = params
+    const { ids } = await getLikelist(id, cookie);
+    return ids
+  }
+);
 
 interface paramsType {
-  id?: string | number;
+  id:  number;
   sourceid?: string | number;
   cookie: string;
   limit?: number;
@@ -154,6 +170,17 @@ export const otherSlice = createSlice({
     [getRecentSongsDispatch.rejected.type]: (state, action) => {
       state.recentSongsLoading = false;
       state.recentSongsErr = action.payload;
+    },
+    [getLikeListDispatch.pending.type]: state => {
+      state.likelistLoading = true;
+    },
+    [getLikeListDispatch.fulfilled.type]: (state, action) => {
+      state.likelistLoading = false;
+      state.likelistData = action.payload;
+    },
+    [getLikeListDispatch.rejected.type]: (state, action) => {
+      state.likelistData = false;
+      state.likelistErr = action.payload;
     }
   }
 });

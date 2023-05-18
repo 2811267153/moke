@@ -7,6 +7,7 @@ import { format } from '@/utils';
 import { changeAudioPlay, isPlayingDispatch } from '@/redux/audioDetail/slice';
 import { useNavigate } from 'react-router-dom';
 import PubSub from 'pubsub-js';
+import { message } from 'antd';
 
 interface recommendListItem {
   coverImgUrl?: string
@@ -19,7 +20,6 @@ export const RecommendedStation: React.FC = () => {
   const navigate = useNavigate();
   const cookie = useSelector(state => state.loginUnikey.cookie);
   const [currentMusic, setCurrentMusic] = useState<ListItem>(); //获取正在播放的歌曲
-  const loading = useSelector(state => state.recommendPlayList.recommedUserLoading); //推荐勇哥歌单loading
   const [currentTime, setCurrentTime] = useState(0); //当前播放的秒数
   const [width, setWidth] = useState(0); //进度条宽度
   const [duration, setDuration] = useState(0);
@@ -46,22 +46,31 @@ export const RecommendedStation: React.FC = () => {
     });
     return () => {
       PubSub.unsubscribe('AudioCurretTime');
-      PubSub.unsubscribe('AudioCurrentMusic')
-      PubSub.unsubscribe('RecommendedStation')
+      PubSub.unsubscribe('AudioCurrentMusic');
+      PubSub.unsubscribe('RecommendedStation');
     };
   }, []);
   const handlePlayPauseClick = (e: any) => {
-    e.stopPropagation()
-    dispatch(changeAudioPlay(true))
-    dispatch(isPlayingDispatch(!isPlaying))
+    e.stopPropagation();
+    dispatch(changeAudioPlay(true));
+    dispatch(isPlayingDispatch(!isPlaying));
   };
   const handleToPlayerPage = () => {
-    navigate('/playerPage')
-  }
+    navigate('/playerPage');
+  };
 
-  const handelGetSongs = (type: 'file' | "live" | "playlist") => {
-    navigate(`/list/${type}`)
-  }
+  const handelGetSongs = (type: 'file' | 'live' | 'playlist') => {
+    navigate(`/list/${type}`);
+    if (type === 'live') {
+      if(cookie === '') {
+        message.info("请先登录")
+        navigate(`/`)
+      }
+      navigate(`/list/${type}`);
+    } else {
+      navigate(`/list/${type}`);
+    }
+  };
   return <div className={styles['recommend-station']} style={{ display: 'flex', width: '100%' }}>
     <div style={{ width: '50%' }}>
       <h2 style={{ fontWeight: 200, fontSize: 15, height: 28 }}>要继续听歌么?我把播放器给你搬过来了(〃´-ω･) </h2>
@@ -72,7 +81,7 @@ export const RecommendedStation: React.FC = () => {
                  height={110} />
           <div className={styles['song-info']}>
             <div style={{ height: 100 + '%', flex: '1', padding: '0 20px' }}>
-              <h3>{currentMusic?.name || "简音乐"}</h3>
+              <h3>{currentMusic?.name || '简音乐'}</h3>
               <div className={styles['music-info']}>
                 <div className={styles['scrolling-text-container']} ref={containerRef}>
                   <div className={styles['scrolling-text']} style={{
@@ -82,8 +91,8 @@ export const RecommendedStation: React.FC = () => {
                     <p
                       className={styles['music-other']}>{currentMusic && currentMusic.ar && currentMusic.ar.map((item: any) => {
                       return <span key={item.id}>{item.name} -</span>;
-                    }) || "简音乐"} <span
-                      className={styles['music-ablum']}>专辑: {currentMusic && currentMusic.al && currentMusic.al.name || "简音乐, 让音乐多一点简单"}</span>
+                    }) || '简音乐'} <span
+                      className={styles['music-ablum']}>专辑: {currentMusic && currentMusic.al && currentMusic.al.name || '简音乐, 让音乐多一点简单'}</span>
                     </p>
                   </div>
                 </div>
@@ -98,9 +107,11 @@ export const RecommendedStation: React.FC = () => {
             </div>
             <div className={styles['song-info-icon']}>
               {!isPlaying && !isLoading &&
-                <i className='icon iconfont icon-zanting2' onClick={(e) => handlePlayPauseClick(e)} style={{ fontSize: 35 }} />}
+                <i className='icon iconfont icon-zanting2' onClick={(e) => handlePlayPauseClick(e)}
+                   style={{ fontSize: 35 }} />}
               {!isLoading && isPlaying &&
-                <i className='icon iconfont icon-bofang' onClick={(e) => handlePlayPauseClick(e)} style={{ fontSize: 35 }} />}
+                <i className='icon iconfont icon-bofang' onClick={(e) => handlePlayPauseClick(e)}
+                   style={{ fontSize: 35 }} />}
             </div>
             {isLoading && <div style={{ position: 'relative', height: 30 }}>
               <svg className={styles['icon-solid']} version='1.0' xmlns='http://www.w3.org/2000/svg'
@@ -138,23 +149,23 @@ export const RecommendedStation: React.FC = () => {
       <div className={styles['song-album']}>
         <div className={styles['album-item']} onClick={() => handelGetSongs('file')}>
           <a><i className='icon iconfont icon-yinle'></i>
-          <p>
-            本地歌曲
-          </p>
+            <p>
+              本地歌曲
+            </p>
           </a>
         </div>
-        <div className={styles['album-item']} onClick={() => handelGetSongs("live")}>
+        <div className={styles['album-item']} onClick={() => handelGetSongs('live')}>
           <a><i className='icon iconfont icon-aixin'></i>
-          <p>
-            我喜欢
-          </p>
+            <p>
+              我喜欢
+            </p>
           </a>
         </div>
         <div className={styles['album-item']} onClick={() => handelGetSongs('playlist')}>
           <a><i className='icon iconfont icon-bofangduilie'></i>
-          <p>
-            我的歌单
-          </p>
+            <p>
+              我的歌单
+            </p>
           </a>
         </div>
       </div>

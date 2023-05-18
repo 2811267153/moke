@@ -6,7 +6,7 @@ import {
   getdynamicAblumDetail,
   updatePlayList
 } from '@/axios/recommend/ablum';
-import { getSongsInfo } from '@/axios/recommend/songs';
+import { getSongsInfo, getSongsInfoId } from '@/axios/recommend/songs';
 import { message } from 'antd';
 
 interface initalbumState {
@@ -26,7 +26,9 @@ interface initalbumState {
   albumidData: any
   albumidLoading: boolean
   albumidError: null | string
-
+  songsList: any
+  songsLoading: boolean
+  songsErr: null | string
 }
 interface albumParams {
   id: number | string,
@@ -71,8 +73,14 @@ export const updatePlayListCount = createAsyncThunk(
 export const getSongsInfoData = createAsyncThunk(
   "musicAblumData/getSongsInfoData",
   async (id: number | string) => {
-    const res = await getSongsInfo(id)
-    return res;
+    return await getSongsInfo(id)
+
+  }
+)
+export const getSongsData = createAsyncThunk(
+  "musicAblumData/getSongsData",
+  async (id: number | string) => {
+    return await getSongsInfo(id)
   }
 )
 export const getAlbumidData = createAsyncThunk(
@@ -101,6 +109,9 @@ const initialState: initalbumState = {
   albumidLoading:true,
   ablumAllSongsLoading:true,
   albumidError:'',
+  songsList: [],
+  songsLoading: true,
+  songsErr: null,
 }
 export const musicAlbumSlice = createSlice({
   name: "musicAblumData",
@@ -176,6 +187,19 @@ export const musicAlbumSlice = createSlice({
       state.albumidLoading = false
       state.albumidData = ''
       state.albumidError = action.payload
+    },
+    [getSongsData.pending.type]: (state, action) => {
+      state.songsLoading = false
+      state.songsList = []
+    },
+    [getSongsData.fulfilled.type]: (state, action) => {
+      state.songsLoading = false
+      state.songsList = action.payload
+    },
+    [getSongsData.rejected.type]: (state, action) => {
+      state.songsLoading = false
+      state.songsList = []
+      state.songsErr = action.payload
     },
   }
 })
