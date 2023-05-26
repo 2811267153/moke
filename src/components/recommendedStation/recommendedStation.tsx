@@ -164,7 +164,7 @@ export const RecommendedStation: React.FC = () => {
         <div className={styles['album-item']} onClick={() => handelGetSongs('playlist')}>
           <a><i className='icon iconfont icon-bofangduilie'></i>
             <p>
-              我的歌单
+              当前播放列表
             </p>
           </a>
         </div>

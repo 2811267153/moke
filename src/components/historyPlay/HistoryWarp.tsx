@@ -22,8 +22,9 @@ export const HistoryWarp: React.FC<List> = ({ list, playlist, type }) => {
       return  item.data;
     })
     dispatch(changeAudioPlay(true));
-    PubSub.publish('currentIndex', index);
-    dispatch(addPlayingList(data));
+    dispatch(addPlayingList(data)).then(() => {
+      PubSub.publish('currentIndex', index);
+    })
   }
 
   return (

@@ -13,7 +13,7 @@ interface PropsType {
   dataList: any
 }
 export const ListPageCpn:React.FC<PropsType> = ({title, menuList, dataList}) => {
-  const swiperRef = useRef<RefObject<CarouselRef | null>>();
+  const swiperRef = useRef<any>();
   const [currentIndex, setIndex] = useState(0);
   const dispatch = useAppDispatch();
   const handleChangeClick = (index: number) => {
@@ -25,6 +25,7 @@ export const ListPageCpn:React.FC<PropsType> = ({title, menuList, dataList}) => 
     setIndex(index);
     swiperRef.current.goTo(index);
   };
+  // @ts-ignore
   return (
     <>
       <div className={styles.list_top}>

@@ -35,6 +35,7 @@ export const AudioPlayer: React.FC = () => {
   useEffect(() => {
     PubSub.subscribe('currentIndex', (_, index) => {
       setCurrentIndex(index);
+      console.log("playList[currentIndex]",playList[currentIndex]);
       if(audioRef.current){
         audioRef.current.play()
       }
@@ -56,9 +57,9 @@ export const AudioPlayer: React.FC = () => {
 
   useEffect(() => {
     if (playList?.length != 0) {
+      console.log("url", playList[currentIndex]);
       //如果当前播放歌曲不包含url属性 则发送请求
       if(!playList[currentIndex].hasOwnProperty('url')){
-        console.log("url", playList[currentIndex]);
         const params = {
           id: playList[currentIndex]?.id,
           level: 'standard',

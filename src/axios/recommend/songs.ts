@@ -6,7 +6,8 @@ enum Songs {
   songsUrls = '/song/url/v1?', //获取歌曲url
   songsSearch = '/search?', //获取搜索歌曲<简单版>
   songsSearch_c = '/cloudsearch?', //获取搜索歌曲<完整版>
-  likelist= "/likelist?uid="
+  likelist = '/likelist?uid=',//喜欢的音乐
+  livePlaylist= "/user/playlist?", //喜欢的播放列表
 }
 
 export function getSongsInfo(id: number | string) {
@@ -47,5 +48,11 @@ export function getSongsSearch_c(keywords: any, offset: number, limit: number = 
 export function getLikelist(id: number, cookie: string) {
   return hyRequest.get({
     url: `${Songs.likelist}${id}&cookie=${cookie}`
+  });
+}
+
+export function getLikePlayList(id: number, cookie: string) {
+  return hyRequest.get({
+    url: `${Songs.livePlaylist}?id=${id}&cookie=${cookie}`
   });
 }

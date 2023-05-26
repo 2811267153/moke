@@ -3,7 +3,7 @@ import styles from "./index.module.scss"
 import { HistoryWarp } from './HistoryWarp';
 import { useAppDispatch, useSelector } from '@/redux/hooks';
 import { clearHistoryList, clearPlayingList } from '@/redux/audioDetail/slice';
-import { getRecentSongsDispatch, getScrobbleDispatch } from '@/redux/other/slice';
+import { getRecentSongsDispatch } from '@/redux/other/slice';
 
 
 export const HistoryPlay: React.FC = () => {
@@ -20,6 +20,7 @@ export const HistoryPlay: React.FC = () => {
         limit: 20,
         cookie
       }
+      // @ts-ignore
       dispatch(getRecentSongsDispatch(params))
     }
   }, [cookie]);

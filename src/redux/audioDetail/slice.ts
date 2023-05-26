@@ -40,7 +40,6 @@ const audioSlice = createSlice({
       state.playingList = []
     },
     musicListDispatch: (state, action) => {
-      console.log("action", action.payload);
       state.musicList = action.payload
     },
     playingList(state, action) {
@@ -114,7 +113,6 @@ export const addPlayingList = (payload: ListItem[]) => async (dispatch: Dispatch
 export const deleteAllFromPlayingList = () => async (dispatch: Dispatch, getState: () => RootState) => {
   db.remove({ key: 'playlist' }, { multi: true }, (err, numRemoved) => {
     if (!err) {
-      console.log('成功删除了', numRemoved, '个项');
       dispatch({ type: 'audioDetail/deleteAllFromPlayingList' });
     } else {
       console.log('数据删除失败', err);

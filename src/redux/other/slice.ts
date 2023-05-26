@@ -10,7 +10,7 @@ import { ListItem } from '@/components';
 import { RootState } from '@/redux/store';
 import db from '../../../db';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
-import { getLikelist } from '@/axios/recommend/songs';
+import { getLikelist, getLikePlayList } from '@/axios/recommend/songs';
 
 interface initialState {
   bannerLoading: boolean,
@@ -34,6 +34,10 @@ interface initialState {
   likelistData: any
   likelistLoading: boolean
   likelistErr: string | null
+  livePlayList: [],
+  livePlayListLoading: boolean,
+  livePlayListErr: string | null,
+
 }
 
 const initialState: initialState = {
@@ -55,6 +59,9 @@ const initialState: initialState = {
   likelistData: [],
   likelistLoading: true,
   likelistErr: null,
+  livePlayList: [],
+  livePlayListLoading: true,
+  livePlayListErr: null,
 
 
   closePop: false,
@@ -88,11 +95,6 @@ export const getLyricDispatch = createAsyncThunk(
   async (id: number) => {
     const data = await getNewLyric(id);
     return parseLyric(data.lrc.lyric);
-    // if(Object.keys(data.klyric).length !== 0) {
-    //   return parsePureDynamicLyric(data.klyric.lyric)
-    // }else{
-    //   return parseLyric(data.lrc.lyric)
-    // }
   }
 );
 export const getLikeListDispatch = createAsyncThunk(
@@ -103,6 +105,14 @@ export const getLikeListDispatch = createAsyncThunk(
     return ids
   }
 );
+export const getLivePlayListDispatch = createAsyncThunk(
+  'other/getLivePlayListDispatch',
+  async (params: paramsType) => {
+    const {id, cookie} = params
+    const data = await getLikePlayList(id, cookie);
+    return data
+  }
+);
 
 interface paramsType {
   id:  number;
@@ -110,7 +120,6 @@ interface paramsType {
   cookie: string;
   limit?: number;
 }
-
 
 export const otherSlice = createSlice({
   name: 'other',
@@ -181,7 +190,18 @@ export const otherSlice = createSlice({
     [getLikeListDispatch.rejected.type]: (state, action) => {
       state.likelistData = false;
       state.likelistErr = action.payload;
-    }
+    },
+    [getLivePlayListDispatch.pending.type]: state => {
+      state.livePlayListLoading = true;
+    },
+    [getLivePlayListDispatch.fulfilled.type]: (state, action) => {
+      state.livePlayListLoading = false;
+      state.livePlayList = action.payload;
+    },
+    [getLivePlayListDispatch.rejected.type]: (state, action) => {
+      state.livePlayListLoading = false;
+      state.livePlayListErr = action.payload;
+    },
   }
 });
 

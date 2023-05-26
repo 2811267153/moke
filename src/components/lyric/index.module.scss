@@ -2,27 +2,29 @@
 
 .active {
   color: #f2f2f2;
+  font-size: 18px !important;
   opacity: .8 !important;
 }
 .lyrics {
   display: inline-block;
+  list-style-type: none;
   margin-top: 61px;
+  height: calc(100vh - 150px);
   padding: 200px 20px 54px;
   overflow: auto;
   div {
-    line-height: 27px;
+    font-weight: 500;
+    line-height: 30px;
     cursor: default;
     font-size: 16px;
     padding: 0 20px;
     user-select: none; /* 标准语法 */
   }
-
 }
 
 .lyrics_container {
   display: flex;
   flex-direction: column;
-  white-space: nowrap; /* 让歌词不换行 */
 }
 
 .lyrics-item {

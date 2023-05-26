@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import styles from "./index.module.scss"
 import { animate } from '@/utils';
 interface LyricsProps {
@@ -14,24 +14,26 @@ export function Lyrics({ lyrics, currentTime }: LyricsProps) {
   const ContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if(ContainerRef.current) {
+    if (ContainerRef.current) {
       const { height } = ContainerRef.current.getBoundingClientRect();
       const { length } = lyrics;
-      console.log(height, length);
       const lineHeight = height / length;
       setLineHeight(lineHeight);
     }
-  }, [lyrics, ]);
+  }, [lyrics]);
 
   useEffect(() => {
-    const nextIndex = lyrics.findIndex(([time]) => (time / 1000) > currentTime)
+    const nextIndex = lyrics.findIndex(([time]) => (time / 1000) > currentTime);
     if (nextIndex !== currentIndex && nextIndex !== -1) {
       setCurrentIndex(nextIndex - 1);
     }
   }, [currentTime]);
+
   useEffect(() => {
     setMarginTop(-(currentIndex * lineHeight));
   }, [currentIndex, lineHeight]);
+
+
   const handleItemClick = (time: string | number) => {
     PubSub.publish("UpDataTime", time)
   }
@@ -39,7 +41,7 @@ export function Lyrics({ lyrics, currentTime }: LyricsProps) {
     <div className={styles["lyrics"]}>
       {
         lyrics.length != 0 ? (<div ref={ContainerRef}  style={{ marginTop }} className={styles.lyrics_container}>
-          {lyrics?.map((line, i) => (
+          {lyrics.map((line, i) => (
             <div
               key={i}
               ref={lyricRef}
@@ -49,7 +51,7 @@ export function Lyrics({ lyrics, currentTime }: LyricsProps) {
               {line[1]}
             </div>
           ))}
-        </div>) : <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "100%"}}>很抱歉 暂时没有找到歌词哦</div>
+        </div>) : <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "100%"}}>null</div>
       }
     </div>
   );
